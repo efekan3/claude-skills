@@ -1,0 +1,1323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Koersdesk</title>
+<meta name="description" content="Live crypto markets, charts, news and event-based scenario analysis in one page.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: top bar + market strip, then one working view at a time (Markets / Chart / News / Insights).
+   Dark-first: used at a desk in the evening as often as in daylight; light theme follows the system or the toggle. */
+:root {
+  color-scheme: dark;
+  --bg: #0e1215;          /* cool near-black, biased toward the blue accent */
+  --panel: #151a1e;
+  --panel-2: #1b2126;
+  --line: #262d33;
+  --line-strong: #343c44;
+  --text: #e7ebee;
+  --muted: #98a3ad;
+  --faint: #6d7882;
+  --accent: #3987e5;      /* dataviz series-1, dark step */
+  --accent-ink: #0b1220;
+  --up: #2fbf4a;
+  --down: #e5534b;
+  --up-bg: rgba(47,191,74,.12);
+  --down-bg: rgba(229,83,75,.12);
+  --warn: #fab219;
+  --band: 57,135,229;     /* rgb for fan-chart bands */
+  --sel: rgba(57,135,229,.35);
+  --font: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --r: 6px;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg: #f5f6f7; --panel: #ffffff; --panel-2: #eef1f3; --line: #dfe3e7; --line-strong: #c9cfd5;
+    --text: #12171b; --muted: #55606a; --faint: #78838d;
+    --accent: #2a78d6; --accent-ink: #ffffff;
+    --up: #0b7d1f; --down: #c4302b; --up-bg: rgba(11,125,31,.09); --down-bg: rgba(196,48,43,.09);
+    --warn: #a86b00; --band: 42,120,214; --sel: rgba(42,120,214,.22);
+  }
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f5f6f7; --panel: #ffffff; --panel-2: #eef1f3; --line: #dfe3e7; --line-strong: #c9cfd5;
+  --text: #12171b; --muted: #55606a; --faint: #78838d;
+  --accent: #2a78d6; --accent-ink: #ffffff;
+  --up: #0b7d1f; --down: #c4302b; --up-bg: rgba(11,125,31,.09); --down-bg: rgba(196,48,43,.09);
+  --warn: #a86b00; --band: 42,120,214; --sel: rgba(42,120,214,.22);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font: 400 14px/1.45 var(--font);
+  -webkit-font-smoothing: antialiased;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 32px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+::selection { background: var(--sel); }
+a { color: var(--accent); text-underline-offset: 3px; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+* { scrollbar-color: var(--line-strong) transparent; scrollbar-width: thin; }
+.num, .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.up { color: var(--up); } .down { color: var(--down); } .muted { color: var(--muted); } .faint { color: var(--faint); }
+.wrap { max-width: 1480px; margin: 0 auto; }
+svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- top bar ---------- */
+header.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: var(--bg); border-bottom: 1px solid var(--line);
+  margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))) calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+  padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
+}
+.bar { display: flex; align-items: center; gap: 16px; min-height: 56px; flex-wrap: wrap; padding-block: 8px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 17px; letter-spacing: -.01em; }
+.brand svg { width: 22px; height: 22px; }
+nav.tabs { display: flex; gap: 2px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 3px; }
+nav.tabs a {
+  display: flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 6px;
+  color: var(--muted); text-decoration: none; font-weight: 500; transition: background .15s, color .15s;
+}
+nav.tabs a:hover { color: var(--text); }
+nav.tabs a[aria-current="page"] { background: var(--panel-2); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.spacer { flex: 1; }
+.controls { display: flex; align-items: center; gap: 8px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg button { background: transparent; border: 0; padding: 5px 10px; cursor: pointer; color: var(--muted); font-weight: 500; }
+.seg button[aria-pressed="true"] { background: var(--panel-2); color: var(--text); }
+.seg button:hover { color: var(--text); }
+.iconbtn { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--line); background: transparent; cursor: pointer; color: var(--muted); }
+.iconbtn:hover { color: var(--text); border-color: var(--line-strong); }
+.live { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); padding: 4px 9px; border: 1px solid var(--line); border-radius: 999px; }
+.live i { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); }
+.live[data-state="on"] i { background: var(--up); box-shadow: 0 0 0 3px var(--up-bg); }
+.live[data-state="wait"] i { background: var(--warn); }
+.live[data-state="off"] i { background: var(--down); }
+
+.strip { display: flex; gap: 22px; overflow-x: auto; padding-block: 8px 10px; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+.strip b { color: var(--text); font-weight: 500; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.fg { display: inline-flex; align-items: center; gap: 6px; }
+.fg .meter { width: 52px; height: 5px; border-radius: 3px; background: linear-gradient(90deg, var(--down), var(--warn), var(--up)); position: relative; }
+.fg .meter i { position: absolute; top: -3px; width: 2px; height: 11px; background: var(--text); border-radius: 1px; }
+
+main { padding-top: 18px; }
+section.view[hidden] { display: none; }
+h1, h2, h3 { margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+h1 { font-size: 20px; font-weight: 600; }
+h2 { font-size: 16px; font-weight: 600; }
+h3 { font-size: 13px; font-weight: 600; color: var(--muted); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+.phead { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.pbody { padding: 14px; }
+.note { font-size: 12.5px; color: var(--muted); max-width: 75ch; }
+.chip { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; font-size: 12.5px; font-weight: 500; }
+.chip:hover { color: var(--text); border-color: var(--line-strong); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.input { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 6px; padding: 0 10px; background: var(--panel); min-width: 0; }
+.input input { border: 0; outline: 0; background: transparent; padding: 7px 0; width: 100%; min-width: 0; }
+.input:focus-within { border-color: var(--accent); }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel-2); cursor: pointer; font-weight: 500; }
+.btn:hover { border-color: var(--line-strong); }
+.btn:disabled { opacity: .5; cursor: default; }
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 1px 7px; border-radius: 4px; font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.pill.up { background: var(--up-bg); } .pill.down { background: var(--down-bg); }
+.pill svg { width: 9px; height: 9px; fill: currentColor; stroke: none; }
+.skel { display: inline-block; height: 10px; width: 70%; border-radius: 3px; background: linear-gradient(90deg, var(--panel-2), var(--line), var(--panel-2)); background-size: 200% 100%; animation: sk 1.2s linear infinite; }
+@keyframes sk { to { background-position: -200% 0; } }
+.err { border: 1px solid var(--down); background: var(--down-bg); color: var(--text); border-radius: 8px; padding: 10px 12px; font-size: 13px; }
+
+/* ---------- markets ---------- */
+.mk-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+.tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th { text-align: right; font-weight: 500; color: var(--faint); font-size: 12px; padding: 9px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; position: sticky; top: 0; background: var(--panel); }
+th:first-child, th.l { text-align: left; }
+td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+td.l { text-align: left; }
+tbody tr { cursor: pointer; transition: background .12s; }
+tbody tr:hover { background: var(--panel-2); }
+tbody tr:last-child td { border-bottom: 0; }
+.coin { display: flex; align-items: center; gap: 10px; min-width: 150px; }
+.coin img { width: 22px; height: 22px; border-radius: 50%; background: var(--panel-2); }
+.coin b { font-weight: 500; }
+.coin small { color: var(--faint); font-size: 12px; text-transform: uppercase; }
+.star { background: none; border: 0; padding: 4px; cursor: pointer; color: var(--faint); display: inline-grid; }
+.star svg { width: 15px; height: 15px; }
+.star[aria-pressed="true"] { color: var(--warn); }
+.star[aria-pressed="true"] svg { fill: currentColor; }
+td.price { font-family: var(--mono); font-variant-numeric: tabular-nums; transition: background .6s; border-radius: 3px; }
+td.flash-up { background: var(--up-bg); } td.flash-down { background: var(--down-bg); }
+canvas.spark { width: 110px; height: 32px; display: block; margin-left: auto; }
+.side { display: grid; gap: 16px; }
+.trend li { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+.trend li:last-child { border-bottom: 0; }
+.trend ul { list-style: none; margin: 0; padding: 0; }
+.trend img { width: 20px; height: 20px; border-radius: 50%; }
+.movers { display: grid; gap: 4px; }
+.movers div { display: flex; justify-content: space-between; gap: 8px; padding: 5px 0; cursor: pointer; }
+
+/* ---------- chart ---------- */
+.ch-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+.ch-head { display: flex; align-items: flex-end; gap: 18px; flex-wrap: wrap; padding: 14px; border-bottom: 1px solid var(--line); }
+.ch-price { font-family: var(--mono); font-size: 26px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.ch-stats { display: flex; gap: 18px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+.ch-stats b { display: block; color: var(--text); font-weight: 500; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.ch-tools { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.legend { font-family: var(--mono); font-size: 12px; color: var(--muted); padding: 8px 14px 0; min-height: 26px; display: flex; gap: 14px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+.legend span i { display: inline-block; width: 10px; height: 2px; vertical-align: middle; margin-right: 5px; border-radius: 1px; }
+#chartMain { height: 440px; }
+#chartLower { height: 140px; border-top: 1px solid var(--line); }
+.symbolbox { position: relative; min-width: 220px; flex: 1; max-width: 320px; }
+.suggest { position: absolute; z-index: 15; left: 0; right: 0; top: calc(100% + 4px); background: var(--panel); border: 1px solid var(--line-strong); border-radius: 8px; max-height: 300px; overflow: auto; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+.suggest button { display: flex; width: 100%; gap: 10px; align-items: center; padding: 8px 10px; background: none; border: 0; cursor: pointer; text-align: left; }
+.suggest button:hover, .suggest button.active { background: var(--panel-2); }
+.suggest img { width: 18px; height: 18px; border-radius: 50%; }
+.book { font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; }
+.book .row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; padding: 2px 12px; position: relative; }
+.book .row span { position: relative; z-index: 1; text-align: right; }
+.book .row span:first-child { text-align: left; }
+.book .row i { position: absolute; top: 1px; bottom: 1px; right: 0; z-index: 0; }
+.book .ask i { background: var(--down-bg); } .book .bid i { background: var(--up-bg); }
+.book .hdr { color: var(--faint); font-family: var(--font); }
+.book .mid { padding: 8px 12px; font-size: 15px; border-block: 1px solid var(--line); margin-block: 4px; display: flex; justify-content: space-between; }
+.trades { font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; max-height: 300px; overflow: auto; }
+.trades div { display: grid; grid-template-columns: 1fr 1fr 70px; gap: 6px; padding: 2px 12px; }
+.trades span:nth-child(2), .trades span:nth-child(3) { text-align: right; }
+
+/* ---------- news ---------- */
+.news-list { display: grid; gap: 0; }
+.news-item { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 14px; padding: 14px; border-bottom: 1px solid var(--line); }
+.news-item:last-child { border-bottom: 0; }
+.news-item img { width: 96px; height: 64px; object-fit: cover; border-radius: 6px; background: var(--panel-2); }
+.news-item h2 { font-size: 15px; line-height: 1.35; }
+.news-item h2 a { color: var(--text); text-decoration: none; }
+.news-item h2 a:hover { text-decoration: underline; }
+.news-meta { font-size: 12px; color: var(--faint); display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+.news-body { color: var(--muted); font-size: 13px; margin: 6px 0 0; max-width: 80ch; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tag { font-size: 11px; padding: 1px 6px; border-radius: 4px; background: var(--panel-2); color: var(--muted); }
+
+/* ---------- insights ---------- */
+.in-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
+.span-12 { grid-column: span 12; } .span-7 { grid-column: span 7; } .span-5 { grid-column: span 5; } .span-6 { grid-column: span 6; }
+.read { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0; }
+.read > div { padding: 12px 14px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.read dt { font-size: 12px; color: var(--faint); }
+.read dd { margin: 2px 0 0; font-family: var(--mono); font-size: 17px; font-variant-numeric: tabular-nums; }
+.read p { margin: 4px 0 0; font-size: 12.5px; color: var(--muted); }
+.state { display: inline-block; font-family: var(--font); font-size: 11.5px; font-weight: 500; padding: 1px 7px; border-radius: 4px; margin-left: 6px; vertical-align: 2px; }
+.state.up { background: var(--up-bg); } .state.down { background: var(--down-bg); } .state.n { background: var(--panel-2); color: var(--muted); }
+.scen { display: grid; gap: 12px; }
+.scen > div { padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); }
+.scen h3 { color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.scen p { margin: 6px 0 0; color: var(--muted); font-size: 13px; max-width: 75ch; }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.bars { display: grid; gap: 6px; }
+.barrow { display: grid; grid-template-columns: 150px minmax(0, 1fr) 64px; gap: 10px; align-items: center; font-size: 12.5px; }
+.barrow .track { position: relative; height: 16px; }
+.barrow .track::before { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--line-strong); }
+.barrow .fill { position: absolute; top: 2px; bottom: 2px; border-radius: 3px; }
+.ev-table td, .ev-table th { padding: 7px 9px; }
+.ev-table td.l { white-space: normal; min-width: 220px; }
+canvas#fan { width: 100%; height: 260px; display: block; }
+.upcoming { display: grid; gap: 10px; }
+.upcoming > div { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: start; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.upcoming > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.date { font-family: var(--mono); font-size: 12px; text-align: center; border: 1px solid var(--line); border-radius: 6px; padding: 4px 0; }
+.date b { display: block; font-size: 18px; font-weight: 500; }
+.disclaimer { font-size: 12px; color: var(--faint); margin-top: 22px; max-width: 90ch; }
+footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px; font-size: 12px; color: var(--faint); display: flex; gap: 16px; flex-wrap: wrap; }
+
+@media (max-width: 1100px) {
+  .mk-grid, .ch-grid { grid-template-columns: minmax(0, 1fr); }
+  .span-7, .span-5, .span-6 { grid-column: span 12; }
+}
+@media (max-width: 640px) {
+  nav.tabs a span { display: none; }
+  nav.tabs a { padding: 7px 10px; }
+  .hide-sm { display: none; }
+  #chartMain { height: 340px; }
+  .news-item { grid-template-columns: minmax(0, 1fr); }
+  .news-item img { display: none; }
+  .barrow { grid-template-columns: 100px minmax(0, 1fr) 56px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/></symbol>
+  <symbol id="i-candle" viewBox="0 0 24 24"><path d="M7 3v4M7 15v6M17 3v8M17 17v4"/><rect x="5" y="7" width="4" height="8" rx="1"/><rect x="15" y="11" width="4" height="6" rx="1"/></symbol>
+  <symbol id="i-news" viewBox="0 0 24 24"><path d="M5 5h11v14H6a1 1 0 0 1-1-1z"/><path d="M16 9h3v9a1 1 0 0 1-1 1h-2M8 9h5M8 13h5M8 16h3"/></symbol>
+  <symbol id="i-scope" viewBox="0 0 24 24"><path d="M4 19l5-6 4 3 7-9"/><path d="M15 7h5v5"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8M18 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h4"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v3h3M4 13a8 8 0 0 0 14.6 4.5M20 20v-3h-3"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol>
+  <symbol id="t-up" viewBox="0 0 10 10"><path d="M5 1.5l4 6.5H1z"/></symbol>
+  <symbol id="t-down" viewBox="0 0 10 10"><path d="M5 8.5L1 2h8z"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <div class="bar">
+      <div class="brand" aria-label="Koersdesk">
+        <svg viewBox="0 0 24 24" class="i" aria-hidden="true" style="stroke:var(--accent)"><use href="#i-candle"/></svg>
+        Koersdesk
+      </div>
+      <nav class="tabs" aria-label="Views">
+        <a href="#markets" data-route="markets"><svg class="i"><use href="#i-grid"/></svg><span>Markets</span></a>
+        <a href="#chart" data-route="chart"><svg class="i"><use href="#i-candle"/></svg><span>Chart</span></a>
+        <a href="#news" data-route="news"><svg class="i"><use href="#i-news"/></svg><span>News</span></a>
+        <a href="#insights" data-route="insights"><svg class="i"><use href="#i-scope"/></svg><span>Insights</span></a>
+      </nav>
+      <div class="spacer"></div>
+      <div class="controls">
+        <span class="live" id="liveState" data-state="wait" title="Live price stream"><i></i><span>Connecting</span></span>
+        <div class="seg" role="group" aria-label="Currency">
+          <button type="button" id="curEur" aria-pressed="true">EUR</button>
+          <button type="button" id="curUsd" aria-pressed="false">USD</button>
+        </div>
+        <button type="button" class="iconbtn" id="themeBtn" aria-label="Switch light or dark theme"><svg class="i"><use href="#i-sun"/></svg></button>
+      </div>
+    </div>
+    <div class="strip" id="strip" aria-live="off">
+      <span>Market cap <b id="gCap"><span class="skel" style="width:70px"></span></b> <span id="gCapCh"></span></span>
+      <span>24h volume <b id="gVol"><span class="skel" style="width:60px"></span></b></span>
+      <span>BTC dominance <b id="gDom">–</b></span>
+      <span>ETH dominance <b id="gEthDom">–</b></span>
+      <span class="fg">Fear &amp; Greed <b id="gFg">–</b> <span class="meter" aria-hidden="true"><i id="gFgPin" style="left:50%"></i></span> <span id="gFgLabel" class="muted"></span></span>
+      <span>Updated <b id="gTime">–</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ===================== MARKETS ===================== -->
+<section class="view" id="view-markets" aria-labelledby="mkTitle">
+  <div class="mk-grid">
+    <div class="panel">
+      <div class="phead">
+        <h1 id="mkTitle">Markets</h1>
+        <span class="faint" id="mkCount"></span>
+        <div class="spacer"></div>
+        <div class="tools">
+          <label class="input" style="width:200px"><svg class="i"><use href="#i-search"/></svg><input id="mkSearch" type="search" placeholder="Search coin" autocomplete="off"></label>
+          <div class="tools" role="group" aria-label="Filter">
+            <button type="button" class="chip" data-filter="all" aria-pressed="true">Top 100</button>
+            <button type="button" class="chip" data-filter="watch" aria-pressed="false">Watchlist</button>
+            <button type="button" class="chip" data-filter="gain" aria-pressed="false">Gainers</button>
+            <button type="button" class="chip" data-filter="lose" aria-pressed="false">Losers</button>
+          </div>
+        </div>
+      </div>
+      <div class="tablewrap">
+        <table aria-describedby="mkTitle">
+          <thead><tr>
+            <th class="l" scope="col"><span class="hide-sm">Coin</span></th>
+            <th scope="col">Price</th>
+            <th scope="col" class="hide-sm">1h</th>
+            <th scope="col">24h</th>
+            <th scope="col" class="hide-sm">7d</th>
+            <th scope="col" class="hide-sm">Market cap</th>
+            <th scope="col" class="hide-sm">Volume 24h</th>
+            <th scope="col" class="hide-sm">Last 7 days</th>
+          </tr></thead>
+          <tbody id="mkBody"></tbody>
+        </table>
+      </div>
+      <div class="pbody" id="mkEmpty" hidden></div>
+    </div>
+    <aside class="side">
+      <div class="panel trend">
+        <div class="phead"><h2>Trending searches</h2></div>
+        <div class="pbody" style="padding-block:4px"><ul id="trendList"><li><span class="skel"></span></li></ul></div>
+      </div>
+      <div class="panel">
+        <div class="phead"><h2>Biggest moves, 24h</h2></div>
+        <div class="pbody movers" id="movers"><span class="skel"></span></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ===================== CHART ===================== -->
+<section class="view" id="view-chart" hidden aria-labelledby="chTitle">
+  <div class="ch-grid">
+    <div class="panel" style="min-width:0">
+      <div class="ch-head">
+        <div class="symbolbox">
+          <label class="input"><svg class="i"><use href="#i-search"/></svg><input id="symInput" type="search" placeholder="Pick a coin, e.g. SOL" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="symSuggest"></label>
+          <div class="suggest" id="symSuggest" role="listbox" hidden></div>
+        </div>
+        <div>
+          <h1 id="chTitle" style="font-size:14px;color:var(--muted);font-weight:500">BTC / USDT</h1>
+          <div class="ch-price" id="chPrice">–</div>
+        </div>
+        <div class="ch-stats">
+          <div>24h change<b id="chChg">–</b></div>
+          <div>24h high<b id="chHigh">–</b></div>
+          <div>24h low<b id="chLow">–</b></div>
+          <div>24h volume<b id="chVol">–</b></div>
+          <div id="chEurWrap">In EUR<b id="chEur">–</b></div>
+        </div>
+      </div>
+      <div class="ch-tools">
+        <div class="seg" role="group" aria-label="Interval" id="ivSeg">
+          <button type="button" data-iv="1m" aria-pressed="false">1m</button>
+          <button type="button" data-iv="5m" aria-pressed="false">5m</button>
+          <button type="button" data-iv="15m" aria-pressed="false">15m</button>
+          <button type="button" data-iv="1h" aria-pressed="true">1h</button>
+          <button type="button" data-iv="4h" aria-pressed="false">4h</button>
+          <button type="button" data-iv="1d" aria-pressed="false">1D</button>
+          <button type="button" data-iv="1w" aria-pressed="false">1W</button>
+        </div>
+        <div class="tools" role="group" aria-label="Overlays" id="indChips">
+          <button type="button" class="chip" data-ind="ema20" aria-pressed="true">EMA 20</button>
+          <button type="button" class="chip" data-ind="ema50" aria-pressed="true">EMA 50</button>
+          <button type="button" class="chip" data-ind="ema200" aria-pressed="false">EMA 200</button>
+          <button type="button" class="chip" data-ind="bb" aria-pressed="false">Bollinger</button>
+          <button type="button" class="chip" data-ind="vol" aria-pressed="true">Volume</button>
+        </div>
+        <div class="seg" role="group" aria-label="Lower pane" id="lowerSeg">
+          <button type="button" data-lower="rsi" aria-pressed="true">RSI</button>
+          <button type="button" data-lower="macd" aria-pressed="false">MACD</button>
+        </div>
+      </div>
+      <div class="legend" id="legend"></div>
+      <div id="chartMain" role="img" aria-label="Candlestick price chart"></div>
+      <div id="chartLower" role="img" aria-label="Indicator chart"></div>
+      <div class="pbody" id="chNotice" hidden></div>
+    </div>
+    <aside class="side">
+      <div class="panel">
+        <div class="phead"><h2>Order book</h2><span class="faint" style="font-size:12px">top 10 levels</span></div>
+        <div class="book" id="book" style="padding-block:8px"><div class="row"><span class="skel"></span></div></div>
+      </div>
+      <div class="panel">
+        <div class="phead"><h2>Recent trades</h2></div>
+        <div class="trades" id="trades" style="padding-block:8px"></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ===================== NEWS ===================== -->
+<section class="view" id="view-news" hidden aria-labelledby="nwTitle">
+  <div class="panel">
+    <div class="phead">
+      <h1 id="nwTitle">News</h1>
+      <span class="faint" id="nwTime" style="font-size:12px"></span>
+      <div class="spacer"></div>
+      <label class="input" style="width:220px"><svg class="i"><use href="#i-search"/></svg><input id="nwSearch" type="search" placeholder="Filter headlines" autocomplete="off"></label>
+      <div class="tools" id="nwChips" role="group" aria-label="Coin filter"></div>
+      <button type="button" class="iconbtn" id="nwRefresh" aria-label="Refresh news"><svg class="i"><use href="#i-refresh"/></svg></button>
+    </div>
+    <div class="news-list" id="nwList"></div>
+  </div>
+</section>
+
+<!-- ===================== INSIGHTS ===================== -->
+<section class="view" id="view-insights" hidden aria-labelledby="inTitle">
+  <div class="phead" style="padding:0 0 14px;border:0">
+    <h1 id="inTitle">Insights</h1>
+    <div class="tools" id="inCoins" role="group" aria-label="Coin"></div>
+    <div class="spacer"></div>
+    <span class="faint" id="inStatus" style="font-size:12px"></span>
+  </div>
+  <div class="in-grid">
+    <div class="panel span-12">
+      <div class="phead"><h2>Where it stands now</h2><span class="faint" style="font-size:12px">daily candles, computed in your browser</span></div>
+      <dl class="read" id="inRead" style="margin:0"></dl>
+    </div>
+
+    <div class="panel span-7">
+      <div class="phead"><h2>What could happen next</h2><span class="faint" style="font-size:12px">conditional scenarios, levels from the data</span></div>
+      <div class="pbody scen" id="inScen"></div>
+    </div>
+    <div class="panel span-5">
+      <div class="phead"><h2>Coming up</h2></div>
+      <div class="pbody upcoming" id="inUpcoming"></div>
+    </div>
+
+    <div class="panel span-6">
+      <div class="phead"><h2>Range of outcomes</h2><span class="faint" style="font-size:12px">90-day resampling of past daily moves</span></div>
+      <div class="pbody">
+        <canvas id="fan" aria-label="Fan chart of simulated price paths"></canvas>
+        <div class="tablewrap" style="margin-top:10px"><table id="fanTable"></table></div>
+        <p class="note">Built by replaying random 5-day blocks of this coin's last two years of daily returns, 3,000 times. It shows how wide moves have tended to be, not where price will go.</p>
+      </div>
+    </div>
+    <div class="panel span-6">
+      <div class="phead"><h2>Similar setups in the past</h2><span class="faint" style="font-size:12px">nearest matches on RSI, momentum, trend and volatility</span></div>
+      <div class="pbody" id="inAnalog"></div>
+    </div>
+
+    <div class="panel span-12">
+      <div class="phead">
+        <h2>How it reacted to past events</h2>
+        <div class="spacer"></div>
+        <div class="tools" id="evCats" role="group" aria-label="Event type"></div>
+      </div>
+      <div class="pbody">
+        <div class="bars" id="evBars"></div>
+        <p class="note" id="evNote"></p>
+      </div>
+      <div class="tablewrap"><table class="ev-table" id="evTable"></table></div>
+    </div>
+  </div>
+  <p class="disclaimer">Educational information, not personalised financial advice. Crypto assets can lose substantial value. Past reactions and simulations describe history; they do not predict a price. An event happening near a price move does not prove it caused the move.</p>
+</section>
+
+<footer>
+  <span>Data: <a href="https://www.coingecko.com/" target="_blank" rel="noopener">CoinGecko</a> (markets), Binance public market data (charts, order book, trades), <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener">alternative.me</a> (Fear &amp; Greed), CoinDesk, Decrypt and Cointelegraph RSS via <a href="https://rss2json.com/" target="_blank" rel="noopener">rss2json</a> (news). Charts by <a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noopener">TradingView Lightweight Charts</a>.</span>
+</footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<script>
+"use strict";
+/* =========================================================================
+   Koersdesk — everything runs in the browser against public, keyless APIs.
+   ========================================================================= */
+const API = {
+  cg: "https://api.coingecko.com/api/v3",
+  bn: "https://data-api.binance.vision/api/v3",
+  bnWs: "wss://data-stream.binance.vision",
+  fng: "https://api.alternative.me/fng/?limit=1",
+  news: "https://min-api.cryptocompare.com/data/v2/news/?lang=EN",
+};
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("kd." + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("kd." + k, JSON.stringify(v)); } catch {} },
+};
+const S = {
+  cur: store.get("cur", "eur"),
+  markets: [], byId: new Map(), bySym: new Map(),
+  binance: new Set(), eurPerUsdt: null,
+  watch: new Set(store.get("watch", [])),
+  filter: "all", query: "",
+  chart: { symbol: store.get("sym", "BTCUSDT"), iv: store.get("iv", "1h"), ind: store.get("ind", { ema20: true, ema50: true, ema200: false, bb: false, vol: true }), lower: store.get("lower", "rsi") },
+  news: [], newsCoin: "ALL", newsQuery: "",
+  insight: { sym: "BTC", cat: "all", cache: new Map() },
+};
+
+async function getJSON(url, ms = 15000) {
+  const ac = new AbortController(); const t = setTimeout(() => ac.abort(), ms);
+  try {
+    const r = await fetch(url, { signal: ac.signal });
+    if (!r.ok) throw new Error(r.status === 429 ? "rate limited, trying again shortly" : "HTTP " + r.status);
+    return await r.json();
+  } catch (e) { throw new Error(e.name === "AbortError" ? "timed out" : e.message); }
+  finally { clearTimeout(t); }
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* ---------- formatting ---------- */
+const nfCache = {};
+function nf(opts) { const k = JSON.stringify(opts); return nfCache[k] || (nfCache[k] = new Intl.NumberFormat("en-IE", opts)); }
+function digitsFor(v) { const a = Math.abs(v); return a >= 1000 ? 2 : a >= 1 ? 2 : a >= 0.01 ? 4 : a >= 0.0001 ? 6 : 8; }
+function money(v, cur = S.cur, dg) {
+  if (v == null || !isFinite(v)) return "–";
+  const d = dg ?? digitsFor(v);
+  return nf({ style: "currency", currency: cur.toUpperCase(), minimumFractionDigits: Math.min(d, 2), maximumFractionDigits: d }).format(v);
+}
+function plain(v, dg) { if (v == null || !isFinite(v)) return "–"; const d = dg ?? digitsFor(v); return nf({ minimumFractionDigits: Math.min(d, 2), maximumFractionDigits: d }).format(v); }
+function compact(v, cur = S.cur) { if (v == null || !isFinite(v)) return "–"; return nf({ style: cur ? "currency" : "decimal", currency: cur ? cur.toUpperCase() : undefined, notation: "compact", maximumFractionDigits: 2 }).format(v); }
+function pct(v, dg = 2) { if (v == null || !isFinite(v)) return "–"; return (v > 0 ? "+" : "") + v.toFixed(dg) + "%"; }
+function pill(v, dg = 2) {
+  if (v == null || !isFinite(v)) return '<span class="faint">–</span>';
+  const c = v >= 0 ? "up" : "down";
+  return `<span class="pill ${c}"><svg aria-hidden="true"><use href="#t-${c}"/></svg>${Math.abs(v).toFixed(dg)}%</span>`;
+}
+function ago(sec) {
+  const d = Date.now() / 1000 - sec;
+  if (d < 60) return "just now"; if (d < 3600) return Math.floor(d / 60) + " min ago";
+  if (d < 86400) return Math.floor(d / 3600) + " h ago"; return Math.floor(d / 86400) + " d ago";
+}
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ---------- theme ---------- */
+function applyTheme(t) {
+  if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+  const dark = isDark();
+  $("#themeBtn use").setAttribute("href", dark ? "#i-sun" : "#i-moon");
+  Chart.restyle(); Insights.redrawFan(); Markets.redrawSparks();
+}
+function isDark() {
+  const t = document.documentElement.dataset.theme;
+  return t ? t === "dark" : !matchMedia("(prefers-color-scheme: light)").matches;
+}
+$("#themeBtn").addEventListener("click", () => { const next = isDark() ? "light" : "dark"; store.set("theme", next); applyTheme(next); });
+matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => { if (!document.documentElement.dataset.theme) applyTheme(null); });
+
+/* ---------- currency ---------- */
+function setCur(c) {
+  S.cur = c; store.set("cur", c);
+  $("#curEur").setAttribute("aria-pressed", c === "eur"); $("#curUsd").setAttribute("aria-pressed", c === "usd");
+  Markets.load(); Global.load();
+}
+$("#curEur").addEventListener("click", () => setCur("eur"));
+$("#curUsd").addEventListener("click", () => setCur("usd"));
+
+/* ---------- live state pill ---------- */
+const live = { set(state, text) { const el = $("#liveState"); el.dataset.state = state; el.lastElementChild.textContent = text; } };
+
+/* =========================================================================
+   Global strip
+   ========================================================================= */
+const Global = {
+  async load() {
+    try {
+      const g = (await getJSON(`${API.cg}/global`)).data;
+      $("#gCap").textContent = compact(g.total_market_cap[S.cur]);
+      const ch = g.market_cap_change_percentage_24h_usd;
+      $("#gCapCh").innerHTML = pill(ch);
+      $("#gVol").textContent = compact(g.total_volume[S.cur]);
+      $("#gDom").textContent = g.market_cap_percentage.btc.toFixed(1) + "%";
+      $("#gEthDom").textContent = g.market_cap_percentage.eth.toFixed(1) + "%"; this.ok = true;
+    } catch (e) { if (!this.ok) { $("#gCap").textContent = "–"; $("#gVol").textContent = "–"; $("#gCapCh").textContent = "(CoinGecko busy, retrying)"; } }
+    try {
+      const f = (await getJSON(API.fng)).data[0];
+      $("#gFg").textContent = f.value; $("#gFgLabel").textContent = f.value_classification;
+      $("#gFgPin").style.left = `calc(${f.value}% - 1px)`;
+    } catch { $("#gFgLabel").textContent = "unavailable"; }
+    $("#gTime").textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  },
+};
+
+/* =========================================================================
+   Binance helpers: which pairs exist, EUR rate, all-market live ticker
+   ========================================================================= */
+const Binance = {
+  ws: null, retry: 0, last: new Map(),
+  async init() {
+    try {
+      const all = await getJSON(`${API.bn}/ticker/price`);
+      for (const t of all) if (t.symbol.endsWith("USDT")) S.binance.add(t.symbol);
+      const eur = all.find(t => t.symbol === "EURUSDT");
+      if (eur) S.eurPerUsdt = 1 / parseFloat(eur.price);
+    } catch (e) { console.warn("Binance pairs", e); }
+    this.connect();
+  },
+  connect() {
+    try { this.ws?.close(); } catch {}
+    live.set("wait", "Connecting");
+    const ws = new WebSocket(`${API.bnWs}/ws/!miniTicker@arr`);
+    this.ws = ws;
+    ws.onopen = () => { this.retry = 0; live.set("on", "Live"); };
+    ws.onmessage = ev => {
+      const arr = JSON.parse(ev.data);
+      for (const t of arr) {
+        if (t.s === "EURUSDT") S.eurPerUsdt = 1 / parseFloat(t.c);
+        if (t.s.endsWith("USDT")) this.last.set(t.s, { c: +t.c, o: +t.o });
+      }
+      Markets.liveTick();
+    };
+    ws.onclose = () => { live.set("off", "Reconnecting"); const d = Math.min(30000, 1000 * 2 ** this.retry++); setTimeout(() => this.connect(), d); };
+    ws.onerror = () => ws.close();
+  },
+  /** USDT price -> display currency */
+  conv(usdt) { if (S.cur === "usd") return usdt; return S.eurPerUsdt ? usdt * S.eurPerUsdt : null; },
+};
+
+/* =========================================================================
+   Markets
+   ========================================================================= */
+const Markets = {
+  loading: false,
+  async load() {
+    if (this.loading) return; this.loading = true;
+    try {
+      const url = `${API.cg}/coins/markets?vs_currency=${S.cur}&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=1h,24h,7d`;
+      const data = await getJSON(url);
+      S.markets = data; S.marketsSource = "coingecko"; S.byId.clear(); S.bySym.clear();
+      for (const c of data) { S.byId.set(c.id, c); if (!S.bySym.has(c.symbol.toUpperCase())) S.bySym.set(c.symbol.toUpperCase(), c); }
+      $("#mkEmpty").hidden = true;
+      this.render(); this.movers();
+      Insights.renderCoinChips(); News.renderChips();
+    } catch (e) {
+      // CoinGecko's free tier rate-limits shared networks; fall back to Binance's 24h tickers so the table still works.
+      if (!S.markets.length || S.marketsSource === "binance") await this.fromBinance(e.message);
+    } finally { this.loading = false; }
+  },
+  async fromBinance(why) {
+    try {
+      const all = await getJSON(`${API.bn}/ticker/24hr`);
+      const skip = /^(USDC|FDUSD|TUSD|USDP|DAI|EUR|BUSD|USDE|AEUR|XUSD|PAXG|BFUSD)USDT$|(UP|DOWN|BULL|BEAR)USDT$/;
+      const rows = all.filter(t => t.symbol.endsWith("USDT") && !skip.test(t.symbol) && +t.lastPrice > 0)
+        .sort((a, b) => +b.quoteVolume - +a.quoteVolume).slice(0, 100)
+        .map((t, i) => { const sym = t.symbol.replace(/USDT$/, ""); return {
+          id: "bn-" + sym, symbol: sym.toLowerCase(), name: sym, image: "", market_cap_rank: i + 1,
+          current_price: Binance.conv(+t.lastPrice), price_change_percentage_24h_in_currency: +t.priceChangePercent,
+          price_change_percentage_24h: +t.priceChangePercent, total_volume: Binance.conv(+t.quoteVolume), market_cap: null }; });
+      S.markets = rows; S.marketsSource = "binance"; S.byId.clear(); S.bySym.clear();
+      for (const c of rows) { S.byId.set(c.id, c); S.bySym.set(c.symbol.toUpperCase(), c); }
+      $("#mkEmpty").hidden = false;
+      $("#mkEmpty").innerHTML = `<p class="note" style="margin:0">CoinGecko didn't answer (${esc(why)}), so this list shows the 100 most-traded Binance coins by 24h volume, without market caps or 7-day history. It switches back automatically.</p>`;
+      this.render(); this.movers(); Insights.renderCoinChips(); News.renderChips();
+    } catch (e2) {
+      $("#mkEmpty").hidden = false; $("#mkEmpty").innerHTML = `<div class="err">Couldn't load the market list (${esc(why)}). It retries every minute.</div>`;
+    }
+  },
+  rows() {
+    let rows = S.markets;
+    const q = S.query.trim().toLowerCase();
+    if (q) rows = rows.filter(c => c.name.toLowerCase().includes(q) || c.symbol.toLowerCase().includes(q));
+    if (S.filter === "watch") rows = rows.filter(c => S.watch.has(c.id));
+    if (S.filter === "gain") rows = [...rows].sort((a, b) => (b.price_change_percentage_24h ?? -999) - (a.price_change_percentage_24h ?? -999)).slice(0, 25);
+    if (S.filter === "lose") rows = [...rows].sort((a, b) => (a.price_change_percentage_24h ?? 999) - (b.price_change_percentage_24h ?? 999)).slice(0, 25);
+    return rows;
+  },
+  render() {
+    const rows = this.rows();
+    $("#mkCount").textContent = S.markets.length ? `${rows.length} coins` : "";
+    const body = $("#mkBody");
+    if (!S.markets.length) { body.innerHTML = Array.from({ length: 10 }, () => `<tr><td class="l" colspan="8"><span class="skel"></span></td></tr>`).join(""); return; }
+    if (!rows.length) {
+      body.innerHTML = `<tr><td class="l" colspan="8" style="padding:24px 12px;white-space:normal">${S.filter === "watch" ? "Your watchlist is empty. Tap the star next to a coin to add it here." : "No coin matches that search in the top 100."}</td></tr>`;
+      return;
+    }
+    body.innerHTML = rows.map(c => {
+      const sym = c.symbol.toUpperCase(); const pair = sym + "USDT";
+      return `<tr data-id="${esc(c.id)}">
+        <td class="l"><div class="coin">
+          <button type="button" class="star" data-star="${esc(c.id)}" aria-pressed="${S.watch.has(c.id)}" aria-label="Watch ${esc(c.name)}"><svg class="i"><use href="#i-star"/></svg></button>
+          <span class="faint mono" style="width:22px;font-size:12px">${c.market_cap_rank ?? ""}</span>
+          ${c.image ? `<img src="${esc(c.image)}" alt="" loading="lazy" width="22" height="22">` : `<span class="mono" style="width:22px;height:22px;border-radius:50%;background:var(--panel-2);display:inline-grid;place-items:center;font-size:9px">${esc(sym.slice(0, 3))}</span>`}
+          <span><b>${esc(c.name)}</b> <small>${esc(sym)}</small></span></div></td>
+        <td class="price" data-pair="${S.binance.has(pair) ? pair : ""}">${money(c.current_price)}</td>
+        <td class="hide-sm">${pill(c.price_change_percentage_1h_in_currency)}</td>
+        <td data-chg="${S.binance.has(pair) ? pair : ""}">${pill(c.price_change_percentage_24h_in_currency)}</td>
+        <td class="hide-sm">${pill(c.price_change_percentage_7d_in_currency)}</td>
+        <td class="hide-sm num">${compact(c.market_cap)}</td>
+        <td class="hide-sm num">${compact(c.total_volume)}</td>
+        <td class="hide-sm"><canvas class="spark" data-spark="${esc(c.id)}" width="220" height="64" aria-hidden="true"></canvas></td>
+      </tr>`;
+    }).join("");
+    this.redrawSparks();
+  },
+  redrawSparks() {
+    const up = cssVar("--up"), down = cssVar("--down");
+    for (const cv of $$("canvas[data-spark]")) {
+      const c = S.byId.get(cv.dataset.spark); const p = c?.sparkline_in_7d?.price; if (!p?.length) continue;
+      const ctx = cv.getContext("2d"); const W = cv.width, H = cv.height; ctx.clearRect(0, 0, W, H);
+      const mn = Math.min(...p), mx = Math.max(...p); const col = p[p.length - 1] >= p[0] ? up : down;
+      ctx.beginPath();
+      p.forEach((v, i) => { const x = (i / (p.length - 1)) * (W - 4) + 2, y = H - 4 - ((v - mn) / (mx - mn || 1)) * (H - 8); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+      ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.lineJoin = "round"; ctx.stroke();
+    }
+  },
+  /** called on each all-market tick (~1s); updates prices in place */
+  liveTick() {
+    if (this._pending) return; this._pending = true;
+    requestAnimationFrame(() => {
+      this._pending = false;
+      for (const td of $$("#mkBody td.price[data-pair]")) {
+        const pair = td.dataset.pair; if (!pair) continue;
+        const t = Binance.last.get(pair); if (!t) continue;
+        const v = Binance.conv(t.c); if (v == null) continue;
+        const txt = money(v);
+        if (td.textContent !== txt) {
+          const prev = parseFloat(td.dataset.v || "0");
+          td.textContent = txt; td.dataset.v = v;
+          if (prev) { td.classList.remove("flash-up", "flash-down"); void td.offsetWidth; td.classList.add(v >= prev ? "flash-up" : "flash-down"); setTimeout(() => td.classList.remove("flash-up", "flash-down"), 700); }
+        }
+      }
+      for (const td of $$("#mkBody td[data-chg]")) {
+        const t = Binance.last.get(td.dataset.chg); if (!t || !td.dataset.chg) continue;
+        td.innerHTML = pill((t.c / t.o - 1) * 100);
+      }
+    });
+  },
+  movers() {
+    const m = [...S.markets].filter(c => c.price_change_percentage_24h != null).sort((a, b) => Math.abs(b.price_change_percentage_24h) - Math.abs(a.price_change_percentage_24h)).slice(0, 8);
+    $("#movers").innerHTML = m.map(c => `<div data-id="${esc(c.id)}" role="button" tabindex="0"><span><b style="font-weight:500">${esc(c.symbol.toUpperCase())}</b> <span class="faint">${esc(c.name)}</span></span>${pill(c.price_change_percentage_24h)}</div>`).join("");
+  },
+  async trending() {
+    try {
+      const t = await getJSON(`${API.cg}/search/trending`);
+      $("#trendList").innerHTML = t.coins.slice(0, 8).map(({ item }) => `<li data-sym="${esc(item.symbol.toUpperCase())}" tabindex="0" role="button"><img src="${esc(item.small)}" alt="" width="20" height="20" loading="lazy"><span><b style="font-weight:500">${esc(item.name)}</b> <span class="faint">${esc(item.symbol.toUpperCase())}</span></span><span class="spacer"></span><span class="faint mono" style="font-size:12px">#${item.market_cap_rank ?? "–"}</span></li>`).join("");
+    } catch { $("#trendList").innerHTML = `<li class="muted">Trending list unavailable right now.</li>`; }
+  },
+  openCoin(id) {
+    const c = S.byId.get(id); if (!c) return;
+    Chart.setSymbol(c.symbol.toUpperCase() + "USDT", c.id); location.hash = "chart";
+  },
+};
+$("#mkSearch").addEventListener("input", e => { S.query = e.target.value; Markets.render(); });
+$$("[data-filter]").forEach(b => b.addEventListener("click", () => {
+  S.filter = b.dataset.filter; $$("[data-filter]").forEach(x => x.setAttribute("aria-pressed", x === b)); Markets.render();
+}));
+$("#mkBody").addEventListener("click", e => {
+  const st = e.target.closest("[data-star]");
+  if (st) { e.stopPropagation(); const id = st.dataset.star; S.watch.has(id) ? S.watch.delete(id) : S.watch.add(id); store.set("watch", [...S.watch]); st.setAttribute("aria-pressed", S.watch.has(id)); if (S.filter === "watch") Markets.render(); return; }
+  const tr = e.target.closest("tr[data-id]"); if (tr) Markets.openCoin(tr.dataset.id);
+});
+$("#movers").addEventListener("click", e => { const d = e.target.closest("[data-id]"); if (d) Markets.openCoin(d.dataset.id); });
+$("#trendList").addEventListener("click", e => { const li = e.target.closest("[data-sym]"); if (li) { Chart.setSymbol(li.dataset.sym + "USDT"); location.hash = "chart"; } });
+
+/* =========================================================================
+   Indicators
+   ========================================================================= */
+const Ind = {
+  ema(v, n) { const k = 2 / (n + 1); const out = new Array(v.length).fill(null); let e = null, s = 0;
+    for (let i = 0; i < v.length; i++) { if (i < n) { s += v[i]; if (i === n - 1) { e = s / n; out[i] = e; } continue; } e = v[i] * k + e * (1 - k); out[i] = e; } return out; },
+  sma(v, n) { const out = new Array(v.length).fill(null); let s = 0; for (let i = 0; i < v.length; i++) { s += v[i]; if (i >= n) s -= v[i - n]; if (i >= n - 1) out[i] = s / n; } return out; },
+  rsi(v, n = 14) { const out = new Array(v.length).fill(null); let g = 0, l = 0;
+    for (let i = 1; i < v.length; i++) { const d = v[i] - v[i - 1]; const up = Math.max(d, 0), dn = Math.max(-d, 0);
+      if (i <= n) { g += up; l += dn; if (i === n) { g /= n; l /= n; out[i] = l === 0 ? 100 : 100 - 100 / (1 + g / l); } }
+      else { g = (g * (n - 1) + up) / n; l = (l * (n - 1) + dn) / n; out[i] = l === 0 ? 100 : 100 - 100 / (1 + g / l); } } return out; },
+  macd(v) { const a = this.ema(v, 12), b = this.ema(v, 26); const m = v.map((_, i) => a[i] != null && b[i] != null ? a[i] - b[i] : null);
+    const start = m.findIndex(x => x != null); const sig = new Array(v.length).fill(null);
+    if (start >= 0) { const e = this.ema(m.slice(start), 9); e.forEach((x, i) => sig[start + i] = x); }
+    return { macd: m, signal: sig, hist: m.map((x, i) => x != null && sig[i] != null ? x - sig[i] : null) }; },
+  bb(v, n = 20, k = 2) { const mid = this.sma(v, n); const up = [], lo = [];
+    for (let i = 0; i < v.length; i++) { if (mid[i] == null) { up.push(null); lo.push(null); continue; } let s = 0; for (let j = i - n + 1; j <= i; j++) s += (v[j] - mid[i]) ** 2; const sd = Math.sqrt(s / n); up.push(mid[i] + k * sd); lo.push(mid[i] - k * sd); }
+    return { mid, up, lo }; },
+};
+
+/* =========================================================================
+   Chart (TradingView Lightweight Charts)
+   ========================================================================= */
+const IV_SEC = { "1m": 60, "5m": 300, "15m": 900, "1h": 3600, "4h": 14400, "1d": 86400, "1w": 604800 };
+const SERIES = { ema20: "#eb6834", ema50: "#e87ba4", ema200: "#6250d6" }; // dataviz categorical slots 2, 5, 7
+const Chart = {
+  main: null, lower: null, s: {}, candles: [], ws: null, retry: 0, cgId: null, ready: false, syncing: false,
+  init() {
+    if (!window.LightweightCharts) { $("#chNotice").hidden = false; $("#chNotice").innerHTML = `<div class="err">The chart library didn't load. Check your connection and reload the page.</div>`; return; }
+    const LC = window.LightweightCharts;
+    const base = { autoSize: true, crosshair: { mode: LC.CrosshairMode.Normal }, timeScale: { timeVisible: true, secondsVisible: false, borderVisible: false }, rightPriceScale: { borderVisible: false } };
+    this.main = LC.createChart($("#chartMain"), { ...base, timeScale: { ...base.timeScale, visible: false } });
+    this.lower = LC.createChart($("#chartLower"), base);
+    this.s.candle = this.main.addCandlestickSeries({ borderVisible: false, priceLineVisible: true });
+    this.s.vol = this.main.addHistogramSeries({ priceScaleId: "vol", priceFormat: { type: "volume" }, lastValueVisible: false, priceLineVisible: false });
+    this.main.priceScale("vol").applyOptions({ scaleMargins: { top: 0.82, bottom: 0 } });
+    for (const k of ["ema20", "ema50", "ema200"]) this.s[k] = this.main.addLineSeries({ color: SERIES[k], lineWidth: 2, lastValueVisible: false, priceLineVisible: false, crosshairMarkerVisible: false });
+    for (const k of ["bbUp", "bbLo", "bbMid"]) this.s[k] = this.main.addLineSeries({ lineWidth: 1, lastValueVisible: false, priceLineVisible: false, crosshairMarkerVisible: false, lineStyle: k === "bbMid" ? 2 : 0 });
+    this.s.rsi = this.lower.addLineSeries({ color: "#3987e5", lineWidth: 2, priceLineVisible: false });
+    this.s.macdH = this.lower.addHistogramSeries({ priceLineVisible: false, lastValueVisible: false });
+    this.s.macd = this.lower.addLineSeries({ color: "#3987e5", lineWidth: 2, priceLineVisible: false, lastValueVisible: false });
+    this.s.sig = this.lower.addLineSeries({ color: "#eb6834", lineWidth: 2, priceLineVisible: false, lastValueVisible: false });
+    this.rsiLines = [70, 30].map(p => this.s.rsi.createPriceLine({ price: p, lineWidth: 1, lineStyle: 2, axisLabelVisible: false }));
+    const sync = (from, to) => from.timeScale().subscribeVisibleLogicalRangeChange(r => { if (this.syncing || !r) return; this.syncing = true; to.timeScale().setVisibleLogicalRange(r); this.syncing = false; });
+    sync(this.main, this.lower); sync(this.lower, this.main);
+    this.main.subscribeCrosshairMove(p => this.legend(p));
+    this.ready = true; this.restyle(); this.applyInd();
+    this.load();
+  },
+  restyle() {
+    if (!this.ready) return;
+    const text = cssVar("--muted"), line = cssVar("--line"), up = cssVar("--up"), down = cssVar("--down"), bg = cssVar("--panel");
+    const opt = { layout: { background: { type: "solid", color: bg }, textColor: text, fontFamily: "IBM Plex Mono, ui-monospace, monospace", fontSize: 11 }, grid: { vertLines: { color: line }, horzLines: { color: line } } };
+    this.main.applyOptions(opt); this.lower.applyOptions(opt);
+    this.s.candle.applyOptions({ upColor: up, downColor: down, wickUpColor: up, wickDownColor: down });
+    const band = cssVar("--faint");
+    for (const k of ["bbUp", "bbLo", "bbMid"]) this.s[k].applyOptions({ color: band });
+    this.rsiLines.forEach(l => l.applyOptions({ color: cssVar("--line-strong") }));
+    if (this.candles.length) this.setAll();
+  },
+  setSymbol(sym, cgId) {
+    S.chart.symbol = sym; store.set("sym", sym); this.cgId = cgId || S.bySym.get(sym.replace(/USDT$/, ""))?.id || null;
+    if (this.ready) this.load();
+  },
+  async load() {
+    const { symbol, iv } = S.chart; const base = symbol.replace(/USDT$/, "");
+    $("#chTitle").textContent = `${base} / USDT`; $("#symInput").value = "";
+    $$("#ivSeg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.iv === iv));
+    $("#chNotice").hidden = true;
+    this.closeWs();
+    if (S.binance.size && !S.binance.has(symbol)) return this.fallback(base);
+    try {
+      const k = await getJSON(`${API.bn}/klines?symbol=${symbol}&interval=${iv}&limit=1000`);
+      this.candles = k.map(r => ({ time: r[0] / 1000, open: +r[1], high: +r[2], low: +r[3], close: +r[4], volume: +r[5] }));
+      $("#chartMain").hidden = false; $("#chartLower").hidden = false;
+      this.setAll(); this.main.timeScale().setVisibleLogicalRange({ from: this.candles.length - 150, to: this.candles.length + 3 });
+      this.legend(); this.openWs(); this.loadBook();
+    } catch (e) {
+      $("#chNotice").hidden = false; $("#chNotice").innerHTML = `<div class="err">Couldn't load ${esc(base)} candles (${esc(e.message)}). Try another interval or coin.</div>`;
+    }
+  },
+  async fallback(base) {
+    // coin without a Binance USDT pair: show CoinGecko daily closes as candles-less line via area of closes
+    const c = S.bySym.get(base);
+    $("#chNotice").hidden = false;
+    $("#chNotice").innerHTML = `<p class="note">${esc(base)} has no live Binance pair, so this view shows CoinGecko's daily price history without live updates, order book or trades.</p>`;
+    $("#book").innerHTML = `<p class="note" style="padding:0 12px">No order book for ${esc(base)}.</p>`; $("#trades").innerHTML = "";
+    if (!c) return;
+    try {
+      const d = await getJSON(`${API.cg}/coins/${c.id}/ohlc?vs_currency=usd&days=365`);
+      this.candles = d.map(r => ({ time: r[0] / 1000, open: r[1], high: r[2], low: r[3], close: r[4], volume: 0 }));
+      this.setAll(); this.main.timeScale().fitContent();
+      $("#chPrice").textContent = plain(c.current_price);
+    } catch (e) { $("#chNotice").innerHTML += `<div class="err">Price history unavailable (${esc(e.message)}).</div>`; }
+  },
+  setAll() {
+    const c = this.candles; if (!c.length) return;
+    const up = cssVar("--up"), down = cssVar("--down");
+    this.s.candle.setData(c.map(({ time, open, high, low, close }) => ({ time, open, high, low, close })));
+    this.s.vol.setData(c.map(x => ({ time: x.time, value: x.volume, color: (x.close >= x.open ? up : down) + "55" })));
+    const cl = c.map(x => x.close); const t = c.map(x => x.time);
+    const line = arr => arr.map((v, i) => v == null ? { time: t[i] } : { time: t[i], value: v });
+    this.s.ema20.setData(line(Ind.ema(cl, 20))); this.s.ema50.setData(line(Ind.ema(cl, 50))); this.s.ema200.setData(line(Ind.ema(cl, 200)));
+    const bb = Ind.bb(cl); this.s.bbUp.setData(line(bb.up)); this.s.bbLo.setData(line(bb.lo)); this.s.bbMid.setData(line(bb.mid));
+    this.s.rsi.setData(line(Ind.rsi(cl)));
+    const m = Ind.macd(cl); this.s.macd.setData(line(m.macd)); this.s.sig.setData(line(m.signal));
+    this.s.macdH.setData(m.hist.map((v, i) => v == null ? { time: t[i] } : { time: t[i], value: v, color: (v >= 0 ? up : down) + "88" }));
+  },
+  applyInd() {
+    const I = S.chart.ind;
+    for (const k of ["ema20", "ema50", "ema200"]) this.s[k]?.applyOptions({ visible: !!I[k] });
+    for (const k of ["bbUp", "bbLo", "bbMid"]) this.s[k]?.applyOptions({ visible: !!I.bb });
+    this.s.vol?.applyOptions({ visible: !!I.vol });
+    const rsi = S.chart.lower === "rsi";
+    this.s.rsi?.applyOptions({ visible: rsi }); for (const k of ["macd", "sig", "macdH"]) this.s[k]?.applyOptions({ visible: !rsi });
+    $$("#indChips [data-ind]").forEach(b => b.setAttribute("aria-pressed", !!I[b.dataset.ind]));
+    $$("#lowerSeg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.lower === S.chart.lower));
+    this.legend();
+  },
+  legend(p) {
+    const c = this.candles; if (!c.length) { $("#legend").innerHTML = ""; return; }
+    let bar = c[c.length - 1];
+    if (p?.time) bar = c.find(x => x.time === p.time) || bar;
+    const cls = bar.close >= bar.open ? "up" : "down";
+    const items = [`O <b class="${cls}">${plain(bar.open)}</b>`, `H <b class="${cls}">${plain(bar.high)}</b>`, `L <b class="${cls}">${plain(bar.low)}</b>`, `C <b class="${cls}">${plain(bar.close)}</b>`];
+    const I = S.chart.ind;
+    for (const k of ["ema20", "ema50", "ema200"]) if (I[k]) items.push(`<span><i style="background:${SERIES[k]}"></i>EMA ${k.slice(3)}</span>`);
+    if (I.bb) items.push(`<span><i style="background:var(--faint)"></i>Bollinger 20, 2</span>`);
+    $("#legend").innerHTML = items.map(x => `<span>${x}</span>`).join("");
+  },
+  closeWs() { if (this.ws) { this.ws.onclose = null; try { this.ws.close(); } catch {} this.ws = null; } },
+  openWs() {
+    const s = S.chart.symbol.toLowerCase(), iv = S.chart.iv;
+    const ws = new WebSocket(`${API.bnWs}/stream?streams=${s}@kline_${iv}/${s}@aggTrade/${s}@depth10@1000ms/${s}@ticker`);
+    this.ws = ws; $("#trades").innerHTML = "";
+    ws.onopen = () => { this.retry = 0; };
+    ws.onmessage = ev => {
+      const { stream, data } = JSON.parse(ev.data);
+      if (stream.includes("@kline")) this.onKline(data.k);
+      else if (stream.endsWith("@aggTrade")) this.onTrade(data);
+      else if (stream.includes("@depth")) this.renderBook(data.bids, data.asks);
+      else if (stream.endsWith("@ticker")) this.onTicker(data);
+    };
+    ws.onclose = () => { const d = Math.min(30000, 1000 * 2 ** this.retry++); setTimeout(() => { if (this.ws === ws) this.openWs(); }, d); };
+    ws.onerror = () => ws.close();
+  },
+  onKline(k) {
+    const bar = { time: k.t / 1000, open: +k.o, high: +k.h, low: +k.l, close: +k.c, volume: +k.v };
+    const c = this.candles; const last = c[c.length - 1];
+    if (last && last.time === bar.time) c[c.length - 1] = bar; else if (!last || bar.time > last.time) { c.push(bar); if (c.length > 1500) c.shift(); }
+    else return;
+    // cheap path: candle + volume update; indicators recomputed once per second at most
+    const up = cssVar("--up"), down = cssVar("--down");
+    this.s.candle.update({ time: bar.time, open: bar.open, high: bar.high, low: bar.low, close: bar.close });
+    this.s.vol.update({ time: bar.time, value: bar.volume, color: (bar.close >= bar.open ? up : down) + "55" });
+    const now = Date.now(); if (now - (this._indAt || 0) > 1000) { this._indAt = now; this.updateIndLast(); }
+    this.legend();
+  },
+  updateIndLast() {
+    const c = this.candles; const cl = c.map(x => x.close); const i = c.length - 1; const t = c[i].time;
+    const put = (s, v) => { if (v != null) s.update({ time: t, value: v }); };
+    put(this.s.ema20, Ind.ema(cl, 20)[i]); put(this.s.ema50, Ind.ema(cl, 50)[i]); put(this.s.ema200, Ind.ema(cl, 200)[i]);
+    const bb = Ind.bb(cl.slice(-40)); const j = bb.up.length - 1; put(this.s.bbUp, bb.up[j]); put(this.s.bbLo, bb.lo[j]); put(this.s.bbMid, bb.mid[j]);
+    put(this.s.rsi, Ind.rsi(cl)[i]);
+    const m = Ind.macd(cl); put(this.s.macd, m.macd[i]); put(this.s.sig, m.signal[i]);
+    if (m.hist[i] != null) this.s.macdH.update({ time: t, value: m.hist[i], color: (m.hist[i] >= 0 ? cssVar("--up") : cssVar("--down")) + "88" });
+  },
+  onTicker(d) {
+    const p = +d.c; const ch = +d.P;
+    $("#chPrice").textContent = plain(p); $("#chPrice").className = "ch-price " + (ch >= 0 ? "up" : "down");
+    $("#chChg").innerHTML = pill(ch); $("#chHigh").textContent = plain(+d.h); $("#chLow").textContent = plain(+d.l);
+    $("#chVol").textContent = compact(+d.q, "usd");
+    $("#chEur").textContent = S.eurPerUsdt ? money(p * S.eurPerUsdt, "eur") : "–";
+    document.title = `${plain(p)} ${S.chart.symbol.replace(/USDT$/, "")} · Koersdesk`;
+  },
+  onTrade(t) {
+    const el = $("#trades"); const row = document.createElement("div");
+    const sell = t.m; // buyer is maker => aggressive sell
+    row.innerHTML = `<span class="${sell ? "down" : "up"}">${plain(+t.p)}</span><span>${plain(+t.q, 5)}</span><span class="faint">${new Date(t.T).toLocaleTimeString([], { hour12: false })}</span>`;
+    el.prepend(row); while (el.children.length > 30) el.lastChild.remove();
+  },
+  async loadBook() { try { const d = await getJSON(`${API.bn}/depth?symbol=${S.chart.symbol}&limit=10`); this.renderBook(d.bids, d.asks); } catch {} },
+  renderBook(bids, asks) {
+    const a = asks.slice(0, 10).map(([p, q]) => [+p, +q]).reverse(), b = bids.slice(0, 10).map(([p, q]) => [+p, +q]);
+    const mx = Math.max(...a.map(x => x[0] * x[1]), ...b.map(x => x[0] * x[1]), 1);
+    const row = (cls, [p, q]) => `<div class="row ${cls}"><i style="width:${(p * q / mx * 100).toFixed(1)}%"></i><span class="${cls === "ask" ? "down" : "up"}">${plain(p)}</span><span>${plain(q, 4)}</span><span>${compact(p * q, "")}</span></div>`;
+    const spread = a.length && b.length ? a[a.length - 1][0] - b[0][0] : null;
+    $("#book").innerHTML = `<div class="row hdr"><span>Price</span><span>Amount</span><span>Total USDT</span></div>${a.map(x => row("ask", x)).join("")}<div class="mid"><span>${b.length ? plain(b[0][0]) : "–"}</span><span class="faint" style="font-size:12px">spread ${spread != null ? plain(spread) : "–"}</span></div>${b.map(x => row("bid", x)).join("")}`;
+  },
+};
+$$("#ivSeg button").forEach(b => b.addEventListener("click", () => { S.chart.iv = b.dataset.iv; store.set("iv", S.chart.iv); Chart.load(); }));
+$$("#indChips [data-ind]").forEach(b => b.addEventListener("click", () => { const k = b.dataset.ind; S.chart.ind[k] = !S.chart.ind[k]; store.set("ind", S.chart.ind); Chart.applyInd(); }));
+$$("#lowerSeg button").forEach(b => b.addEventListener("click", () => { S.chart.lower = b.dataset.lower; store.set("lower", S.chart.lower); Chart.applyInd(); }));
+
+/* symbol search combobox */
+(() => {
+  const inp = $("#symInput"), box = $("#symSuggest"); let items = [], active = -1;
+  const close = () => { box.hidden = true; inp.setAttribute("aria-expanded", "false"); active = -1; };
+  const pick = sym => { close(); inp.blur(); Chart.setSymbol(sym + "USDT"); };
+  function show() {
+    const q = inp.value.trim().toUpperCase();
+    const fromMk = S.markets.filter(c => S.binance.has(c.symbol.toUpperCase() + "USDT")).map(c => ({ sym: c.symbol.toUpperCase(), name: c.name, img: c.image }));
+    let list = fromMk.filter(c => !q || c.sym.includes(q) || c.name.toUpperCase().includes(q));
+    if (q && S.binance.has(q + "USDT") && !list.some(c => c.sym === q)) list.unshift({ sym: q, name: q + " (Binance pair)", img: "" });
+    items = list.slice(0, 12); active = -1;
+    box.innerHTML = items.length ? items.map((c, i) => `<button type="button" role="option" data-i="${i}">${c.img ? `<img src="${esc(c.img)}" alt="" width="18" height="18">` : `<span style="width:18px"></span>`}<b style="font-weight:500">${esc(c.sym)}</b><span class="faint">${esc(c.name)}</span></button>`).join("") : `<p class="note" style="padding:10px">No Binance USDT pair matches “${esc(inp.value)}”.</p>`;
+    box.hidden = false; inp.setAttribute("aria-expanded", "true");
+  }
+  inp.addEventListener("focus", show); inp.addEventListener("input", show);
+  inp.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); active = Math.max(0, Math.min(items.length - 1, active + (e.key === "ArrowDown" ? 1 : -1))); $$("button", box).forEach((b, i) => b.classList.toggle("active", i === active)); }
+    if (e.key === "Enter") { const it = items[active >= 0 ? active : 0]; if (it) pick(it.sym); }
+    if (e.key === "Escape") close();
+  });
+  box.addEventListener("mousedown", e => { const b = e.target.closest("[data-i]"); if (b) { e.preventDefault(); pick(items[+b.dataset.i].sym); } });
+  inp.addEventListener("blur", () => setTimeout(close, 120));
+})();
+
+/* =========================================================================
+   News
+   ========================================================================= */
+// Keyless headlines: publishers' RSS feeds, converted to JSON (with CORS) by rss2json's free tier.
+const FEEDS = [
+  ["CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/"],
+  ["Decrypt", "https://decrypt.co/feed"],
+  ["Cointelegraph", "https://cointelegraph.com/rss"],
+];
+const NEWS_TAGS = {
+  BTC: /\b(bitcoin|btc)\b/i, ETH: /\b(ethereum|ether|eth)\b/i, SOL: /\b(solana|sol)\b/i, XRP: /\b(xrp|ripple)\b/i,
+  DOGE: /\b(dogecoin|doge)\b/i, REGULATION: /\b(sec|cftc|regulat\w*|law|bill|congress|senate|mica|lawsuit|court|ban)\b/i,
+  MARKET: /\b(price|market|etf|liquidat\w*|rally|sell-?off|fed|rate)\b/i,
+};
+const stripHtml = h => { const d = document.createElement("div"); d.innerHTML = h || ""; return (d.textContent || "").replace(/\s+/g, " ").trim(); };
+const News = {
+  async load() {
+    const list = $("#nwList");
+    if (!S.news.length) list.innerHTML = Array.from({ length: 6 }, () => `<div class="news-item"><span class="skel" style="height:64px;width:96px"></span><div><span class="skel"></span><br><span class="skel" style="width:40%"></span></div></div>`).join("");
+    const got = [], failed = [];
+    for (const [name, url] of FEEDS) {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const d = await getJSON(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`);
+          if (d.status !== "ok") throw new Error(d.message || "feed error");
+          for (const it of d.items || []) {
+            const body = stripHtml(it.description).slice(0, 400);
+            const txt = it.title + " " + body;
+            got.push({ source: name, title: stripHtml(it.title), url: it.link, img: it.thumbnail || it.enclosure?.link || "",
+              ts: Date.parse(it.pubDate.replace(" ", "T") + "Z") / 1000, body,
+              tags: Object.keys(NEWS_TAGS).filter(k => NEWS_TAGS[k].test(txt)) });
+          }
+          break;
+        } catch (e) { if (attempt) failed.push(name); else await sleep(2500); }
+      }
+      await sleep(600);
+    }
+    // Optional: a CoinDesk Data (CryptoCompare) key adds that wire too.
+    const key = store.get("ccKey", "");
+    if (key) try {
+      const d = await getJSON(API.news + "&api_key=" + encodeURIComponent(key));
+      for (const n of d.Data || []) got.push({ source: n.source_info?.name || n.source, title: n.title, url: n.url, img: n.imageurl, ts: n.published_on, body: n.body, tags: (n.categories || "").toUpperCase().split("|") });
+    } catch {}
+    if (got.length) {
+      const seen = new Set(); S.news = got.filter(n => n.url && !seen.has(n.url) && seen.add(n.url)).sort((a, b) => b.ts - a.ts);
+      $("#nwTime").textContent = `Updated ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}${failed.length ? " · " + failed.join(", ") + " unavailable" : ""}`;
+      this.render(); return;
+    }
+    if (S.news.length) return;
+    list.innerHTML = `<div class="pbody"><div class="err">None of the news feeds answered. They're free and rate-limited; the page tries again in 3 minutes.</div>
+      <p class="note">Read them directly: <a href="https://www.coindesk.com/" target="_blank" rel="noopener">CoinDesk</a> · <a href="https://decrypt.co/" target="_blank" rel="noopener">Decrypt</a> · <a href="https://cointelegraph.com/" target="_blank" rel="noopener">Cointelegraph</a>. Have a free CoinDesk Data API key? Add it to include that wire as well.</p>
+      <form id="ccForm" class="tools" style="margin-top:8px"><label class="input" style="width:280px"><input id="ccKey" placeholder="CoinDesk Data API key (optional)" autocomplete="off"></label><button class="btn" type="submit">Save key and retry</button></form></div>`;
+    $("#ccForm").addEventListener("submit", ev => { ev.preventDefault(); store.set("ccKey", $("#ccKey").value.trim()); this.load(); });
+  },
+  renderChips() {
+    const labels = { ALL: "All", BTC: "BTC", ETH: "ETH", SOL: "SOL", XRP: "XRP", DOGE: "DOGE", REGULATION: "Regulation", MARKET: "Markets" };
+    $("#nwChips").innerHTML = Object.entries(labels).map(([c, l]) => `<button type="button" class="chip" data-nc="${c}" aria-pressed="${S.newsCoin === c}">${l}</button>`).join("");
+  },
+  render() {
+    const q = S.newsQuery.trim().toLowerCase();
+    let items = S.news;
+    if (S.newsCoin !== "ALL") items = items.filter(n => n.tags.includes(S.newsCoin));
+    if (q) items = items.filter(n => (n.title + " " + n.body).toLowerCase().includes(q));
+    $("#nwList").innerHTML = items.length ? items.slice(0, 60).map(n => `<article class="news-item">
+      ${n.img ? `<img src="${esc(n.img)}" alt="" loading="lazy" width="96" height="64">` : `<span style="width:96px;height:64px;border-radius:6px;background:var(--panel-2);display:block"></span>`}
+      <div style="min-width:0">
+        <div class="news-meta"><span>${esc(n.source)}</span><time datetime="${new Date(n.ts * 1000).toISOString()}">${ago(n.ts)}</time>${n.tags.filter(t => /^[A-Z]+$/.test(t)).slice(0, 4).map(c => `<span class="tag">${esc(c)}</span>`).join("")}</div>
+        <h2><a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.title)}</a></h2>
+        <p class="news-body">${esc(n.body)}</p>
+      </div></article>`).join("") : `<div class="pbody note">No headlines match this filter. Clear the search or pick “All”.</div>`;
+  },
+};
+$("#nwChips").addEventListener("click", e => { const b = e.target.closest("[data-nc]"); if (!b) return; S.newsCoin = b.dataset.nc; News.renderChips(); News.render(); });
+$("#nwSearch").addEventListener("input", e => { S.newsQuery = e.target.value; News.render(); });
+$("#nwRefresh").addEventListener("click", () => News.load());
+
+/* =========================================================================
+   Insights: technical read, scenarios, event study, analogs, Monte Carlo
+   ========================================================================= */
+// Dates (UTC) compiled from the public record. Reactions are computed live from Binance daily closes.
+const EVENTS = [
+  ["2020-03-12", "crash", "COVID market crash (“Black Thursday”)"],
+  ["2020-05-11", "halving", "Third Bitcoin halving"],
+  ["2021-02-08", "inst", "Tesla discloses a $1.5B bitcoin purchase"],
+  ["2021-04-14", "inst", "Coinbase lists on Nasdaq"],
+  ["2021-05-12", "inst", "Tesla suspends bitcoin payments"],
+  ["2021-05-21", "policy", "China's State Council targets bitcoin mining"],
+  ["2021-08-05", "upgrade", "Ethereum London upgrade (EIP-1559)"],
+  ["2021-09-07", "policy", "El Salvador makes bitcoin legal tender"],
+  ["2021-09-24", "policy", "China declares crypto transactions illegal"],
+  ["2021-10-19", "inst", "First US bitcoin futures ETF starts trading"],
+  ["2021-11-14", "upgrade", "Bitcoin Taproot activates"],
+  ["2022-05-09", "crash", "Terra / UST loses its dollar peg"],
+  ["2022-06-13", "crash", "Celsius freezes withdrawals"],
+  ["2022-09-15", "upgrade", "Ethereum Merge to proof of stake"],
+  ["2022-11-08", "crash", "FTX liquidity crisis and collapse"],
+  ["2023-03-10", "crash", "Silicon Valley Bank fails, USDC briefly depegs"],
+  ["2023-04-12", "upgrade", "Ethereum Shapella (staking withdrawals)"],
+  ["2023-06-05", "policy", "SEC sues Binance, then Coinbase"],
+  ["2023-06-15", "inst", "BlackRock files for a spot bitcoin ETF"],
+  ["2023-07-13", "policy", "Court rules XRP is not a security in public sales"],
+  ["2023-11-21", "policy", "Binance and CZ settle with the US DOJ"],
+  ["2024-01-10", "inst", "SEC approves US spot bitcoin ETFs"],
+  ["2024-03-13", "upgrade", "Ethereum Dencun upgrade"],
+  ["2024-04-20", "halving", "Fourth Bitcoin halving"],
+  ["2024-07-05", "crash", "Mt. Gox repayments begin"],
+  ["2024-07-23", "inst", "US spot ether ETFs start trading"],
+  ["2024-08-05", "crash", "Yen carry-trade unwind sell-off"],
+  ["2024-11-05", "policy", "US presidential election"],
+  ["2025-01-20", "policy", "US presidential inauguration"],
+  ["2025-02-21", "crash", "Bybit hack (~$1.5B)"],
+  ["2025-03-06", "policy", "US Strategic Bitcoin Reserve executive order"],
+  ["2025-04-02", "macro", "Broad US tariff announcement"],
+  ["2025-05-07", "upgrade", "Ethereum Pectra upgrade"],
+  ["2025-07-18", "policy", "US GENIUS stablecoin act signed"],
+  ["2025-10-10", "crash", "Tariff headlines trigger record liquidations"],
+];
+const FOMC = ["2022-03-16","2022-05-04","2022-06-15","2022-07-27","2022-09-21","2022-11-02","2022-12-14","2023-02-01","2023-03-22","2023-05-03","2023-06-14","2023-07-26","2023-09-20","2023-11-01","2023-12-13","2024-01-31","2024-03-20","2024-05-01","2024-06-12","2024-07-31","2024-09-18","2024-11-07","2024-12-18","2025-01-29","2025-03-19","2025-05-07","2025-06-18","2025-07-30","2025-09-17","2025-10-29","2025-12-10","2026-01-28","2026-03-18","2026-04-29","2026-06-17","2026-07-29","2026-09-16","2026-10-28"];
+const ALL_EVENTS = [...EVENTS, ...FOMC.map(d => [d, "fed", "Fed rate decision"])];
+const CATS = { all: "All events", fed: "Fed decisions", crash: "Crashes & hacks", policy: "Policy & regulation", inst: "ETFs & institutions", upgrade: "Network upgrades", halving: "Halvings", macro: "Macro shocks" };
+const UPCOMING = [
+  { date: "2026-12-09", cat: "fed", title: "Fed rate decision", note: "FOMC meeting December 8–9, with new projections and dot plot.", src: "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm" },
+  { date: "2028-04-15", cat: "halving", title: "Next Bitcoin halving (estimate)", note: "Expected around block 1,050,000, roughly April 2028. The exact date depends on block times.", src: null },
+];
+const IN_COINS = ["BTC", "ETH", "SOL", "XRP", "BNB", "DOGE", "ADA", "LINK"];
+
+const Insights = {
+  data: null, fan: null,
+  renderCoinChips() {
+    $("#inCoins").innerHTML = IN_COINS.map(c => `<button type="button" class="chip" data-ic="${c}" aria-pressed="${S.insight.sym === c}">${c}</button>`).join("");
+    $("#evCats").innerHTML = Object.entries(CATS).map(([k, v]) => `<button type="button" class="chip" data-ec="${k}" aria-pressed="${S.insight.cat === k}">${v}</button>`).join("");
+  },
+  async daily(sym) {
+    if (S.insight.cache.has(sym)) return S.insight.cache.get(sym);
+    const out = { t: [], o: [], h: [], l: [], c: [] }; let start = Date.UTC(2017, 7, 1);
+    for (let guard = 0; guard < 8; guard++) {
+      const k = await getJSON(`${API.bn}/klines?symbol=${sym}USDT&interval=1d&limit=1000&startTime=${start}`);
+      for (const r of k) { out.t.push(r[0]); out.o.push(+r[1]); out.h.push(+r[2]); out.l.push(+r[3]); out.c.push(+r[4]); }
+      if (k.length < 1000) break; start = k[k.length - 1][0] + 86400000;
+    }
+    // drop the still-open daily candle so every number refers to completed days
+    if (out.t.length && out.t[out.t.length - 1] + 86400000 > Date.now()) for (const a of Object.values(out)) a.pop();
+    S.insight.cache.set(sym, out); return out;
+  },
+  async load() {
+    const sym = S.insight.sym; $("#inStatus").textContent = `Loading ${sym} daily history…`;
+    ["#inRead", "#inScen", "#inAnalog", "#evBars"].forEach(s => $(s).innerHTML = `<div style="padding:14px"><span class="skel"></span></div>`);
+    try {
+      const d = await this.daily(sym); this.data = d;
+      $("#inStatus").textContent = `${sym}/USDT · ${d.c.length.toLocaleString()} daily candles since ${new Date(d.t[0]).toISOString().slice(0, 10)} · last close ${new Date(d.t[d.t.length - 1]).toISOString().slice(0, 10)}`;
+      const f = this.features(d);
+      this.renderRead(d, f); this.renderScen(d, f); this.renderEvents(d); this.renderAnalog(d, f); this.sim(d); this.renderUpcoming(d);
+    } catch (e) {
+      $("#inStatus").textContent = "";
+      $("#inRead").innerHTML = `<div class="pbody"><div class="err">Couldn't load ${esc(sym)} history (${esc(e.message)}).</div></div>`;
+    }
+  },
+  features(d) {
+    const c = d.c, n = c.length;
+    const ema50 = Ind.ema(c, 50), ema200 = Ind.ema(c, 200), sma200 = Ind.sma(c, 200), rsi = Ind.rsi(c), m = Ind.macd(c);
+    const lr = c.map((v, i) => i ? Math.log(v / c[i - 1]) : 0);
+    const vol30 = c.map((_, i) => { if (i < 30) return null; let s = 0, s2 = 0; for (let j = i - 29; j <= i; j++) { s += lr[j]; s2 += lr[j] ** 2; } const mu = s / 30; return Math.sqrt(Math.max(s2 / 30 - mu * mu, 0)) * Math.sqrt(365); });
+    const r30 = c.map((v, i) => i >= 30 ? v / c[i - 30] - 1 : null);
+    const ath = Math.max(...d.h); const athI = d.h.indexOf(ath);
+    const hi30 = Math.max(...d.h.slice(-30)), lo30 = Math.min(...d.l.slice(-30));
+    return { ema50, ema200, sma200, rsi, macd: m, vol30, r30, lr, ath, athI, hi30, lo30, n };
+  },
+  renderRead(d, f) {
+    const i = f.n - 1, p = d.c[i];
+    const st = (cls, t) => `<span class="state ${cls}">${t}</span>`;
+    const trend = p > f.ema200[i] ? (p > f.ema50[i] ? st("up", "uptrend") : st("n", "pullback")) : (p < f.ema50[i] ? st("down", "downtrend") : st("n", "recovering"));
+    const rsi = f.rsi[i]; const rsiS = rsi >= 70 ? st("down", "stretched high") : rsi <= 30 ? st("up", "stretched low") : st("n", "neutral");
+    const h = f.macd.hist[i], h1 = f.macd.hist[i - 1]; const macdS = h > 0 ? st("up", h > h1 ? "momentum rising" : "momentum fading") : st("down", h < h1 ? "momentum falling" : "losing downside");
+    const dd = p / f.ath - 1;
+    const cells = [
+      ["Last daily close", money(p, "usd"), `${pill((p / d.c[i - 1] - 1) * 100)} vs. previous day`],
+      ["Trend " + trend, pct((p / f.ema200[i] - 1) * 100, 1), `vs. 200-day average (${plain(f.ema200[i])}); 50-day at ${plain(f.ema50[i])}`],
+      ["RSI 14 " + rsiS, rsi.toFixed(1), "Above 70 often means a run is stretched; below 30, oversold."],
+      ["MACD " + macdS, (h >= 0 ? "+" : "") + plain(h, 2), "Histogram: gap between the MACD line and its signal line."],
+      ["30-day momentum", pct(f.r30[i] * 100, 1), "Change versus 30 days ago."],
+      ["Volatility (30d, yearly)", pct(f.vol30[i] * 100, 0).replace("+", ""), `A typical day moves about ${(f.vol30[i] / Math.sqrt(365) * 100).toFixed(1)}%.`],
+      ["From all-time high", pct(dd * 100, 1), `High ${money(f.ath, "usd")} on ${new Date(d.t[f.athI]).toISOString().slice(0, 10)}`],
+      ["30-day range", `${plain(f.lo30)} – ${plain(f.hi30)}`, `Price sits at ${((p - f.lo30) / (f.hi30 - f.lo30 || 1) * 100).toFixed(0)}% of this range.`],
+    ];
+    $("#inRead").innerHTML = cells.map(([k, v, s]) => `<div><dt>${k}</dt><dd>${v}</dd><p>${s}</p></div>`).join("");
+  },
+  renderScen(d, f) {
+    const i = f.n - 1, p = d.c[i]; const e50 = f.ema50[i], e200 = f.ema200[i];
+    const above = p > e200; const sym = S.insight.sym;
+    const aboveP = [f.hi30, e50].filter(x => x > p), belowP = [f.lo30, e200, e50].filter(x => x < p);
+    const recLvl = aboveP.length ? Math.min(...aboveP) : f.hi30;
+    const supLvl = belowP.length ? Math.max(...belowP) : f.lo30;
+    const dot = v => `<span class="dot" style="background:var(--${v})"></span>`;
+    const blocks = [
+      [dot("up") + " Recovery / continuation", `A daily close above <b class="mono">${plain(recLvl)}</b> (${recLvl === f.hi30 ? "the 30-day high" : "the 50-day average"}) would put ${sym} back above recent resistance. ${above ? "With price already above the 200-day average, that would extend the uptrend." : `It would still be below the 200-day average at <b class="mono">${plain(e200)}</b>, so the bigger trend would remain down until that level is reclaimed.`} Watch for rising volume on the breakout; a close back below it voids the case.`],
+      [dot("faint") + " Range", `Holding between <b class="mono">${plain(supLvl)}</b> and <b class="mono">${plain(recLvl)}</b> keeps ${sym} in a range while the market waits for a catalyst${UPCOMING[0] ? ` such as the ${UPCOMING[0].title.toLowerCase()} on ${UPCOMING[0].date}` : ""}. RSI near 50 and a flat MACD would fit this case.`],
+      [dot("down") + " Breakdown", `A daily close below <b class="mono">${plain(supLvl)}</b> would break the nearest support and open the way toward the 30-day low${f.lo30 < supLvl ? ` at <b class="mono">${plain(f.lo30)}</b>` : ""}. Typical daily swings are about ${(f.vol30[i] / Math.sqrt(365) * 100).toFixed(1)}%, so a single wick through the level is weaker evidence than a daily close.`],
+    ];
+    $("#inScen").innerHTML = blocks.map(([h, p]) => `<div><h3>${h}</h3><p>${p}</p></div>`).join("") +
+      `<p class="note">Levels come from the last 30 completed daily candles and the 50/200-day exponential averages. These are conditions to watch, not forecasts, and no probability is attached to them.</p>`;
+  },
+  eventRows(d) {
+    const idxOf = ds => { const ts = Date.parse(ds + "T00:00:00Z"); let lo = 0, hi = d.t.length - 1; if (ts < d.t[0] || ts > d.t[hi]) return -1; while (lo < hi) { const m = (lo + hi) >> 1; d.t[m] < ts ? lo = m + 1 : hi = m; } return lo; };
+    const c = d.c; const ret = (a, b) => (a >= 0 && b >= 0 && b < c.length && a < c.length) ? (c[b] / c[a] - 1) * 100 : null;
+    return ALL_EVENTS.map(([date, cat, title]) => {
+      const i = idxOf(date); if (i < 8) return { date, cat, title, missing: true };
+      return { date, cat, title, pre: ret(i - 8, i - 1), d1: ret(i - 1, i), d7: ret(i - 1, i + 6), d30: ret(i - 1, i + 29) };
+    }).sort((a, b) => b.date.localeCompare(a.date));
+  },
+  renderEvents(d) {
+    const rows = this.eventRows(d); this._rows = rows;
+    const med = a => { const s = a.filter(x => x != null).sort((x, y) => x - y); if (!s.length) return null; const m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+    const by = {}; for (const r of rows) if (!r.missing) (by[r.cat] ||= []).push(r);
+    const stats = Object.entries(by).map(([k, rs]) => ({ k, n: rs.filter(r => r.d30 != null).length, m7: med(rs.map(r => r.d7)), m30: med(rs.map(r => r.d30)), up: rs.filter(r => r.d30 != null && r.d30 > 0).length / (rs.filter(r => r.d30 != null).length || 1) })).filter(s => s.n).sort((a, b) => b.m30 - a.m30);
+    const mx = Math.max(10, ...stats.map(s => Math.abs(s.m30)));
+    $("#evBars").innerHTML = `<div class="barrow faint" style="font-size:12px"><span>Median move 30 days after</span><span style="display:flex;justify-content:space-between"><span>${-mx.toFixed(0)}%</span><span>0</span><span>+${mx.toFixed(0)}%</span></span><span style="text-align:right">up / n</span></div>` +
+      stats.map(s => { const w = Math.abs(s.m30) / mx * 50; const pos = s.m30 >= 0;
+        return `<div class="barrow" title="${CATS[s.k]}: median +7d ${pct(s.m7, 1)}, median +30d ${pct(s.m30, 1)}, ${Math.round(s.up * 100)}% of ${s.n} cases higher after 30 days"><span>${CATS[s.k]}</span><span class="track"><span class="fill" style="${pos ? `left:50%;width:${w}%;background:#2a78d6` : `right:50%;width:${w}%;background:#e34948`}"></span></span><span class="mono" style="text-align:right;font-size:12px">${Math.round(s.up * 100)}% · ${s.n}</span></div>`; }).join("");
+    $("#evNote").innerHTML = `Each bar is the median ${S.insight.sym} move from the close before the event to 30 days after, across ${stats.reduce((a, s) => a + s.n, 0)} events with enough data. Small samples (n under 10) are anecdotes, not patterns, and other news overlapped many of these dates.`;
+    this.renderEventTable();
+  },
+  renderEventTable() {
+    const rows = (this._rows || []).filter(r => S.insight.cat === "all" || r.cat === S.insight.cat);
+    const cell = v => v == null ? '<span class="faint">–</span>' : `<span class="${v >= 0 ? "up" : "down"} mono">${pct(v, 1)}</span>`;
+    $("#evTable").innerHTML = `<thead><tr><th class="l" scope="col">Date</th><th class="l" scope="col">Event</th><th class="l hide-sm" scope="col">Type</th><th scope="col">7d before</th><th scope="col">Day of</th><th scope="col">+7 days</th><th scope="col">+30 days</th></tr></thead><tbody>` +
+      rows.map(r => `<tr style="cursor:default"><td class="l mono" style="font-size:12.5px">${r.date}</td><td class="l">${esc(r.title)}</td><td class="l hide-sm faint">${CATS[r.cat]}</td>${r.missing ? `<td colspan="4" class="faint">no ${S.insight.sym} data yet</td>` : `<td>${cell(r.pre)}</td><td>${cell(r.d1)}</td><td>${cell(r.d7)}</td><td>${cell(r.d30)}</td>`}</tr>`).join("") + "</tbody>";
+  },
+  renderAnalog(d, f) {
+    const n = f.n, i0 = n - 1, c = d.c;
+    const feat = j => [f.rsi[j], f.r30[j], j >= 200 && f.ema200[j] ? c[j] / f.ema200[j] - 1 : null, f.vol30[j]];
+    const cand = []; for (let j = 210; j <= n - 31; j++) { const v = feat(j); if (v.every(x => x != null && isFinite(x))) cand.push([j, v]); }
+    const now = feat(i0); if (cand.length < 50 || now.some(x => x == null)) { $("#inAnalog").innerHTML = `<p class="note">Not enough history for ${S.insight.sym} to find comparable setups (needs about 8 months).</p>`; return; }
+    const mu = [0, 1, 2, 3].map(k => cand.reduce((a, [, v]) => a + v[k], 0) / cand.length);
+    const sd = [0, 1, 2, 3].map(k => Math.sqrt(cand.reduce((a, [, v]) => a + (v[k] - mu[k]) ** 2, 0) / cand.length) || 1);
+    const dist = v => Math.sqrt(v.reduce((a, x, k) => a + ((x - now[k]) / sd[k]) ** 2, 0));
+    const ranked = cand.map(([j, v]) => [j, dist(v)]).sort((a, b) => a[1] - b[1]);
+    const pick = []; for (const [j, ds] of ranked) { if (pick.every(([p]) => Math.abs(p - j) > 7)) pick.push([j, ds]); if (pick.length >= 25) break; }
+    const f7 = pick.map(([j]) => (c[j + 7] / c[j] - 1) * 100), f30 = pick.map(([j]) => (c[j + 30] / c[j] - 1) * 100);
+    const q = (a, p) => { const s = [...a].sort((x, y) => x - y); const k = (s.length - 1) * p; const lo = Math.floor(k); return s[lo] + (s[Math.ceil(k)] - s[lo]) * (k - lo); };
+    const share = a => Math.round(a.filter(x => x > 0).length / a.length * 100);
+    const row = (lbl, a) => `<tr style="cursor:default"><td class="l">${lbl}</td><td>${share(a)}%</td><td class="mono">${pct(q(a, .5), 1)}</td><td class="mono hide-sm">${pct(q(a, .25), 1)} to ${pct(q(a, .75), 1)}</td><td class="mono">${pct(Math.min(...a), 0)} / ${pct(Math.max(...a), 0)}</td></tr>`;
+    const date = j => new Date(d.t[j]).toISOString().slice(0, 10);
+    $("#inAnalog").innerHTML = `<p class="note" style="margin-top:0">Today: RSI ${now[0].toFixed(0)}, 30-day change ${pct(now[1] * 100, 1)}, ${pct(now[2] * 100, 1)} vs. 200-day average, volatility ${(now[3] * 100).toFixed(0)}%. The ${pick.length} closest past days (at least a week apart) were followed by:</p>
+      <div class="tablewrap"><table><thead><tr><th class="l" scope="col">After</th><th scope="col">Higher</th><th scope="col">Median</th><th scope="col" class="hide-sm">Middle half</th><th scope="col">Worst / best</th></tr></thead><tbody>${row("7 days", f7)}${row("30 days", f30)}</tbody></table></div>
+      <p class="note">Closest matches: ${pick.slice(0, 6).map(([j]) => `<span class="mono">${date(j)}</span> (${pct((c[j + 30] / c[j] - 1) * 100, 0)} after 30d)`).join(", ")}.</p>
+      <p class="note">With 25 matches, a 60% “higher” share is within normal chance. Treat this as context on how similar conditions played out, not a signal.</p>`;
+  },
+  sim(d) {
+    const c = d.c; const lr = []; const start = Math.max(1, c.length - 730);
+    for (let i = start; i < c.length; i++) lr.push(Math.log(c[i] / c[i - 1]));
+    const P = 3000, H = 90, B = 5; const p0 = c[c.length - 1];
+    const paths = new Float64Array(P * (H + 1));
+    let seed = 1234567; const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
+    for (let p = 0; p < P; p++) { let x = 0, h = 0; paths[p * (H + 1)] = p0;
+      while (h < H) { const s = Math.floor(rnd() * (lr.length - B)); for (let b = 0; b < B && h < H; b++) { x += lr[s + b]; h++; paths[p * (H + 1) + h] = p0 * Math.exp(x); } } }
+    const qs = [0.1, 0.25, 0.5, 0.75, 0.9]; const band = qs.map(() => new Float64Array(H + 1));
+    const col = new Float64Array(P);
+    for (let h = 0; h <= H; h++) { for (let p = 0; p < P; p++) col[p] = paths[p * (H + 1) + h]; col.sort(); qs.forEach((q, k) => band[k][h] = col[Math.floor(q * (P - 1))]); }
+    this.fan = { band, p0, H, t0: d.t[d.t.length - 1], hist: c.slice(-60) };
+    this.redrawFan();
+    const at = [7, 30, 90];
+    $("#fanTable").innerHTML = `<thead><tr><th class="l" scope="col">Horizon</th><th scope="col">Low 10%</th><th scope="col">25%</th><th scope="col">Median</th><th scope="col">75%</th><th scope="col">High 90%</th></tr></thead><tbody>` +
+      at.map(h => `<tr style="cursor:default"><td class="l">${h} days</td>${band.map(b => `<td class="mono">${plain(b[h])}<br><span class="${b[h] >= p0 ? "up" : "down"}" style="font-size:11.5px">${pct((b[h] / p0 - 1) * 100, 0)}</span></td>`).join("")}</tr>`).join("") + "</tbody>";
+  },
+  redrawFan() {
+    const cv = $("#fan"); if (!cv || !this.fan || !cv.offsetWidth) return;
+    const dpr = devicePixelRatio || 1; const W = cv.offsetWidth, Hh = cv.offsetHeight; cv.width = W * dpr; cv.height = Hh * dpr;
+    const ctx = cv.getContext("2d"); ctx.scale(dpr, dpr); ctx.clearRect(0, 0, W, Hh);
+    const { band, p0, H, hist } = this.fan; const padL = 8, padR = 70, padT = 10, padB = 22;
+    const N = hist.length + H; const all = [...hist, ...band[0], ...band[4]]; const mn = Math.min(...all), mx = Math.max(...all);
+    const x = i => padL + i / (N - 1) * (W - padL - padR); const y = v => padT + (1 - (Math.log(v) - Math.log(mn)) / (Math.log(mx) - Math.log(mn) || 1)) * (Hh - padT - padB);
+    const ink = cssVar("--muted"), line = cssVar("--line"), rgb = cssVar("--band"), text = cssVar("--text");
+    ctx.font = "11px IBM Plex Mono, ui-monospace, monospace"; ctx.fillStyle = ink; ctx.strokeStyle = line; ctx.lineWidth = 1;
+    for (let k = 0; k <= 4; k++) { const v = Math.exp(Math.log(mn) + (Math.log(mx) - Math.log(mn)) * k / 4); const yy = y(v); ctx.beginPath(); ctx.moveTo(padL, yy); ctx.lineTo(W - padR + 4, yy); ctx.stroke(); ctx.fillText(plain(v, v >= 100 ? 0 : 2), W - padR + 8, yy + 4); }
+    const o = hist.length - 1;
+    const area = (lo, hi, a) => { ctx.beginPath(); for (let h = 0; h <= H; h++) ctx.lineTo(x(o + h), y(hi[h])); for (let h = H; h >= 0; h--) ctx.lineTo(x(o + h), y(lo[h])); ctx.closePath(); ctx.fillStyle = `rgba(${rgb},${a})`; ctx.fill(); };
+    area(band[0], band[4], 0.16); area(band[1], band[3], 0.28);
+    ctx.beginPath(); for (let h = 0; h <= H; h++) ctx.lineTo(x(o + h), y(band[2][h])); ctx.strokeStyle = `rgb(${rgb})`; ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); hist.forEach((v, i) => ctx.lineTo(x(i), y(v))); ctx.strokeStyle = text; ctx.lineWidth = 2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(x(o), y(p0), 4, 0, 7); ctx.fillStyle = text; ctx.fill();
+    ctx.fillStyle = ink; ctx.fillText("last 60 days", padL, Hh - 6); ctx.fillText("next 90 days", x(o) + 6, Hh - 6);
+    ctx.strokeStyle = line; ctx.beginPath(); ctx.moveTo(x(o), padT); ctx.lineTo(x(o), Hh - padB); ctx.stroke();
+  },
+  renderUpcoming(d) {
+    const rows = this._rows || [];
+    const med = a => { const s = a.filter(x => x != null).sort((x, y) => x - y); if (!s.length) return null; const m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+    $("#inUpcoming").innerHTML = UPCOMING.map(u => {
+      const past = rows.filter(r => r.cat === u.cat && !r.missing && r.d7 != null);
+      const dt = new Date(u.date + "T00:00:00Z"); const days = Math.round((dt - Date.now()) / 86400000);
+      const hist = past.length ? `In ${past.length} past ${CATS[u.cat].toLowerCase()} in this data, ${S.insight.sym} moved a median ${pct(med(past.map(r => r.d7)), 1)} over the following week (range ${pct(Math.min(...past.map(r => r.d7)), 0)} to ${pct(Math.max(...past.map(r => r.d7)), 0)}).` : "No past cases of this type in the data yet.";
+      return `<div><div class="date">${dt.toLocaleString("en", { month: "short", timeZone: "UTC" })}<b>${dt.getUTCDate()}</b>${dt.getUTCFullYear()}</div><div><h3 style="color:var(--text);font-size:14px">${esc(u.title)} <span class="faint" style="font-weight:400">· in ${days} days</span></h3><p class="note" style="margin:4px 0 0">${esc(u.note)} ${hist}${u.src ? ` <a href="${u.src}" target="_blank" rel="noopener">Fed calendar</a>` : ""}</p></div></div>`;
+    }).join("");
+  },
+};
+$("#inCoins").addEventListener("click", e => { const b = e.target.closest("[data-ic]"); if (!b) return; S.insight.sym = b.dataset.ic; Insights.renderCoinChips(); Insights.load(); });
+$("#evCats").addEventListener("click", e => { const b = e.target.closest("[data-ec]"); if (!b) return; S.insight.cat = b.dataset.ec; $$("#evCats [data-ec]").forEach(x => x.setAttribute("aria-pressed", x === b)); Insights.renderEventTable(); });
+addEventListener("resize", () => { clearTimeout(Insights._rz); Insights._rz = setTimeout(() => Insights.redrawFan(), 150); });
+
+/* =========================================================================
+   Router + boot
+   ========================================================================= */
+const ROUTES = ["markets", "chart", "news", "insights"]; const loaded = new Set();
+function route() {
+  const r = ROUTES.includes(location.hash.slice(1)) ? location.hash.slice(1) : "markets";
+  for (const v of ROUTES) $("#view-" + v).hidden = v !== r;
+  $$("nav.tabs a").forEach(a => a.dataset.route === r ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+  if (r === "chart" && !loaded.has("chart")) { loaded.add("chart"); Chart.init(); }
+  if (r === "news" && !loaded.has("news")) { loaded.add("news"); News.renderChips(); News.load(); }
+  if (r === "insights" && !loaded.has("insights")) { loaded.add("insights"); Insights.renderCoinChips(); Insights.load(); }
+  if (r === "insights") requestAnimationFrame(() => Insights.redrawFan());
+}
+addEventListener("hashchange", route);
+
+(async function boot() {
+  const t = store.get("theme", null); if (t) document.documentElement.dataset.theme = t;
+  $("#themeBtn use").setAttribute("href", isDark() ? "#i-sun" : "#i-moon");
+  $("#curEur").setAttribute("aria-pressed", S.cur === "eur"); $("#curUsd").setAttribute("aria-pressed", S.cur === "usd");
+  Markets.render();
+  await Binance.init();
+  route();
+  Markets.load(); Global.load(); Markets.trending();
+  setInterval(() => Markets.load(), 60000);
+  setInterval(() => Global.load(), 120000);
+  setInterval(() => { if (loaded.has("news")) News.load(); }, 180000);
+})();
+</script>
+</body>
+</html>
