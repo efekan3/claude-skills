@@ -244,6 +244,19 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
 .pr-top { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
 .pr-mid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: start; margin-top: 16px; }
 .ch-price.tick-up { color: var(--up); } .ch-price.tick-down { color: var(--down); }
+.seg-4 { display: grid; grid-template-columns: repeat(4, 1fr); } .seg-4 button { padding: 7px; }
+.strat-pick { display: grid; gap: 6px; }
+.strat-pick label { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; color: var(--text); font-size: 13px; }
+.strat-pick label:has(input:checked) { border-color: var(--accent); background: var(--sel); }
+.strat-pick small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.botlog { max-height: 420px; overflow-y: auto; font-size: 13px; }
+.botlog div { display: grid; grid-template-columns: 110px 54px minmax(0, 1fr); gap: 10px; padding: 7px 14px; border-bottom: 1px solid var(--line); }
+.botlog time { font-family: var(--mono); font-size: 11.5px; color: var(--faint); font-variant-numeric: tabular-nums; }
+.botlog b { font-weight: 500; }
+.verdict { display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: 12px; padding: 12px 14px; border-radius: 8px; background: var(--panel-2); margin-bottom: 12px; }
+.verdict h3 { color: var(--text); font-size: 15px; }
+.verdict p { margin: 4px 0 0; color: var(--muted); font-size: 13px; max-width: 75ch; }
+.verdict .dot { width: 12px; height: 12px; margin-top: 3px; }
 .ticket { display: grid; gap: 12px; }
 .fld { display: grid; gap: 5px; font-size: 12.5px; color: var(--muted); }
 .fld-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -337,6 +350,8 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
   <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol>
   <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h11v4"/><path d="M4 7v11a2 2 0 0 0 2 2h14V9H6a2 2 0 0 1-2-2z"/><circle cx="16" cy="14.5" r="1.2"/></symbol>
   <symbol id="i-cap" viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6"/></symbol>
+  <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M9.5 16h5M2 13v2M22 13v2"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19h14"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
   <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6.5z"/></symbol>
   <symbol id="t-up" viewBox="0 0 10 10"><path d="M5 1.5l4 6.5H1z"/></symbol>
@@ -356,6 +371,7 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
         <a href="#news" data-route="news"><svg class="i"><use href="#i-news"/></svg><span>News</span></a>
         <a href="#insights" data-route="insights"><svg class="i"><use href="#i-scope"/></svg><span>Insights</span></a>
         <a href="#practice" data-route="practice"><svg class="i"><use href="#i-wallet"/></svg><span>Practice</span></a>
+        <a href="#bot" data-route="bot"><svg class="i"><use href="#i-bot"/></svg><span>Bot</span></a>
         <a href="#coach" data-route="coach"><svg class="i"><use href="#i-cap"/></svg><span>Coach</span></a>
       </nav>
       <div class="spacer"></div>
@@ -563,6 +579,9 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
     <h1 id="prTitle">Practice trading</h1>
     <span class="faint" style="font-size:12.5px">Virtual euros, real live Bitvavo prices, 0.25% fee per trade. Nothing here touches real money.</span>
     <div class="spacer"></div>
+    <span class="faint" style="font-size:12px">Saved automatically on this PC</span>
+    <button type="button" class="btn" id="dataBackup"><svg class="i"><use href="#i-save"/></svg>Back up all data</button>
+    <label class="btn" style="cursor:pointer">Restore backup<input type="file" id="dataRestore" accept=".json,application/json" hidden></label>
     <button type="button" class="btn" id="prReset">Reset account</button>
   </div>
   <div class="panel" style="margin-bottom:16px"><dl class="read" id="prAccount" style="margin:0"></dl></div>
@@ -582,18 +601,18 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
       </div>
       <div class="ch-tools">
         <div class="seg" role="group" aria-label="Interval" id="pcIv">
-          <button type="button" data-piv="1m" aria-pressed="false">1m</button>
-          <button type="button" data-piv="5m" aria-pressed="true">5m</button>
-          <button type="button" data-piv="15m" aria-pressed="false">15m</button>
-          <button type="button" data-piv="1h" aria-pressed="false">1h</button>
-          <button type="button" data-piv="4h" aria-pressed="false">4h</button>
-          <button type="button" data-piv="1d" aria-pressed="false">1D</button>
+          <button type="button" data-civ="1m" aria-pressed="false">1m</button>
+          <button type="button" data-civ="5m" aria-pressed="true">5m</button>
+          <button type="button" data-civ="15m" aria-pressed="false">15m</button>
+          <button type="button" data-civ="1h" aria-pressed="false">1h</button>
+          <button type="button" data-civ="4h" aria-pressed="false">4h</button>
+          <button type="button" data-civ="1d" aria-pressed="false">1D</button>
         </div>
         <div class="tools" role="group" aria-label="Overlays" id="pcInd">
-          <button type="button" class="chip" data-pind="ema20" aria-pressed="true">EMA 20</button>
-          <button type="button" class="chip" data-pind="ema50" aria-pressed="false">EMA 50</button>
-          <button type="button" class="chip" data-pind="vol" aria-pressed="true">Volume</button>
-          <button type="button" class="chip" data-pind="trades" aria-pressed="true">My trades</button>
+          <button type="button" class="chip" data-cind="ema20" aria-pressed="true">EMA 20</button>
+          <button type="button" class="chip" data-cind="ema50" aria-pressed="false">EMA 50</button>
+          <button type="button" class="chip" data-cind="vol" aria-pressed="true">Volume</button>
+          <button type="button" class="chip" data-cind="trades" aria-pressed="true">My trades</button>
         </div>
       </div>
       <div class="legend" id="pcLegend"></div>
@@ -637,6 +656,88 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
   </div>
 </section>
 
+<!-- ===================== BOT ===================== -->
+<section class="view" id="view-bot" hidden aria-labelledby="btTitle">
+  <div class="phead" style="padding:0 0 14px;border:0">
+    <h1 id="btTitle">Trading bot</h1>
+    <span class="state n" id="btState">Stopped</span>
+    <span class="faint" style="font-size:12.5px">Trades its own virtual €10,000 at live prices so you can judge it before trusting it with real money. It never touches a real account.</span>
+    <div class="spacer"></div>
+    <button type="button" class="btn btn-primary" id="btToggle">Start bot</button>
+    <button type="button" class="btn" id="btReset">Reset bot</button>
+  </div>
+  <div class="panel" style="margin-bottom:16px"><dl class="read" id="btAccount" style="margin:0"></dl></div>
+  <div class="pr-top">
+    <div class="panel" style="min-width:0">
+      <div class="ch-head" style="padding:12px 14px">
+        <div>
+          <h2 id="bcTitle" style="font-size:14px;color:var(--muted);font-weight:500">BTC / EUR</h2>
+          <div class="ch-price" id="bcPrice">–</div>
+        </div>
+        <div class="ch-stats">
+          <div>24h change<b id="bcChg">–</b></div>
+          <div>24h high<b id="bcHigh">–</b></div>
+          <div>24h low<b id="bcLow">–</b></div>
+          <div id="bcPosWrap" hidden>Bot position<b id="bcPos">–</b></div>
+        </div>
+      </div>
+      <div class="ch-tools">
+        <div class="tools" id="bcCoins" role="group" aria-label="Coin on chart"></div>
+        <div class="seg" role="group" aria-label="Interval" id="bcIv">
+          <button type="button" data-civ="5m" aria-pressed="false">5m</button>
+          <button type="button" data-civ="15m" aria-pressed="false">15m</button>
+          <button type="button" data-civ="1h" aria-pressed="false">1h</button>
+          <button type="button" data-civ="4h" aria-pressed="false">4h</button>
+          <button type="button" data-civ="1d" aria-pressed="false">1D</button>
+        </div>
+        <div class="tools" role="group" aria-label="Overlays" id="bcInd">
+          <button type="button" class="chip" data-cind="ema20" aria-pressed="true">EMA 20</button>
+          <button type="button" class="chip" data-cind="ema50" aria-pressed="false">EMA 50</button>
+          <button type="button" class="chip" data-cind="vol" aria-pressed="true">Volume</button>
+          <button type="button" class="chip" data-cind="trades" aria-pressed="true">Bot trades</button>
+        </div>
+      </div>
+      <div class="legend" id="bcLegend"></div>
+      <div id="bcChart" style="height:460px" role="img" aria-label="Live candlestick chart with the bot's trades"></div>
+      <p class="note" style="padding:8px 14px 12px;margin:0;max-width:none" id="bcKey"><span style="color:var(--accent)">━</span> bot's entry price · <span class="down">┅</span> stop-loss · <span class="up">┅</span> take-profit · <span class="up">▲</span> bot buys · <span class="down">▼</span> bot sells</p>
+    </div>
+    <div class="panel">
+      <div class="phead"><h2>Bot settings</h2></div>
+      <form class="pbody ticket" id="btForm" autocomplete="off">
+        <div class="fld"><span>Coins the bot may trade</span><div class="tools" id="btCoins"></div>
+          <span class="input"><input id="btAdd" list="prCoins" placeholder="Add a coin, e.g. ADA"></span></div>
+        <div class="fld"><span>Strategy</span><div class="strat-pick" id="btStrat"></div></div>
+        <div class="fld"><span>Candle size the bot trades on</span>
+          <div class="seg seg-4" role="group" id="btIv"><button type="button" data-biv="5m">5m</button><button type="button" data-biv="15m">15m</button><button type="button" data-biv="1h">1h</button><button type="button" data-biv="4h">4h</button></div></div>
+        <div class="fld-row">
+          <label class="fld"><span>Size per trade (% of bot money)</span><span class="input"><input id="btSize" type="number" min="1" max="100" step="1"></span></label>
+          <label class="fld"><span>Max open positions</span><span class="input"><input id="btMax" type="number" min="1" max="10" step="1"></span></label>
+        </div>
+        <div class="fld-row">
+          <label class="fld"><span>Stop-loss (% below entry)</span><span class="input"><input id="btSl" type="number" min="0.5" max="50" step="0.5"></span></label>
+          <label class="fld"><span>Take-profit (% above entry)</span><span class="input"><input id="btTp" type="number" min="0.5" max="200" step="0.5"></span></label>
+        </div>
+        <div class="checks" id="btChecks"></div>
+        <button type="button" class="btn" id="btTest">Test these settings on recent history</button>
+        <p class="note" id="btMsg" role="status" style="margin:0"></p>
+      </form>
+    </div>
+  </div>
+  <div class="panel" id="btTestOut" hidden style="margin-top:16px"></div>
+  <div class="pr-mid">
+    <div class="panel" style="min-width:0"><div class="phead"><h2>Can you trust it?</h2><span class="faint" style="font-size:12px">updated after every trade</span></div><div class="pbody" id="btTrust"></div></div>
+    <div class="side" style="min-width:0">
+      <div class="panel"><div class="phead"><h2>Open positions</h2></div><div class="tablewrap"><table id="btPos"></table></div></div>
+      <div class="panel"><div class="phead"><h2>Bot money vs. just holding</h2></div><div class="pbody"><canvas id="btEq" style="width:100%;height:150px;display:block" aria-label="Bot account value compared with holding the same coins"></canvas><p class="note" id="btEqNote" style="margin-bottom:0"></p></div></div>
+    </div>
+  </div>
+  <div class="pr-mid">
+    <div class="panel" style="min-width:0"><div class="phead"><h2>What the bot is thinking</h2><span class="faint" style="font-size:12px">every decision with its reason</span></div><div class="botlog" id="btLog"></div></div>
+    <div class="panel" style="min-width:0"><div class="phead"><h2>Bot trade history</h2></div><div class="tablewrap" style="max-height:420px"><table id="btHist"></table></div></div>
+  </div>
+  <p class="disclaimer">The bot runs while Koersdesk is open (also minimised). When you open the app again it catches up on the candles it missed, up to about 1,000 candles back. Results are simulated with a 0.25% fee per trade; real trading adds slippage and delays. Good past results don't guarantee future ones. Educational tool, not financial advice.</p>
+</section>
+
 <!-- ===================== COACH ===================== -->
 <section class="view" id="view-coach" hidden aria-labelledby="coTitle">
   <div class="phead" style="padding:0 0 14px;border:0">
@@ -662,7 +763,7 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
       <div class="chat" id="chatLog" aria-live="polite"></div>
       <div class="tools" id="chatSuggest" style="margin:10px 0"></div>
       <form class="chat-in" id="chatForm"><label class="input" style="flex:1"><input id="chatInput" placeholder="Try: “review my trades”, “what is RSI”, “account 10000 risk 1% stop 5%”, “how is SOL”" autocomplete="off"></label><button class="btn btn-primary" type="submit" id="chatSend"><svg class="i"><use href="#i-send"/></svg>Send</button></form>
-      <p class="note"><button type="button" class="linkbtn" id="chatClear">Start a new conversation</button></p>
+      <p class="note"><button type="button" class="linkbtn" id="chatClear">Clear the chat window</button> (the coach keeps remembering what you asked; say “forget everything” to erase that too)</p>
     </div>
   </div>
   <p class="disclaimer">Educational information, not personalised financial advice. Practise risk management before risking real money; crypto assets can lose substantial value, and most short-term traders lose money.</p>
@@ -746,7 +847,7 @@ function applyTheme(t) {
   if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
   const dark = isDark();
   $("#themeBtn use").setAttribute("href", dark ? "#i-sun" : "#i-moon");
-  Chart.restyle(); PChart.restyle(); Insights.redrawFan(); Markets.redrawSparks();
+  Chart.restyle(); PChart.restyle(); BChart.restyle(); Insights.redrawFan(); Markets.redrawSparks();
 }
 function isDark() {
   const t = document.documentElement.dataset.theme;
@@ -1814,16 +1915,23 @@ const Practice = {
 /* =========================================================================
    Practice chart: live EUR candles with your trades, average price, stop, target and orders
    ========================================================================= */
-const PChart = {
-  chart: null, s: {}, candles: [], ws: null, base: null, retry: 0, lines: [], key: "", lastPx: null,
-  iv: store.get("piv", "5m"), ind: store.get("pind", { ema20: true, ema50: false, vol: true, trades: true }),
+/** Live EUR candle chart (Bitvavo, or Binance converted) with overlay lines and trade markers.
+ *  Element ids are `${pre}Chart`, `${pre}Legend`, `${pre}Title`, `${pre}Price`, `${pre}Chg`, `${pre}High`, `${pre}Low`,
+ *  `${pre}PosWrap`, `${pre}Pos`, `${pre}Key`; interval buttons `[data-civ]` inside `#${pre}Iv`, overlay chips `[data-cind]` inside `#${pre}Ind`.
+ *  `overlays(base)` returns { lines: [{price, kind, title}], marks: [{ts, side, pnl}], pos: {qty, cost} | null }. */
+class LiveChart {
+  constructor(pre, overlays) {
+    this.pre = pre; this.ov = overlays; this.chart = null; this.s = {}; this.candles = []; this.ws = null; this.base = null;
+    this.retry = 0; this.lines = []; this.extra = []; this.key = ""; this.lastPx = null;
+    this.iv = store.get(pre + ".iv", "5m"); this.ind = store.get(pre + ".ind", { ema20: true, ema50: false, vol: true, trades: true });
+  }
+  $(id) { return document.getElementById(this.pre + id); }
   init() {
     if (this.chart) return;
-    if (!window.LightweightCharts) { $("#pcChart").innerHTML = `<div class="pbody"><div class="err">The chart library didn't load. Check your internet connection and reload.</div></div>`; return; }
+    if (!window.LightweightCharts) { this.$("Chart").innerHTML = `<div class="pbody"><div class="err">The chart library didn't load. Check your internet connection and reload.</div></div>`; return; }
     const LC = window.LightweightCharts;
-    this.chart = LC.createChart($("#pcChart"), { autoSize: true, crosshair: { mode: LC.CrosshairMode.Normal }, timeScale: { timeVisible: true, secondsVisible: false, borderVisible: false }, rightPriceScale: { borderVisible: false }, localization: { priceFormatter: v => "€" + plain(v) } });
-    // keep your stop, target and orders on screen: stretch the price scale to include them
-    this.extra = [];
+    this.chart = LC.createChart(this.$("Chart"), { autoSize: true, crosshair: { mode: LC.CrosshairMode.Normal }, timeScale: { timeVisible: true, secondsVisible: false, borderVisible: false }, rightPriceScale: { borderVisible: false }, localization: { priceFormatter: v => "€" + plain(v) } });
+    // keep stops, targets and orders on screen: stretch the price scale to include them
     this.s.candle = this.chart.addCandlestickSeries({ borderVisible: false, autoscaleInfoProvider: orig => {
       const r = orig(); if (!r || !this.extra.length) return r;
       return { ...r, priceRange: { minValue: Math.min(r.priceRange.minValue, ...this.extra), maxValue: Math.max(r.priceRange.maxValue, ...this.extra) } };
@@ -1832,10 +1940,10 @@ const PChart = {
     this.chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.82, bottom: 0 } });
     for (const k of ["ema20", "ema50"]) this.s[k] = this.chart.addLineSeries({ color: SERIES[k], lineWidth: 2, lastValueVisible: false, priceLineVisible: false, crosshairMarkerVisible: false });
     this.chart.subscribeCrosshairMove(p => this.legend(p));
-    $$("#pcIv [data-piv]").forEach(b => b.addEventListener("click", () => { this.iv = b.dataset.piv; store.set("piv", this.iv); this.load(this.base, true); }));
-    $$("#pcInd [data-pind]").forEach(b => b.addEventListener("click", () => { const k = b.dataset.pind; this.ind[k] = !this.ind[k]; store.set("pind", this.ind); this.applyInd(); }));
+    this.$("Iv").querySelectorAll("[data-civ]").forEach(b => b.addEventListener("click", () => { this.iv = b.dataset.civ; store.set(this.pre + ".iv", this.iv); this.load(this.base, true); }));
+    this.$("Ind").querySelectorAll("[data-cind]").forEach(b => b.addEventListener("click", () => { const k = b.dataset.cind; this.ind[k] = !this.ind[k]; store.set(this.pre + ".ind", this.ind); this.applyInd(); }));
     this.restyle(); this.applyInd();
-  },
+  }
   restyle() {
     if (!this.chart) return;
     const text = cssVar("--muted"), line = cssVar("--line"), up = cssVar("--up"), down = cssVar("--down"), bg = cssVar("--panel");
@@ -1843,37 +1951,30 @@ const PChart = {
     this.s.candle.applyOptions({ upColor: up, downColor: down, wickUpColor: up, wickDownColor: down });
     if (this.candles.length) this.setAll();
     this.key = ""; this.overlays();
-  },
-  src(base) { return S.bitvavo.has(base) ? "bv" : "bn"; },
+  }
+  src(base) { return S.bitvavo.has(base) ? "bv" : "bn"; }
   async load(base, force) {
     if (!this.chart || !base || (base === this.base && !force)) return;
     this.base = base; this.lastPx = null; const id = (this._id = (this._id || 0) + 1); this.closeWs(); this.key = "";
-    $$("#pcIv [data-piv]").forEach(b => b.setAttribute("aria-pressed", b.dataset.piv === this.iv));
+    this.$("Iv").querySelectorAll("[data-civ]").forEach(b => b.setAttribute("aria-pressed", b.dataset.civ === this.iv));
     const src = this.src(base); this.srcNow = src;
-    $("#pcTitle").innerHTML = `${esc(base)} / EUR <span class="state ${src === "bv" ? "up" : "n"}">${src === "bv" ? "Bitvavo · live" : "Binance price, converted to euros"}</span>`;
-    $("#pcLegend").innerHTML = `<span class="skel" style="width:240px"></span>`;
+    this.$("Title").innerHTML = `${esc(base)} / EUR <span class="state ${src === "bv" ? "up" : "n"}">${src === "bv" ? "Bitvavo · live" : "Binance price, converted to euros"}</span>`;
+    this.$("Legend").innerHTML = `<span class="skel" style="width:240px"></span>`;
     try {
-      let c;
-      if (src === "bv") {
-        const k = await getJSON(`${API.bv}/${base}-EUR/candles?interval=${this.iv}&limit=500`);
-        c = k.map(r => ({ time: r[0] / 1000, open: +r[1], high: +r[2], low: +r[3], close: +r[4], volume: +r[5] })).reverse();
-      } else {
-        const k = await getJSON(`${API.bn}/klines?symbol=${base}USDT&interval=${this.iv}&limit=500`); const fx = S.eurPerUsdt || 1;
-        c = k.map(r => ({ time: r[0] / 1000, open: r[1] * fx, high: r[2] * fx, low: r[3] * fx, close: r[4] * fx, volume: +r[5] }));
-      }
+      const c = await fetchCandles(base, this.iv, 500);
       if (id !== this._id) return;
       this.candles = c; this.setAll();
       this.chart.timeScale().setVisibleLogicalRange({ from: c.length - 120, to: c.length + 5 });
       this.overlays(); this.legend(); this.header(); this.openWs();
-    } catch (e) { if (id === this._id) $("#pcLegend").innerHTML = `<span class="down">Couldn't load ${esc(base)} candles (${esc(e.message)}). Pick another coin or interval.</span>`; }
-  },
+    } catch (e) { if (id === this._id) this.$("Legend").innerHTML = `<span class="down">Couldn't load ${esc(base)} candles (${esc(e.message)}). Pick another coin or interval.</span>`; }
+  }
   setAll() {
     const c = this.candles; if (!c.length) return; const up = cssVar("--up"), down = cssVar("--down");
     this.s.candle.setData(c.map(({ time, open, high, low, close }) => ({ time, open, high, low, close })));
     this.s.vol.setData(c.map(x => ({ time: x.time, value: x.volume, color: (x.close >= x.open ? up : down) + "55" })));
     const cl = c.map(x => x.close), t = c.map(x => x.time); const line = a => a.map((v, i) => v == null ? { time: t[i] } : { time: t[i], value: v });
     this.s.ema20.setData(line(Ind.ema(cl, 20))); this.s.ema50.setData(line(Ind.ema(cl, 50)));
-  },
+  }
   bar(b) {
     const c = this.candles, last = c[c.length - 1];
     if (last && last.time === b.time) c[c.length - 1] = b; else if (!last || b.time > last.time) { c.push(b); if (c.length > 1500) c.shift(); } else return;
@@ -1884,49 +1985,48 @@ const PChart = {
     const e20 = Ind.ema(cl, 20)[i], e50 = Ind.ema(cl, 50)[i];
     if (e20 != null) this.s.ema20.update({ time: b.time, value: e20 }); if (e50 != null) this.s.ema50.update({ time: b.time, value: e50 });
     this.legend(); this.header(b.close);
-  },
+  }
   openWs() {
     const base = this.base, iv = this.iv;
+    const retry = ws => () => { const dl = Math.min(30000, 1000 * 2 ** this.retry++); setTimeout(() => { if (this.ws === ws) this.openWs(); }, dl); };
     if (this.srcNow === "bv") {
       const m = base + "-EUR"; const ws = new WebSocket(API.bvWs); this.ws = ws;
       ws.onopen = () => { this.retry = 0; ws.send(JSON.stringify({ action: "subscribe", channels: [{ name: "candles", interval: [iv], markets: [m] }] })); };
       ws.onmessage = ev => { const d = JSON.parse(ev.data); if (d.event === "candle" && d.market === m && d.interval === iv) for (const r of d.candle || []) this.bar({ time: r[0] / 1000, open: +r[1], high: +r[2], low: +r[3], close: +r[4], volume: +r[5] }); };
-      ws.onclose = () => { const dl = Math.min(30000, 1000 * 2 ** this.retry++); setTimeout(() => { if (this.ws === ws) this.openWs(); }, dl); };
-      ws.onerror = () => ws.close();
+      ws.onclose = retry(ws); ws.onerror = () => ws.close();
     } else {
       const ws = new WebSocket(`${API.bnWs}/ws/${base.toLowerCase()}usdt@kline_${iv}`); this.ws = ws;
       ws.onopen = () => { this.retry = 0; };
       ws.onmessage = ev => { const k = JSON.parse(ev.data).k; const fx = S.eurPerUsdt || 1; if (k) this.bar({ time: k.t / 1000, open: k.o * fx, high: k.h * fx, low: k.l * fx, close: k.c * fx, volume: +k.v }); };
-      ws.onclose = () => { const dl = Math.min(30000, 1000 * 2 ** this.retry++); setTimeout(() => { if (this.ws === ws) this.openWs(); }, dl); };
-      ws.onerror = () => ws.close();
+      ws.onclose = retry(ws); ws.onerror = () => ws.close();
     }
-  },
-  closeWs() { if (this.ws) { const w = this.ws; this.ws = null; w.onclose = null; try { w.close(); } catch {} } },
+  }
+  closeWs() { if (this.ws) { const w = this.ws; this.ws = null; w.onclose = null; try { w.close(); } catch {} } }
   applyInd() {
     if (!this.chart) return;
     this.s.ema20.applyOptions({ visible: !!this.ind.ema20 }); this.s.ema50.applyOptions({ visible: !!this.ind.ema50 }); this.s.vol.applyOptions({ visible: !!this.ind.vol });
-    $$("#pcInd [data-pind]").forEach(b => b.setAttribute("aria-pressed", !!this.ind[b.dataset.pind]));
-    $("#pcKey").hidden = !this.ind.trades;
+    this.$("Ind").querySelectorAll("[data-cind]").forEach(b => b.setAttribute("aria-pressed", !!this.ind[b.dataset.cind]));
+    if (this.$("Key")) this.$("Key").hidden = !this.ind.trades;
     this.key = ""; this.overlays(); this.legend();
-  },
-  /** Price lines (average buy, stop, target, limit orders) and trade markers for the shown coin. */
+  }
+  /** Price lines and trade markers from the page's overlay provider. */
   overlays() {
-    if (!this.chart || !this.candles.length || !Practice.st) return;
-    const st = Practice.st, b = this.base, p = st.pos[b], ords = st.orders.filter(o => o.base === b), hist = st.hist.filter(h => h.base === b);
-    const key = JSON.stringify([b, this.iv, p && [p.cost, p.qty, p.sl, p.tp], ords.map(o => o.id), hist.length, this.ind.trades, this.candles[0].time, this.candles.length > 0 && isDark()]);
+    if (!this.chart || !this.candles.length) return;
+    const o = this.ov(this.base); if (!o) return;
+    const key = JSON.stringify([this.base, this.iv, o.lines, o.marks.length, this.ind.trades, this.candles[0].time, isDark()]);
     if (key === this.key) return; this.key = key;
     for (const l of this.lines) this.s.candle.removePriceLine(l); this.lines = []; this.extra = [];
     if (!this.ind.trades) { this.s.candle.setMarkers([]); this.chart.priceScale("right").applyOptions({ autoScale: true }); return; }
-    const add = (price, color, style, title) => { this.extra.push(price); this.lines.push(this.s.candle.createPriceLine({ price, color, lineWidth: style === 0 ? 2 : 1, lineStyle: style, axisLabelVisible: true, title })); };
-    if (p) { add(p.cost / p.qty, cssVar("--accent"), 0, "avg buy"); if (p.sl) add(p.sl, cssVar("--down"), 2, "stop-loss"); if (p.tp) add(p.tp, cssVar("--up"), 2, "take-profit"); }
-    for (const o of ords) add(o.px, cssVar("--warn"), 1, o.side === "buy" ? "buy limit" : "sell limit");
+    const look = { avg: [cssVar("--accent"), 0], stop: [cssVar("--down"), 2], target: [cssVar("--up"), 2], order: [cssVar("--warn"), 1] };
+    for (const l of o.lines) { const [color, style] = look[l.kind]; this.extra.push(l.price); this.lines.push(this.s.candle.createPriceLine({ price: l.price, color, lineWidth: style === 0 ? 2 : 1, lineStyle: style, axisLabelVisible: true, title: l.title })); }
     // snap each trade to the candle it happened in
-    const times = this.candles.map(x => x.time); const snap = ts => { let lo = 0, hi = times.length - 1; if (ts < times[0]) return null; while (lo < hi) { const m = (lo + hi + 1) >> 1; times[m] <= ts ? lo = m : hi = m - 1; } return times[lo]; };
-    const marks = hist.map(h => ({ t: snap(h.ts / 1000), h })).filter(x => x.t != null).sort((a, z) => a.t - z.t)
-      .map(({ t, h }) => h.side === "buy" ? { time: t, position: "belowBar", color: cssVar("--up"), shape: "arrowUp", text: "Buy" } : { time: t, position: "aboveBar", color: cssVar("--down"), shape: "arrowDown", text: h.pnl >= 0 ? "Sell +" + plain(h.pnl, 0) : "Sell −" + plain(-h.pnl, 0) });
+    const times = this.candles.map(x => x.time);
+    const snap = ts => { if (ts < times[0]) return null; let lo = 0, hi = times.length - 1; while (lo < hi) { const m = (lo + hi + 1) >> 1; times[m] <= ts ? lo = m : hi = m - 1; } return times[lo]; };
+    const marks = o.marks.map(m => ({ t: snap(m.ts / 1000), m })).filter(x => x.t != null).sort((a, z) => a.t - z.t)
+      .map(({ t, m }) => m.side === "buy" ? { time: t, position: "belowBar", color: cssVar("--up"), shape: "arrowUp", text: m.text || "Buy" } : { time: t, position: "aboveBar", color: cssVar("--down"), shape: "arrowDown", text: m.text || (m.pnl >= 0 ? "Sell +" + plain(m.pnl, 0) : "Sell −" + plain(-m.pnl, 0)) });
     this.s.candle.setMarkers(marks);
-    this.chart.priceScale("right").applyOptions({ autoScale: true }); // re-run autoscale with the new lines
-  },
+    this.chart.priceScale("right").applyOptions({ autoScale: true });
+  }
   legend(pt) {
     const c = this.candles; if (!c.length) return;
     let bar = c[c.length - 1]; if (pt?.time) bar = c.find(x => x.time === pt.time) || bar;
@@ -1934,20 +2034,277 @@ const PChart = {
     const items = [`O ${f(bar.open)}`, `H ${f(bar.high)}`, `L ${f(bar.low)}`, `C ${f(bar.close)}`, `<span class="${cls}">${pct((bar.close / bar.open - 1) * 100, 2)}</span>`];
     if (this.ind.ema20) items.push(`<span><i style="background:${SERIES.ema20}"></i>EMA 20</span>`);
     if (this.ind.ema50) items.push(`<span><i style="background:${SERIES.ema50}"></i>EMA 50</span>`);
-    $("#pcLegend").innerHTML = items.map(x => `<span>${x}</span>`).join("");
-  },
+    this.$("Legend").innerHTML = items.map(x => `<span>${x}</span>`).join("");
+  }
   header(live) {
     if (!this.base) return; const b = this.base;
     const px = live ?? pxEUR(b) ?? this.candles[this.candles.length - 1]?.close; if (px == null) return;
-    const el = $("#pcPrice"); const txt = eur(px);
+    const el = this.$("Price"); const txt = eur(px);
     if (el.textContent !== txt) { if (this.lastPx != null) { el.classList.remove("tick-up", "tick-down"); void el.offsetWidth; el.classList.add(px >= this.lastPx ? "tick-up" : "tick-down"); } el.textContent = txt; this.lastPx = px; }
     const bv = Bitvavo.last.get(b);
-    $("#pcChg").innerHTML = pill(chg24(b));
-    $("#pcHigh").textContent = bv ? eur(bv.h) : "–"; $("#pcLow").textContent = bv ? eur(bv.l) : "–";
-    const p = Practice.st?.pos[b]; $("#pcPosWrap").hidden = !p;
-    if (p) { const v = p.qty * px * (1 - FEE), g = v - p.cost; $("#pcPos").innerHTML = `<span class="${g >= 0 ? "up" : "down"}">${g >= 0 ? "+" : ""}${eur(g)} (${pct(g / p.cost * 100, 1)})</span>`; }
+    this.$("Chg").innerHTML = pill(chg24(b));
+    this.$("High").textContent = bv ? eur(bv.h) : "–"; this.$("Low").textContent = bv ? eur(bv.l) : "–";
+    const p = this.ov(b)?.pos; this.$("PosWrap").hidden = !p;
+    if (p) { const v = p.qty * px * (1 - FEE), g = v - p.cost; this.$("Pos").innerHTML = `<span class="${g >= 0 ? "up" : "down"}">${g >= 0 ? "+" : ""}${eur(g)} (${pct(g / p.cost * 100, 1)})</span>`; }
+  }
+}
+/** Candles in euros: Bitvavo EUR market when listed, otherwise Binance USDT converted. Oldest first. */
+async function fetchCandles(base, iv, limit = 500) {
+  if (S.bitvavo.has(base)) {
+    const k = await getJSON(`${API.bv}/${base}-EUR/candles?interval=${iv}&limit=${limit}`);
+    return k.map(r => ({ time: r[0] / 1000, open: +r[1], high: +r[2], low: +r[3], close: +r[4], volume: +r[5] })).reverse();
+  }
+  const k = await getJSON(`${API.bn}/klines?symbol=${base}USDT&interval=${iv}&limit=${limit}`); const fx = S.eurPerUsdt || 1;
+  return k.map(r => ({ time: r[0] / 1000, open: r[1] * fx, high: r[2] * fx, low: r[3] * fx, close: r[4] * fx, volume: +r[5] }));
+}
+const PChart = new LiveChart("pc", base => {
+  const st = Practice.st; if (!st) return null; const p = st.pos[base]; const lines = [];
+  if (p) { lines.push({ price: p.cost / p.qty, kind: "avg", title: "avg buy" }); if (p.sl) lines.push({ price: p.sl, kind: "stop", title: "stop-loss" }); if (p.tp) lines.push({ price: p.tp, kind: "target", title: "take-profit" }); }
+  for (const o of st.orders.filter(o => o.base === base)) lines.push({ price: o.px, kind: "order", title: o.side === "buy" ? "buy limit" : "sell limit" });
+  return { lines, marks: st.hist.filter(h => h.base === base).map(h => ({ ts: h.ts, side: h.side, pnl: h.pnl })), pos: p ? { qty: p.qty, cost: p.cost } : null };
+});
+
+/* =========================================================================
+   Trading bot: paper-trades chosen coins on closed candles with a fixed strategy
+   ========================================================================= */
+const BOT_STRATS = {
+  ema: { name: "Trend follower", desc: "Buys when the 20 EMA crosses above the 50 EMA, sells when it crosses back below.",
+    signal(c, i, x) { const a = x.e20, b = x.e50; if (a[i - 1] == null || b[i - 1] == null) return null;
+      if (a[i - 1] <= b[i - 1] && a[i] > b[i]) return { side: "buy", why: "EMA 20 crossed above EMA 50: an upswing may be starting" };
+      if (a[i - 1] >= b[i - 1] && a[i] < b[i]) return { side: "sell", why: "EMA 20 crossed below EMA 50: the upswing is fading" };
+      return null; } },
+  rsi: { name: "Dip buyer", desc: "Buys when RSI(14) climbs back above 30 after being oversold, sells when RSI rises above 60.",
+    signal(c, i, x) { const r = x.rsi; if (r[i - 1] == null) return null;
+      if (r[i - 1] < 30 && r[i] >= 30) return { side: "buy", why: `RSI recovered from oversold (${r[i - 1].toFixed(0)} → ${r[i].toFixed(0)})` };
+      if (r[i] > 60) return { side: "sell", why: `RSI ${r[i].toFixed(0)} is above 60: the bounce has played out` };
+      return null; } },
+  breakout: { name: "Breakout hunter", desc: "Buys when price closes above the highest high of the last 20 candles, sells below the lowest low of the last 10.",
+    signal(c, i) { if (i < 21) return null; let hi = -Infinity, lo = Infinity;
+      for (let j = i - 20; j < i; j++) hi = Math.max(hi, c[j].high); for (let j = i - 10; j < i; j++) lo = Math.min(lo, c[j].low);
+      if (c[i].close > hi) return { side: "buy", why: `Closed at ${eur(c[i].close)}, above the 20-candle high of ${eur(hi)}` };
+      if (c[i].close < lo) return { side: "sell", why: `Closed below the 10-candle low of ${eur(lo)}` };
+      return null; } },
+};
+const BOT_IV = { "5m": 300, "15m": 900, "1h": 3600, "4h": 14400 };
+function botCtx(c) { const cl = c.map(x => x.close); return { e20: Ind.ema(cl, 20), e50: Ind.ema(cl, 50), rsi: Ind.rsi(cl) }; }
+function botEquity(a) { let v = a.cash; for (const [b, p] of Object.entries(a.pos)) v += p.qty * (a.px[b] ?? p.entry); return v; }
+/** One closed candle for one coin: stop/target first, then the strategy signal. Shared by the live bot and the history test. */
+function botStep(a, cfg, base, c, i, x, live) {
+  const k = c[i], ts = (k.time + BOT_IV[cfg.iv]) * 1000 - 1; a.px[base] = k.close; // just before the candle closes, so markers land on it
+  const log = (kind, msg) => { if (live) { a.log.unshift({ ts, base, kind, msg }); if (a.log.length > 400) a.log.pop(); } };
+  const exit = (px, why) => {
+    const p = a.pos[base]; const proceeds = p.qty * px * (1 - FEE), pnl = proceeds - p.cost;
+    a.cash += proceeds; delete a.pos[base];
+    a.hist.unshift({ ts, base, side: "sell", px, qty: p.qty, eur: proceeds, pnl, pnlPct: pnl / p.cost * 100, held: ts - p.ts, why });
+    log("sell", `Sold at ${eur(px)}: ${why}. Result ${pnl >= 0 ? "+" : ""}${eur(pnl)} (${pct(pnl / p.cost * 100, 1)}).`);
+  };
+  const p = a.pos[base];
+  if (p) {
+    if (k.low <= p.sl) { exit(p.sl, "stop-loss hit"); return; }
+    if (k.high >= p.tp) { exit(p.tp, "take-profit reached"); return; }
+  }
+  const sig = BOT_STRATS[cfg.strat].signal(c, i, x); if (!sig) return;
+  if (sig.side === "sell" && a.pos[base]) { exit(k.close, sig.why); return; }
+  if (sig.side === "buy" && !a.pos[base]) {
+    if (Object.keys(a.pos).length >= cfg.max) { log("skip", `Buy signal skipped (${sig.why}): already ${cfg.max} positions open.`); return; }
+    const amt = Math.min(botEquity(a) * cfg.size / 100, a.cash);
+    if (amt < 10) { log("skip", `Buy signal skipped: not enough cash left (${eur(a.cash)}).`); return; }
+    const qty = amt * (1 - FEE) / k.close;
+    a.cash -= amt; a.pos[base] = { qty, cost: amt, entry: k.close, sl: k.close * (1 - cfg.sl / 100), tp: k.close * (1 + cfg.tp / 100), ts };
+    a.hist.unshift({ ts, base, side: "buy", px: k.close, qty, eur: amt, why: sig.why });
+    log("buy", `Bought ${eur(amt)} at ${eur(k.close)}: ${sig.why}. Stop ${eur(a.pos[base].sl)}, target ${eur(a.pos[base].tp)}.`);
+  }
+}
+function botStats(a, start, eqVals) {
+  const closed = a.hist.filter(h => h.side === "sell"), w = closed.filter(h => h.pnl > 0), l = closed.filter(h => h.pnl <= 0);
+  const gw = w.reduce((s, h) => s + h.pnl, 0), gl = -l.reduce((s, h) => s + h.pnl, 0);
+  let pk = -Infinity, mdd = 0; for (const v of eqVals) { pk = Math.max(pk, v); mdd = Math.max(mdd, 1 - v / pk); }
+  return { n: closed.length, win: closed.length ? w.length / closed.length : 0, pf: gl ? gw / gl : (gw ? Infinity : 0), ret: botEquity(a) / start - 1, mdd, avgW: w.length ? gw / w.length : 0, avgL: l.length ? gl / l.length : 0 };
+}
+
+const Bot = {
+  st: null, timer: null, data: {}, busy: false,
+  fresh(cfg) { return { on: false, cfg: cfg || { coins: ["BTC", "ETH", "SOL"], strat: "ema", iv: "15m", size: 20, max: 3, sl: 3, tp: 6 }, start: 10000, cash: 10000, pos: {}, px: {}, hist: [], log: [], last: {}, eq: [], startedAt: null, bench: null }; },
+  load() { this.st = store.get("bot", null) || this.fresh(); this.st.px ||= {}; },
+  save() { store.set("bot", this.st); },
+  latestClosed(c) { const iv = BOT_IV[this.st.cfg.iv], now = Date.now(); for (let i = c.length - 1; i >= 0; i--) if ((c[i].time + iv) * 1000 <= now) return c[i].time; return 0; },
+  async start() {
+    const st = this.st; st.on = true; st.startedAt ||= Date.now();
+    this.logInfo(`Bot started: ${BOT_STRATS[st.cfg.strat].name} on ${st.cfg.coins.join(", ")}, ${st.cfg.iv} candles.`);
+    this.save(); this.render(); await this.poll(true);
+    clearInterval(this.timer); this.timer = setInterval(() => this.poll(), 15000);
+  },
+  stop() { this.st.on = false; clearInterval(this.timer); this.logInfo("Bot stopped. Open positions stay open until you start it again or reset."); this.save(); this.render(); },
+  logInfo(msg) { this.st.log.unshift({ ts: Date.now(), base: "", kind: "info", msg }); if (this.st.log.length > 400) this.st.log.pop(); },
+  /** Fetch candles for every coin and process each newly closed candle once (also catches up after the app was closed). */
+  async poll(first) {
+    if (this.busy || !this.st.on) return; this.busy = true;
+    const st = this.st, cfg = st.cfg, iv = BOT_IV[cfg.iv]; let traded = false, caught = 0;
+    try {
+      for (const base of cfg.coins) {
+        let c;
+        try { c = await fetchCandles(base, cfg.iv, first ? 1000 : 300); } catch (e) { if (first) this.logInfo(`Couldn't load ${base} (${e.message}). Retrying.`); continue; }
+        this.data[base] = c; const x = botCtx(c); const now = Date.now();
+        if (!st.last[base]) { st.last[base] = this.latestClosed(c); st.px[base] = c[c.length - 1].close; continue; }
+        for (let i = 1; i < c.length; i++) {
+          if (c[i].time <= st.last[base] || (c[i].time + iv) * 1000 > now) continue;
+          const before = st.hist.length; botStep(st, cfg, base, c, i, x, true); st.last[base] = c[i].time;
+          if (st.hist.length !== before) traded = true; if (first) caught++;
+        }
+        st.px[base] = c[c.length - 1].close;
+      }
+      if (!st.bench && cfg.coins.every(b => st.px[b])) st.bench = { ts: Date.now(), px: Object.fromEntries(cfg.coins.map(b => [b, st.px[b]])) };
+      if (first && caught > 1) this.logInfo(`Caught up on ${caught} candles that closed while the app was closed.`);
+      const last = st.eq[st.eq.length - 1];
+      if (!last || Date.now() - last[0] > 60000 || traded) { st.eq.push([Date.now(), botEquity(st), this.benchValue()]); if (st.eq.length > 3000) st.eq.shift(); }
+      this.save();
+    } finally { this.busy = false; }
+    if (!$("#view-bot").hidden) this.render();
+  },
+  benchValue() {
+    const b = this.st.bench; if (!b) return null; const coins = Object.keys(b.px);
+    return coins.reduce((s, c) => s + (this.st.start / coins.length) * ((pxEUR(c) ?? this.st.px[c] ?? b.px[c]) / b.px[c]), 0);
+  },
+  /* ---- history test of the current settings ---- */
+  async test() {
+    const cfg = this.st.cfg, out = $("#btTestOut"); out.hidden = false;
+    out.innerHTML = `<div class="pbody"><span class="skel" style="width:260px"></span></div>`;
+    try {
+      const sets = {}; for (const b of cfg.coins) sets[b] = await fetchCandles(b, cfg.iv, 1000);
+      const a = { cash: 10000, pos: {}, px: {}, hist: [], log: [] };
+      const ctx = Object.fromEntries(Object.entries(sets).map(([b, c]) => [b, botCtx(c)]));
+      const idx = Object.fromEntries(Object.entries(sets).map(([b, c]) => [b, new Map(c.map((k, i) => [k.time, i]))]));
+      const times = [...new Set(Object.values(sets).flatMap(c => c.map(k => k.time)))].sort((x, y) => x - y).slice(0, -1);
+      const t0 = times.find(t => cfg.coins.every(b => idx[b].has(t))) ?? times[0];
+      const eqv = [];
+      for (const t of times) { if (t < t0) continue; for (const b of cfg.coins) { const i = idx[b].get(t); if (i != null && i > 0) botStep(a, cfg, b, sets[b], i, ctx[b], false); } eqv.push(botEquity(a)); }
+      const r = botStats(a, 10000, eqv);
+      const bh = cfg.coins.reduce((s, b) => { const c = sets[b], i0 = idx[b].get(t0) ?? 0; return s + (10000 / cfg.coins.length) * (c[c.length - 2].close / c[i0].close); }, 0) / 10000 - 1;
+      const days = (times[times.length - 1] - t0) / 86400;
+      out.innerHTML = `<div class="phead"><h2>History test</h2><span class="faint" style="font-size:12px">${BOT_STRATS[cfg.strat].name} · ${cfg.coins.join(", ")} · last ${days.toFixed(0)} days of ${cfg.iv} candles</span></div>
+        <div class="tablewrap"><table><thead><tr><th class="l" scope="col"></th><th scope="col">Return</th><th scope="col">Trades</th><th scope="col">Winning</th><th scope="col">Profit factor</th><th scope="col">Worst drop</th></tr></thead><tbody>
+        <tr style="cursor:default"><td class="l">Bot with these settings</td><td class="mono ${r.ret >= 0 ? "up" : "down"}">${pct(r.ret * 100, 1)}</td><td class="mono">${r.n}</td><td class="mono">${r.n ? Math.round(r.win * 100) + "%" : "–"}</td><td class="mono">${isFinite(r.pf) ? r.pf.toFixed(2) : "–"}</td><td class="mono down">${pct(-r.mdd * 100, 1)}</td></tr>
+        <tr style="cursor:default"><td class="l">Just holding these coins</td><td class="mono ${bh >= 0 ? "up" : "down"}">${pct(bh * 100, 1)}</td><td class="mono">–</td><td class="mono">–</td><td class="mono">–</td><td class="mono">–</td></tr></tbody></table></div>
+        <p class="note" style="padding:0 14px 12px">${r.n < 10 ? `Only ${r.n} trades in this window: too few to say much. Try a smaller candle size or more coins.` : r.ret > bh && r.pf > 1.2 ? "These settings would have done better than holding in this window. That's a start, not proof: test it live for a few weeks too." : "These settings would not have beaten simply holding in this window. Try another strategy, candle size or stop/target before letting it trade live."} Simulated with a 0.25% fee per trade on closed candles.</p>`;
+    } catch (e) { out.innerHTML = `<div class="pbody"><div class="err">Couldn't run the test (${esc(e.message)}).</div></div>`; }
+  },
+  /* ---- UI ---- */
+  init() {
+    this.load();
+    $("#btStrat").innerHTML = Object.entries(BOT_STRATS).map(([k, s]) => `<label><input type="radio" name="btStrat" value="${k}"><span>${s.name}<small>${s.desc}</small></span></label>`).join("");
+    $("#btStrat").addEventListener("change", e => { this.st.cfg.strat = e.target.value; this.changed("Strategy"); });
+    $$("#btIv [data-biv]").forEach(b => b.addEventListener("click", () => { this.st.cfg.iv = b.dataset.biv; this.st.last = {}; this.changed("Candle size"); }));
+    for (const [id, k, lo, hi] of [["#btSize", "size", 1, 100], ["#btMax", "max", 1, 10], ["#btSl", "sl", 0.5, 50], ["#btTp", "tp", 0.5, 200]])
+      $(id).addEventListener("change", e => { const v = parseFloat(e.target.value); if (v >= lo && v <= hi) { this.st.cfg[k] = v; this.changed(); } else e.target.value = this.st.cfg[k]; });
+    $("#btAdd").addEventListener("change", e => {
+      const b = e.target.value.trim().toUpperCase(); e.target.value = "";
+      if (!b || this.st.cfg.coins.includes(b)) return;
+      if (!S.bitvavo.has(b) && !S.binance.has(b + "USDT")) { $("#btMsg").textContent = `${b} has no live market on Bitvavo or Binance.`; return; }
+      if (this.st.cfg.coins.length >= 8) { $("#btMsg").textContent = "The bot can watch up to 8 coins."; return; }
+      this.st.cfg.coins.push(b); this.changed(`Added ${b}`);
+    });
+    $("#btCoins").addEventListener("click", e => { const x = e.target.closest("[data-rm]"); if (!x) return; const b = x.dataset.rm;
+      if (this.st.pos[b]) { $("#btMsg").textContent = `The bot still holds ${b}. It stays in the list until that position closes.`; return; }
+      if (this.st.cfg.coins.length <= 1) return; this.st.cfg.coins = this.st.cfg.coins.filter(c => c !== b); delete this.st.last[b]; this.changed(`Removed ${b}`); });
+    $("#bcCoins").addEventListener("click", e => { const b = e.target.closest("[data-bc]"); if (b) { this.chartCoin = b.dataset.bc; this.renderChartCoins(); BChart.load(this.chartCoin); } });
+    $("#btToggle").addEventListener("click", () => this.st.on ? this.stop() : this.start());
+    $("#btTest").addEventListener("click", () => this.test());
+    $("#btReset").addEventListener("click", e => {
+      const b = e.currentTarget;
+      if (b.dataset.armed) { clearInterval(this.timer); this.st = this.fresh(this.st.cfg); this.save(); this.render(); BChart.key = ""; BChart.overlays(); b.textContent = "Reset bot"; delete b.dataset.armed; b.classList.remove("btn-danger"); $("#btMsg").textContent = "Bot reset: €10,000, no history. Settings kept."; return; }
+      b.dataset.armed = "1"; b.textContent = "Click again to erase the bot's history"; b.classList.add("btn-danger");
+      setTimeout(() => { if (b.dataset.armed) { delete b.dataset.armed; b.textContent = "Reset bot"; b.classList.remove("btn-danger"); } }, 4000);
+    });
+    if (this.st.on) { this.logInfo("App reopened: resuming."); this.poll(true); this.timer = setInterval(() => this.poll(), 15000); }
+  },
+  changed(what) {
+    this.save(); this.renderForm();
+    if (what) { $("#btMsg").textContent = this.st.on ? `${what} saved. The bot uses it from the next candle.` : `${what} saved.`; if (this.st.on) this.logInfo(`Settings changed: ${what}.`); }
+    if (this.st.on && /Candle|Added/.test(what || "")) this.poll(false);
+  },
+  renderForm() {
+    const c = this.st.cfg;
+    $("#btCoins").innerHTML = c.coins.map(b => `<span class="chip" aria-pressed="false" style="cursor:default">${esc(b)} <button type="button" class="linkbtn" data-rm="${esc(b)}" aria-label="Remove ${esc(b)}" style="text-decoration:none">×</button></span>`).join("");
+    $$("#btStrat input").forEach(i => i.checked = i.value === c.strat);
+    $$("#btIv [data-biv]").forEach(b => b.setAttribute("aria-pressed", b.dataset.biv === c.iv));
+    $("#btSize").value = c.size; $("#btMax").value = c.max; $("#btSl").value = c.sl; $("#btTp").value = c.tp;
+    const ck = [], add = (lvl, h) => ck.push(`<div class="check ${lvl}">${lvl === "ok" ? `<svg class="i"><use href="#i-check"/></svg>` : `<span class="dot"></span>`}<span>${h}</span></div>`);
+    const risk = c.size * c.sl / 100; add(risk <= 2 ? "ok" : risk <= 4 ? "warn" : "bad", `Each losing trade costs about <b>${risk.toFixed(1)}%</b> of the bot's money (${c.size}% size × ${c.sl}% stop).`);
+    add(c.tp / c.sl >= 1.5 ? "ok" : "warn", `Reward-to-risk <b>${(c.tp / c.sl).toFixed(1)} : 1</b>.`);
+    if (c.size * c.max > 100) add("warn", `${c.max} positions × ${c.size}% is more than 100%: later signals may be skipped for lack of cash.`);
+    $("#btChecks").innerHTML = ck.join("");
+  },
+  renderChartCoins() {
+    const coins = [...new Set([...this.st.cfg.coins, ...Object.keys(this.st.pos)])];
+    if (!coins.includes(this.chartCoin)) this.chartCoin = coins[0];
+    $("#bcCoins").innerHTML = coins.map(b => `<button type="button" class="chip" data-bc="${esc(b)}" aria-pressed="${b === this.chartCoin}">${esc(b)}${this.st.pos[b] ? " ●" : ""}</button>`).join("");
+  },
+  render() {
+    const st = this.st, V = botEquity({ ...st, px: Object.fromEntries(Object.keys(st.pos).map(b => [b, pxEUR(b) ?? st.px[b]])) }), bench = this.benchValue();
+    $("#btState").textContent = st.on ? "Running" : "Stopped"; $("#btState").className = "state " + (st.on ? "up" : "n");
+    $("#btToggle").textContent = st.on ? "Stop bot" : "Start bot";
+    const r = botStats(st, st.start, st.eq.map(e => e[1]).concat(V));
+    $("#btAccount").innerHTML = [
+      ["Bot money", eur(V), `${pill((V / st.start - 1) * 100)} from ${eur(st.start)}`],
+      ["Just holding", bench ? eur(bench) : "–", bench ? `${pill((bench / st.start - 1) * 100)} if you'd bought the same coins at start` : "starts when the bot starts"],
+      ["Closed trades", String(r.n), r.n ? `${Math.round(r.win * 100)}% profitable` : "none yet"],
+      ["Running since", st.startedAt ? new Date(st.startedAt).toLocaleDateString([], { day: "numeric", month: "short" }) : "not started", st.startedAt ? `${((Date.now() - st.startedAt) / 86400000).toFixed(1)} days` : "press Start bot"],
+      ["Cash", eur(st.cash), `${Object.keys(st.pos).length} open position${Object.keys(st.pos).length === 1 ? "" : "s"}`],
+    ].map(([k, v, s]) => `<div><dt>${k}</dt><dd>${v}</dd><p>${s}</p></div>`).join("");
+    const pos = Object.entries(st.pos);
+    $("#btPos").innerHTML = pos.length ? `<thead><tr><th class="l" scope="col">Coin</th><th scope="col">Entry</th><th scope="col">Now</th><th scope="col">Result</th><th scope="col" class="hide-sm">Stop / target</th></tr></thead><tbody>` +
+      pos.map(([b, p]) => { const px = pxEUR(b) ?? st.px[b], g = p.qty * px * (1 - FEE) - p.cost; return `<tr style="cursor:default"><td class="l"><button type="button" class="linkbtn" data-bc="${esc(b)}">${esc(b)}</button></td><td class="mono">${eur(p.entry)}</td><td class="mono">${eur(px)}</td><td class="mono ${g >= 0 ? "up" : "down"}">${g >= 0 ? "+" : ""}${eur(g)}</td><td class="mono hide-sm" style="font-size:12px">${eur(p.sl)} / ${eur(p.tp)}</td></tr>`; }).join("") + "</tbody>"
+      : `<tbody><tr><td class="l faint" style="padding:14px 12px;white-space:normal">${st.on ? "No open positions. The bot is waiting for a signal." : "Start the bot to let it look for trades."}</td></tr></tbody>`;
+    $("#btPos").onclick = e => { const b = e.target.closest("[data-bc]"); if (b) { this.chartCoin = b.dataset.bc; this.renderChartCoins(); BChart.load(this.chartCoin); } };
+    const kindCls = { buy: "up", sell: "down", skip: "faint", info: "muted" }, kindTxt = { buy: "BUY", sell: "SELL", skip: "SKIP", info: "INFO" };
+    $("#btLog").innerHTML = st.log.length ? st.log.slice(0, 150).map(l => `<div><time>${new Date(l.ts).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</time><b class="${kindCls[l.kind]}">${l.base ? esc(l.base) : kindTxt[l.kind]}</b><span>${l.base ? `<b class="${kindCls[l.kind]}">${kindTxt[l.kind]}</b> ` : ""}${l.msg}</span></div>`).join("")
+      : `<p class="note" style="padding:14px">Nothing yet. Press <b>Start bot</b>. The bot checks every coin when a ${st.cfg.iv} candle closes and writes down every decision here.</p>`;
+    $("#btHist").innerHTML = st.hist.length ? `<thead><tr><th class="l" scope="col">When</th><th class="l" scope="col">Trade</th><th scope="col">Price</th><th scope="col">Result</th></tr></thead><tbody>` +
+      st.hist.slice(0, 80).map(h => `<tr style="cursor:default"><td class="l faint" style="font-size:12px">${new Date(h.ts).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</td><td class="l"><span class="${h.side === "buy" ? "up" : "down"}">${h.side === "buy" ? "Buy" : "Sell"}</span> ${esc(h.base)} <span class="faint" style="font-size:12px">${esc(h.why)}</span></td><td class="mono">${eur(h.px)}</td><td>${h.side === "sell" ? `<span class="mono ${h.pnl >= 0 ? "up" : "down"}">${h.pnl >= 0 ? "+" : ""}${eur(h.pnl)}</span>` : `<span class="mono">${eur(h.eur)}</span>`}</td></tr>`).join("") + "</tbody>"
+      : `<tbody><tr><td class="l faint" style="padding:14px 12px">The bot's trades will appear here.</td></tr></tbody>`;
+    this.renderTrust(r, V, bench); this.drawEq(); this.renderForm(); this.renderChartCoins(); BChart.overlays(); BChart.header();
+  },
+  renderTrust(r, V, bench) {
+    const st = this.st, days = st.startedAt ? (Date.now() - st.startedAt) / 86400000 : 0;
+    const beats = bench != null && V > bench, prof = V > st.start;
+    const benchDd = (() => { let pk = -Infinity, m = 0; for (const e of st.eq) if (e[2] != null) { pk = Math.max(pk, e[2]); m = Math.max(m, 1 - e[2] / pk); } return m; })();
+    const [lvl, title, text] = r.n < 10 ? ["faint", "Too early to judge", `${r.n} closed trade${r.n === 1 ? "" : "s"} so far. A bot needs at least 30 trades, over a few weeks with both rising and falling markets, before its results mean anything. Let it run.`]
+      : r.pf < 1 || (!prof && !beats) ? ["down", "Not trustworthy (yet)", "It's losing money after fees. Don't use these settings with real money. Try another strategy or candle size, use “Test these settings”, then reset and run it again."]
+      : r.n >= 30 && days >= 14 && r.pf >= 1.3 && beats ? ["up", "Promising so far", "It's profitable after fees and beats simply holding over a reasonable sample. Keep it running: markets change, and a bot that worked for a month can stop working. If you ever go live, start with a very small amount."]
+      : ["warn", "Mixed results", `${prof ? "It's in profit" : "It's not in profit"}${bench != null ? ` and ${beats ? "beats" : "trails"} simply holding` : ""}. Keep testing before trusting it.`];
+    const item = (ok, t) => `<div class="check ${ok ? "ok" : "warn"}">${ok ? `<svg class="i"><use href="#i-check"/></svg>` : `<span class="dot"></span>`}<span>${t}</span></div>`;
+    $("#btTrust").innerHTML = `<div class="verdict"><span class="dot" style="background:var(--${lvl === "faint" ? "faint" : lvl})"></span><div><h3>${title}</h3><p>${text}</p></div></div>
+      <div class="checks">
+        ${item(r.n >= 30, `At least 30 closed trades <span class="faint">(${r.n} so far)</span>`)}
+        ${item(days >= 14, `Running at least 2 weeks <span class="faint">(${days.toFixed(1)} days)</span>`)}
+        ${item(prof, `Profitable after fees <span class="faint">(${pct((V / st.start - 1) * 100, 1)})</span>`)}
+        ${item(beats, `Beats just holding the same coins <span class="faint">(${bench != null ? pct((bench / st.start - 1) * 100, 1) : "–"})</span>`)}
+        ${item(r.pf >= 1.3, `Profit factor 1.3 or more <span class="faint">(${r.n ? (isFinite(r.pf) ? r.pf.toFixed(2) : "no losses yet") : "–"})</span>`)}
+        ${item(r.n && r.mdd <= Math.max(benchDd, 0.05), `Worst drop no bigger than holding <span class="faint">(bot ${pct(-r.mdd * 100, 1)}, holding ${pct(-benchDd * 100, 1)})</span>`)}
+      </div>
+      <p class="note">${r.n ? `Average win ${eur(r.avgW)}, average loss ${eur(r.avgL)}. ` : ""}Before ever connecting a bot to real money, remember that live trading adds slippage, delays and outages that this simulation doesn't have.</p>`;
+  },
+  drawEq() {
+    const cv = $("#btEq"); if (!cv.offsetWidth) return; const st = this.st; const pts = st.eq.filter(e => e[2] != null);
+    const dpr = devicePixelRatio || 1, W = cv.offsetWidth, H = cv.offsetHeight; cv.width = W * dpr; cv.height = H * dpr; const ctx = cv.getContext("2d"); ctx.scale(dpr, dpr);
+    if (pts.length < 2) { ctx.fillStyle = cssVar("--faint"); ctx.font = "12px IBM Plex Sans, sans-serif"; ctx.fillText("The comparison appears once the bot has been running a few minutes.", 4, H / 2); $("#btEqNote").textContent = ""; return; }
+    const all = pts.flatMap(p => [p[1], p[2]]); const mn = Math.min(...all), mx = Math.max(...all), pad = (mx - mn) * 0.1 || 20;
+    const x = i => 4 + i / (pts.length - 1) * (W - 80), y = v => 6 + (1 - (v - mn + pad) / (mx - mn + 2 * pad)) * (H - 14);
+    ctx.font = "11px IBM Plex Mono, monospace";
+    for (const [k, col, lbl] of [[2, cssVar("--faint"), "holding"], [1, "#3987e5", "bot"]]) { ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.beginPath(); pts.forEach((p, i) => ctx.lineTo(x(i), y(p[k]))); ctx.stroke(); ctx.fillStyle = col; ctx.fillText(`${lbl} ${money(pts[pts.length - 1][k], "eur", 0)}`, W - 74, y(pts[pts.length - 1][k]) + 4); }
+    $("#btEqNote").innerHTML = `<span style="color:#3987e5">━</span> bot · <span class="faint">━</span> buying the same coins at the start and holding`;
+  },
+  show() {
+    this.renderChartCoins(); BChart.init();
+    if (!store.get("bc.iv", null)) BChart.iv = this.st.cfg.iv;
+    BChart.load(this.chartCoin); this.render();
   },
 };
+const BChart = new LiveChart("bc", base => {
+  const st = Bot.st; if (!st) return null; const p = st.pos[base]; const lines = [];
+  if (p) lines.push({ price: p.entry, kind: "avg", title: "bot entry" }, { price: p.sl, kind: "stop", title: "bot stop" }, { price: p.tp, kind: "target", title: "bot target" });
+  return { lines, marks: st.hist.filter(h => h.base === base).map(h => ({ ts: h.ts, side: h.side, pnl: h.pnl })), pos: p ? { qty: p.qty, cost: p.cost } : null };
+});
 
 /* =========================================================================
    Coach: course, strategy lab, AI coach chat
@@ -2041,6 +2398,8 @@ const Coach = {
   prog: null, cur: null, msgs: [], client: null, busy: false,
   init() {
     this.prog = store.get("coach", { done: {}, cur: LESSONS[0].id }); this.cur = this.prog.cur;
+    this.msgs = store.get("chat", []);
+    this.mem = store.get("mem", null) || { first: Date.now(), qs: [], terms: {}, coins: {} };
     $("#coList").addEventListener("click", e => { const b = e.target.closest("[data-l]"); if (b) this.open(b.dataset.l, true); });
     $("#labCoins").innerHTML = ["BTC", "ETH", "SOL", "XRP", "ADA", "DOGE"].map((c, i) => `<button type="button" class="chip" data-lc="${c}" aria-pressed="${i === 0}">${c}</button>`).join("");
     this.labSym = "BTC";
@@ -2048,8 +2407,8 @@ const Coach = {
     $("#labCards").innerHTML = STRATS.map(s => `<div class="strat"><h3>${s.name}</h3><p>${s.rule}</p><button type="button" class="btn" data-run="${s.id}">Test on history</button></div>`).join("");
     $("#labCards").addEventListener("click", e => { const b = e.target.closest("[data-run]"); if (b) this.runLab(b.dataset.run); });
     // chat (built-in, free)
-    store.set("apiKey", ""); // remove any key saved by version 1.1.0
-    $("#chatClear").addEventListener("click", () => { this.msgs = []; this.renderChat(); });
+    try { localStorage.removeItem("kd.apiKey"); } catch {} // remove any key saved by version 1.1.0
+    $("#chatClear").addEventListener("click", () => { this.msgs = []; store.set("chat", []); this.renderChat(); });
     $("#chatForm").addEventListener("submit", e => { e.preventDefault(); const t = $("#chatInput").value.trim(); if (t) { $("#chatInput").value = ""; this.ask(t); } });
     $("#chatSuggest").innerHTML = ["Review my trades", "What is the market doing today?", "Quiz me", "What is a stop-loss?", "Account 10000 risk 1% stop 5%", "How is SOL?", "Which strategy fits a beginner?"].map(s => `<button type="button" class="chip" data-sug="${esc(s)}">${esc(s)}</button>`).join("");
     $("#chatSuggest").addEventListener("click", e => { const b = e.target.closest("[data-sug]"); if (b) this.ask(b.dataset.sug); });
@@ -2099,16 +2458,28 @@ const Coach = {
   /* ---- built-in coach chat (free, rule-based, uses live data in the browser) ---- */
   renderChat() {
     const log = $("#chatLog");
-    const hello = `<p>Hi! I'm your built-in trading coach. I can review your practice trades, explain any trading term, calculate a safe position size, quiz you, and describe the market or a coin using live Bitvavo prices.</p><p class="faint" style="font-size:12.5px">I'm not an internet AI: I follow trading-coach rules written into this app, so I'm free and private. Tap a suggestion below to start.</p>`;
+    const m = this.mem; const lastQ = m.qs[m.qs.length - 1];
+    const hello = m.qs.length
+      ? `<p>Welcome back! We've talked ${m.qs.length} time${m.qs.length === 1 ? "" : "s"} since ${new Date(m.first).toLocaleDateString([], { day: "numeric", month: "long" })}. Last time you asked: “${esc(lastQ.text)}”.</p><p class="faint" style="font-size:12.5px">I remember our whole conversation on this computer. Ask “what do you remember?” to see it.</p>`
+      : `<p>Hi! I'm your built-in trading coach. I can review your practice trades, explain any trading term, calculate a safe position size, quiz you, and describe the market or a coin using live Bitvavo prices.</p><p class="faint" style="font-size:12.5px">I'm not an internet AI: I follow trading-coach rules written into this app, so I'm free and private. I remember what you ask me on this computer. Tap a suggestion below to start.</p>`;
     log.innerHTML = [{ role: "coach", html: hello }, ...this.msgs].map(m => `<div class="msg ${m.role === "user" ? "user" : "coach"}">${m.html}</div>`).join("");
     log.scrollTop = log.scrollHeight;
   },
-  say(role, html) { this.msgs.push({ role, html }); if (this.msgs.length > 80) this.msgs.splice(0, 2); this.renderChat(); },
+  say(role, html) { this.msgs.push({ role, html }); if (this.msgs.length > 400) this.msgs.splice(0, 2); store.set("chat", this.msgs); this.renderChat(); },
+  forget() { this.msgs = []; this.mem = { first: Date.now(), qs: [], terms: {}, coins: {} }; store.set("chat", []); store.set("mem", this.mem); },
+  remember(text) {
+    const t = text.toLowerCase(), m = this.mem; if (/forget everything/.test(t)) return;
+    const g = GLOSSARY.find(x => x.k.test(t)), c = Brain.findCoin(t);
+    m.qs.push({ ts: Date.now(), text: text.slice(0, 200) }); if (m.qs.length > 1000) m.qs.shift();
+    if (g) m.terms[g.t] = (m.terms[g.t] || 0) + 1;
+    if (c) m.coins[c] = (m.coins[c] || 0) + 1;
+    store.set("mem", m);
+  },
   async ask(text) {
     if (this.busy) return;
     this.say("user", esc(text));
     this.busy = true; $("#chatSend").disabled = true;
-    try { this.say("coach", await Bot.reply(text)); }
+    try { const ans = await Brain.reply(text, this.mem); this.remember(text); this.say("coach", ans); }
     catch (e) { this.say("coach", `<p>Something went wrong while I looked that up (${esc(e.message)}). Try again in a moment.</p>`); }
     finally { this.busy = false; $("#chatSend").disabled = false; }
   },
@@ -2153,11 +2524,17 @@ const COIN_NAMES = { bitcoin: "BTC", btc: "BTC", ethereum: "ETH", ether: "ETH", 
 const lessonLink = id => { const i = LESSONS.findIndex(l => l.id === id); return i < 0 ? "" : `<a href="#coach" data-lesson="${id}">Lesson ${i + 1}: ${esc(LESSONS[i].title)}</a>`; };
 const chips = (...xs) => `<div class="opts">${xs.map(x => `<button type="button" class="btn" data-say="${esc(x)}">${esc(x)}</button>`).join("")}</div>`;
 
-const Bot = {
+const Brain = {
   askedQuiz: [],
-  async reply(raw) {
+  async reply(raw, mem) {
     const t = raw.toLowerCase();
-    if (/^(hi|hey|hello|hallo|hoi|yo|goedemorgen|good (morning|evening))\b/.test(t)) return `<p>Hi! What would you like to work on?</p>${chips("Review my trades", "Quiz me", "Where do I start?")}`;
+    if (/what do you (remember|know about me)|wat (weet|onthoud) je|your memory|geheugen/.test(t)) return this.memory(mem);
+    if (/^yes, forget everything$/.test(t)) { Coach.forget(); return `<p>Done. I've forgotten our conversation and everything you asked. Your practice account, lessons and bot are not affected.</p>`; }
+    if (/forget (everything|me|all)|vergeet (alles|me)|clear (my )?memory/.test(t)) return `<p>Do you want me to forget our whole conversation and all your questions? Your practice account, lesson progress and bot stay as they are.</p>${chips("Yes, forget everything")}`;
+    if (/^(hi|hey|hello|hallo|hoi|yo|goedemorgen|good (morning|evening))\b/.test(t)) {
+      const top = mem && Object.entries(mem.terms).sort((a, b) => b[1] - a[1])[0];
+      return `<p>Hi${mem?.qs.length ? " again" : ""}! ${top ? `Last time you were working on <b>${esc(top[0].toLowerCase())}</b>. ` : ""}What would you like to work on?</p>${chips("Review my trades", "Quiz me", top ? "What is " + top[0].toLowerCase() + "?" : "Where do I start?")}`;
+    }
     if (/review|feedback|my trades|how am i doing|mijn trades|beoordeel|evaluat|what am i doing wrong/.test(t)) return this.review();
     if (/quiz|test me|overhoor|toets/.test(t)) return this.quiz();
     const nums = this.sizing(t); if (nums) return nums;
@@ -2169,10 +2546,23 @@ const Bot = {
     if (coin && !/what is|wat is|explain|uitleg/.test(t)) return this.coin(coin);
     if (/market|today|vandaag|markt|nieuws|what.?s happening|hoe staat/.test(t)) return this.market();
     const g = GLOSSARY.find(x => x.k.test(t));
-    if (g) return `<p><b>${g.t}.</b> ${g.a}</p><p class="example" style="margin:8px 0">${g.ex(Practice.value())}</p><p>${lessonLink(g.les)}</p>`;
+    if (g) { const n = mem?.terms[g.t] || 0; return `<p><b>${g.t}.</b> ${g.a}</p><p class="example" style="margin:8px 0">${g.ex(Practice.value())}</p><p>${lessonLink(g.les)}</p>${n ? `<p class="faint" style="font-size:12.5px">You've asked about ${g.t.toLowerCase()} ${n === 1 ? "once" : n + " times"} before. Want to test yourself?</p>${chips("Quiz me")}` : ""}`; }
     if (/thank|bedankt|dank/.test(t)) return `<p>You're welcome. Keep practising with small positions and a stop-loss on every trade.</p>`;
     if (/buy|sell|should i|moet ik|kopen|verkopen|prediction|voorspel|will .* go up/.test(t)) return `<p>I can't tell you what to buy or where a price will go. Nobody reliably can. What I can do is help you decide like a professional: check the trend, choose your stop, size the position so a loss costs at most 1–2%, and practise it here first.</p>${coin ? "" : chips("How is BTC?", "Account 10000 risk 1% stop 5%", "What is a stop-loss?")}`;
     return `<p>I didn't catch that. I'm a built-in coach, so I understand these kinds of questions:</p><ul><li>“review my trades”</li><li>“what is RSI” (or any term: stop-loss, spread, leverage, DCA…)</li><li>“account 5000 risk 1% stop 4%”</li><li>“how is ETH” or “market today”</li><li>“quiz me” or “which strategy fits me”</li></ul>`;
+  },
+  memory(mem) {
+    if (!mem?.qs.length) return `<p>We haven't talked before, so there's nothing to remember yet. Everything you ask me is saved on this computer only.</p>`;
+    const top = (o, n) => Object.entries(o).sort((a, b) => b[1] - a[1]).slice(0, n).map(([k, v]) => `${esc(k)} (${v}×)`).join(", ");
+    const done = LESSONS.filter(l => Coach.prog.done[l.id]).length, st = Practice.st;
+    return `<p>Here's what I remember, saved on this computer:</p><ul>
+      <li>We first talked on ${new Date(mem.first).toLocaleDateString([], { day: "numeric", month: "long", year: "numeric" })}, and you've asked me ${mem.qs.length} question${mem.qs.length === 1 ? "" : "s"}.</li>
+      ${Object.keys(mem.terms).length ? `<li>Topics you asked about most: ${top(mem.terms, 5)}.</li>` : ""}
+      ${Object.keys(mem.coins).length ? `<li>Coins you asked about: ${top(mem.coins, 5)}.</li>` : ""}
+      <li>Your last questions: ${mem.qs.slice(-3).reverse().map(q => `“${esc(q.text)}”`).join(", ")}.</li>
+      <li>Lessons completed: ${done} of ${LESSONS.length}. Practice account: ${eur(Practice.value())} after ${st.hist.length} trade${st.hist.length === 1 ? "" : "s"}.</li>
+      ${Bot.st?.startedAt ? `<li>Your trading bot has made ${Bot.st.hist.filter(h => h.side === "sell").length} closed trade${Bot.st.hist.filter(h => h.side === "sell").length === 1 ? "" : "s"} since ${new Date(Bot.st.startedAt).toLocaleDateString([], { day: "numeric", month: "short" })}.</li>` : ""}
+    </ul>${chips("Quiz me", "Review my trades", "Forget everything")}`;
   },
   findCoin(t) {
     for (const [w, s] of Object.entries(COIN_NAMES)) if (new RegExp(`\\b${w}\\b`).test(t)) return s;
@@ -2303,9 +2693,34 @@ function drawLines(cv, series, times, cur) {
 }
 
 /* =========================================================================
+   Backup and restore: every saved setting, trade, lesson, chat and bot record in one file
+   ========================================================================= */
+const DataFile = {
+  collect() { const keys = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k.startsWith("kd.")) keys[k] = localStorage.getItem(k); } } catch {} return keys; },
+  backup() {
+    const body = JSON.stringify({ app: "Koersdesk", made: new Date().toISOString(), keys: this.collect() }, null, 1);
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([body], { type: "application/json" }));
+    a.download = `koersdesk-backup-${new Date().toISOString().slice(0, 10)}.json`; document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    $("#prMsg").textContent = "Backup file created. Keep it somewhere safe (for example in OneDrive or on a USB stick).";
+  },
+  async restore(file) {
+    try {
+      const d = JSON.parse(await file.text());
+      if (d.app !== "Koersdesk" || typeof d.keys !== "object") throw new Error("this isn't a Koersdesk backup file");
+      for (const k of Object.keys(this.collect())) localStorage.removeItem(k);
+      for (const [k, v] of Object.entries(d.keys)) if (k.startsWith("kd.")) localStorage.setItem(k, v);
+      location.reload();
+    } catch (e) { $("#prMsg").textContent = `Couldn't restore: ${e.message}.`; }
+  },
+};
+$("#dataBackup").addEventListener("click", () => DataFile.backup());
+$("#dataRestore").addEventListener("change", e => { const f = e.target.files[0]; if (f) DataFile.restore(f); e.target.value = ""; });
+
+/* =========================================================================
    Router + boot
    ========================================================================= */
-const ROUTES = ["markets", "chart", "news", "insights", "practice", "coach"]; const loaded = new Set();
+const ROUTES = ["markets", "chart", "news", "insights", "practice", "bot", "coach"]; const loaded = new Set();
 function route() {
   const r = ROUTES.includes(location.hash.slice(1)) ? location.hash.slice(1) : "markets";
   for (const v of ROUTES) $("#view-" + v).hidden = v !== r;
@@ -2315,6 +2730,7 @@ function route() {
   if (r === "insights" && !loaded.has("insights")) { loaded.add("insights"); Insights.renderCoinChips(); Insights.load(); }
   if (r === "insights") requestAnimationFrame(() => Insights.redrawFan());
   if (r === "practice") Practice.show();
+  if (r === "bot") Bot.show();
   if (r === "coach") Coach.show();
   scrollTo(0, 0);
 }
@@ -2327,6 +2743,7 @@ addEventListener("hashchange", route);
   Markets.render();
   Practice.init(); Coach.init();
   await Promise.all([Binance.init(), Bitvavo.init()]);
+  Bot.init();
   route();
   Markets.load(); Global.load(); Markets.trending();
   setInterval(() => Markets.load(), 60000);

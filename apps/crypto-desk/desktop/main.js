@@ -16,7 +16,8 @@ function createWindow() {
     backgroundColor: "#0e1215",
     icon: path.join(__dirname, "icon.png"),
     autoHideMenuBar: true,
-    webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true },
+    // backgroundThrottling off: the trading bot keeps checking candles while the window is minimised
+    webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true, backgroundThrottling: false },
   });
   Menu.setApplicationMenu(null);
   win.loadFile(path.join(__dirname, "app", "index.html"));
