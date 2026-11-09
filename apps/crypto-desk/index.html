@@ -241,6 +241,9 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
 
 /* ---------- practice ---------- */
 .pr-grid { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 16px; align-items: start; }
+.pr-top { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+.pr-mid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: start; margin-top: 16px; }
+.ch-price.tick-up { color: var(--up); } .ch-price.tick-down { color: var(--down); }
 .ticket { display: grid; gap: 12px; }
 .fld { display: grid; gap: 5px; font-size: 12.5px; color: var(--muted); }
 .fld-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -302,7 +305,8 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
 .msg.coach.thinking { color: var(--muted); }
 .chat-in { display: flex; gap: 8px; }
 @media (max-width: 1100px) {
-  .pr-grid, .co-grid { grid-template-columns: minmax(0, 1fr); }
+  .pr-grid, .co-grid, .pr-top, .pr-mid { grid-template-columns: minmax(0, 1fr); }
+  #pcChart { height: 360px !important; }
   .mk-grid, .ch-grid { grid-template-columns: minmax(0, 1fr); }
   .span-7, .span-5, .span-6 { grid-column: span 12; }
 }
@@ -562,7 +566,40 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
     <button type="button" class="btn" id="prReset">Reset account</button>
   </div>
   <div class="panel" style="margin-bottom:16px"><dl class="read" id="prAccount" style="margin:0"></dl></div>
-  <div class="pr-grid">
+  <div class="pr-top">
+    <div class="panel" style="min-width:0">
+      <div class="ch-head" style="padding:12px 14px">
+        <div>
+          <h2 id="pcTitle" style="font-size:14px;color:var(--muted);font-weight:500">BTC / EUR</h2>
+          <div class="ch-price" id="pcPrice">–</div>
+        </div>
+        <div class="ch-stats">
+          <div>24h change<b id="pcChg">–</b></div>
+          <div>24h high<b id="pcHigh">–</b></div>
+          <div>24h low<b id="pcLow">–</b></div>
+          <div id="pcPosWrap" hidden>Your position<b id="pcPos">–</b></div>
+        </div>
+      </div>
+      <div class="ch-tools">
+        <div class="seg" role="group" aria-label="Interval" id="pcIv">
+          <button type="button" data-piv="1m" aria-pressed="false">1m</button>
+          <button type="button" data-piv="5m" aria-pressed="true">5m</button>
+          <button type="button" data-piv="15m" aria-pressed="false">15m</button>
+          <button type="button" data-piv="1h" aria-pressed="false">1h</button>
+          <button type="button" data-piv="4h" aria-pressed="false">4h</button>
+          <button type="button" data-piv="1d" aria-pressed="false">1D</button>
+        </div>
+        <div class="tools" role="group" aria-label="Overlays" id="pcInd">
+          <button type="button" class="chip" data-pind="ema20" aria-pressed="true">EMA 20</button>
+          <button type="button" class="chip" data-pind="ema50" aria-pressed="false">EMA 50</button>
+          <button type="button" class="chip" data-pind="vol" aria-pressed="true">Volume</button>
+          <button type="button" class="chip" data-pind="trades" aria-pressed="true">My trades</button>
+        </div>
+      </div>
+      <div class="legend" id="pcLegend"></div>
+      <div id="pcChart" style="height:460px" role="img" aria-label="Live candlestick chart of the selected coin with your trades"></div>
+      <p class="note" style="padding:8px 14px 12px;margin:0;max-width:none" id="pcKey"><span style="color:var(--accent)">━</span> your average buy price · <span class="down">┅</span> stop-loss · <span class="up">┅</span> take-profit · <span style="color:var(--warn)">┅</span> waiting limit order · <span class="up">▲</span> your buys · <span class="down">▼</span> your sells</p>
+    </div>
     <div class="panel">
       <div class="phead"><h2>New order</h2></div>
       <form class="pbody ticket" id="prForm" autocomplete="off">
@@ -586,8 +623,10 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
         <p class="note" id="prMsg" role="status" style="margin:0"></p>
       </form>
     </div>
+  </div>
+  <div class="pr-mid">
+    <div class="panel" style="min-width:0"><div class="phead"><h2>Open positions</h2><span class="faint" style="font-size:12px">click a coin to show it on the chart</span></div><div class="tablewrap"><table id="prPos"></table></div></div>
     <div class="side" style="min-width:0">
-      <div class="panel"><div class="phead"><h2>Open positions</h2></div><div class="tablewrap"><table id="prPos"></table></div></div>
       <div class="panel"><div class="phead"><h2>Waiting orders</h2></div><div class="tablewrap"><table id="prOrders"></table></div></div>
       <div class="panel"><div class="phead"><h2>Account value</h2><span class="faint" style="font-size:12px">recorded every minute while the app is open</span></div><div class="pbody"><canvas id="prEq" style="width:100%;height:140px;display:block" aria-label="Account value over time"></canvas></div></div>
     </div>
@@ -707,7 +746,7 @@ function applyTheme(t) {
   if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
   const dark = isDark();
   $("#themeBtn use").setAttribute("href", dark ? "#i-sun" : "#i-moon");
-  Chart.restyle(); Insights.redrawFan(); Markets.redrawSparks();
+  Chart.restyle(); PChart.restyle(); Insights.redrawFan(); Markets.redrawSparks();
 }
 function isDark() {
   const t = document.documentElement.dataset.theme;
@@ -1692,7 +1731,7 @@ const Practice = {
     const pos = Object.entries(st.pos);
     $("#prPos").innerHTML = pos.length ? `<thead><tr><th class="l" scope="col">Coin</th><th scope="col">Amount</th><th scope="col">Avg. buy</th><th scope="col">Now</th><th scope="col">Value</th><th scope="col">Profit / loss</th><th scope="col" class="hide-sm">Stop / target</th><th scope="col"></th></tr></thead><tbody>` +
       pos.map(([b, p]) => { const px = pxEUR(b) ?? p.cost / p.qty; const val = p.qty * px * (1 - FEE); const g = val - p.cost;
-        return `<tr style="cursor:default"><td class="l"><b style="font-weight:500">${esc(b)}</b></td><td class="mono">${plain(p.qty, 6)}</td><td class="mono">${eur(p.cost / p.qty)}</td><td class="mono">${eur(px)}</td><td class="mono">${eur(val)}</td><td><span class="mono ${g >= 0 ? "up" : "down"}">${g >= 0 ? "+" : ""}${eur(g)}</span> ${pill(g / p.cost * 100, 1)}</td><td class="mono hide-sm" style="font-size:12px">${p.sl ? eur(p.sl) : '<span class="warn-t">none</span>'} / ${p.tp ? eur(p.tp) : "–"}</td><td><button type="button" class="btn" data-close="${esc(b)}">Sell all</button></td></tr>`; }).join("") + "</tbody>"
+        return `<tr style="cursor:default"><td class="l"><button type="button" class="linkbtn" data-show="${esc(b)}" title="Show ${esc(b)} on the chart"><b style="font-weight:500">${esc(b)}</b></button></td><td class="mono">${plain(p.qty, 6)}</td><td class="mono">${eur(p.cost / p.qty)}</td><td class="mono">${eur(px)}</td><td class="mono">${eur(val)}</td><td><span class="mono ${g >= 0 ? "up" : "down"}">${g >= 0 ? "+" : ""}${eur(g)}</span> ${pill(g / p.cost * 100, 1)}</td><td class="mono hide-sm" style="font-size:12px">${p.sl ? eur(p.sl) : '<span class="warn-t">none</span>'} / ${p.tp ? eur(p.tp) : "–"}</td><td><button type="button" class="btn" data-close="${esc(b)}">Sell all</button></td></tr>`; }).join("") + "</tbody>"
       : `<tbody><tr><td class="l" style="white-space:normal;padding:18px 12px">No open positions. Buy something on the left. Start small and add a stop-loss.</td></tr></tbody>`;
     $("#prOrders").innerHTML = st.orders.length ? `<thead><tr><th class="l" scope="col">Order</th><th scope="col">Price</th><th scope="col">Now</th><th scope="col">Size</th><th scope="col"></th></tr></thead><tbody>` +
       st.orders.map(o => `<tr style="cursor:default"><td class="l"><span class="${o.side === "buy" ? "up" : "down"}">${o.side === "buy" ? "Buy" : "Sell"}</span> ${esc(o.base)} · limit</td><td class="mono">${eur(o.px)}</td><td class="mono">${eur(pxEUR(o.base))}</td><td class="mono">${o.side === "buy" ? eur(o.eur) : plain(o.qty, 6) + " " + esc(o.base)}</td><td><button type="button" class="btn" data-cancel="${o.id}">Cancel</button></td></tr>`).join("") + "</tbody>"
@@ -1701,6 +1740,7 @@ const Practice = {
       st.hist.slice(0, 60).map(h => `<tr style="cursor:default"><td class="l faint" style="font-size:12px">${new Date(h.ts).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</td><td class="l"><span class="${h.side === "buy" ? "up" : "down"}">${h.side === "buy" ? "Buy" : "Sell"}</span> ${plain(h.qty, 6)} ${esc(h.base)} <span class="faint" style="font-size:12px">${h.why}</span></td><td class="mono">${eur(h.px)}</td><td class="mono">${eur(h.eur)}</td><td>${h.side === "sell" ? `<span class="mono ${h.pnl >= 0 ? "up" : "down"}">${h.pnl >= 0 ? "+" : ""}${eur(h.pnl)}</span>` : '<span class="faint">–</span>'}</td></tr>`).join("") + "</tbody>"
       : `<tbody><tr><td class="l faint" style="padding:14px 12px">Your trades will appear here.</td></tr></tbody>`;
     this.drawEq(); this.renderNotes();
+    PChart.overlays(); PChart.header();
   },
   drawEq() {
     const cv = $("#prEq"); if (!cv.offsetWidth) return; const pts = this.st.eq.concat([[Date.now(), this.value()]]);
@@ -1744,6 +1784,11 @@ const Practice = {
     $$("[data-type]").forEach(b => b.addEventListener("click", () => this.setType(b.dataset.type)));
     $("#prForm").addEventListener("submit", e => { e.preventDefault(); this.submit(); });
     for (const id of ["#prCoin", "#prAmt", "#prSl", "#prTp", "#prLimit"]) $(id).addEventListener("input", () => { if (id === "#prAmt") this.sellAll = false; if (id === "#prCoin") this.quick(); this.renderChecks(); });
+    $("#prCoin").addEventListener("input", () => {
+      clearTimeout(this._coinT);
+      this._coinT = setTimeout(() => { const b = $("#prCoin").value.trim().toUpperCase(); if (pxEUR(b) != null) { store.set("pcoin", b); PChart.load(b); } }, 400);
+    });
+    $("#prPos").addEventListener("click", e => { const c = e.target.closest("[data-show]"); if (c) { this.pick(c.dataset.show); scrollTo({ top: 0, behavior: "smooth" }); } });
     $("#prPos").addEventListener("click", e => { const b = e.target.closest("[data-close]"); if (!b) return; const base = b.dataset.close, px = pxEUR(base); if (px) { this.sell(base, this.st.pos[base].qty, px, "manual"); this.save(); this.render(); } });
     $("#prOrders").addEventListener("click", e => { const b = e.target.closest("[data-cancel]"); if (!b) return; const o = this.st.orders.find(x => String(x.id) === b.dataset.cancel); if (o?.side === "buy") this.st.cash += o.eur; this.st.orders = this.st.orders.filter(x => x !== o); this.save(); this.render(); });
     $("#prReset").addEventListener("click", e => {
@@ -1756,8 +1801,151 @@ const Practice = {
   },
   show() {
     $("#prCoins").innerHTML = this.coins().map(s => `<option value="${esc(s)}"></option>`).join("");
-    if (!$("#prCoin").value) $("#prCoin").value = "BTC";
+    if (!$("#prCoin").value) $("#prCoin").value = store.get("pcoin", "BTC");
     this.quick(); this.renderChecks(); this.render();
+    PChart.init(); PChart.load($("#prCoin").value.trim().toUpperCase());
+  },
+  /** Show a coin in both the order ticket and the live chart. */
+  pick(base) {
+    $("#prCoin").value = base; store.set("pcoin", base); this.quick(); this.renderChecks(); PChart.load(base);
+  },
+};
+
+/* =========================================================================
+   Practice chart: live EUR candles with your trades, average price, stop, target and orders
+   ========================================================================= */
+const PChart = {
+  chart: null, s: {}, candles: [], ws: null, base: null, retry: 0, lines: [], key: "", lastPx: null,
+  iv: store.get("piv", "5m"), ind: store.get("pind", { ema20: true, ema50: false, vol: true, trades: true }),
+  init() {
+    if (this.chart) return;
+    if (!window.LightweightCharts) { $("#pcChart").innerHTML = `<div class="pbody"><div class="err">The chart library didn't load. Check your internet connection and reload.</div></div>`; return; }
+    const LC = window.LightweightCharts;
+    this.chart = LC.createChart($("#pcChart"), { autoSize: true, crosshair: { mode: LC.CrosshairMode.Normal }, timeScale: { timeVisible: true, secondsVisible: false, borderVisible: false }, rightPriceScale: { borderVisible: false }, localization: { priceFormatter: v => "€" + plain(v) } });
+    // keep your stop, target and orders on screen: stretch the price scale to include them
+    this.extra = [];
+    this.s.candle = this.chart.addCandlestickSeries({ borderVisible: false, autoscaleInfoProvider: orig => {
+      const r = orig(); if (!r || !this.extra.length) return r;
+      return { ...r, priceRange: { minValue: Math.min(r.priceRange.minValue, ...this.extra), maxValue: Math.max(r.priceRange.maxValue, ...this.extra) } };
+    } });
+    this.s.vol = this.chart.addHistogramSeries({ priceScaleId: "vol", priceFormat: { type: "volume" }, lastValueVisible: false, priceLineVisible: false });
+    this.chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.82, bottom: 0 } });
+    for (const k of ["ema20", "ema50"]) this.s[k] = this.chart.addLineSeries({ color: SERIES[k], lineWidth: 2, lastValueVisible: false, priceLineVisible: false, crosshairMarkerVisible: false });
+    this.chart.subscribeCrosshairMove(p => this.legend(p));
+    $$("#pcIv [data-piv]").forEach(b => b.addEventListener("click", () => { this.iv = b.dataset.piv; store.set("piv", this.iv); this.load(this.base, true); }));
+    $$("#pcInd [data-pind]").forEach(b => b.addEventListener("click", () => { const k = b.dataset.pind; this.ind[k] = !this.ind[k]; store.set("pind", this.ind); this.applyInd(); }));
+    this.restyle(); this.applyInd();
+  },
+  restyle() {
+    if (!this.chart) return;
+    const text = cssVar("--muted"), line = cssVar("--line"), up = cssVar("--up"), down = cssVar("--down"), bg = cssVar("--panel");
+    this.chart.applyOptions({ layout: { background: { type: "solid", color: bg }, textColor: text, fontFamily: "IBM Plex Mono, ui-monospace, monospace", fontSize: 11 }, grid: { vertLines: { color: line }, horzLines: { color: line } } });
+    this.s.candle.applyOptions({ upColor: up, downColor: down, wickUpColor: up, wickDownColor: down });
+    if (this.candles.length) this.setAll();
+    this.key = ""; this.overlays();
+  },
+  src(base) { return S.bitvavo.has(base) ? "bv" : "bn"; },
+  async load(base, force) {
+    if (!this.chart || !base || (base === this.base && !force)) return;
+    this.base = base; this.lastPx = null; const id = (this._id = (this._id || 0) + 1); this.closeWs(); this.key = "";
+    $$("#pcIv [data-piv]").forEach(b => b.setAttribute("aria-pressed", b.dataset.piv === this.iv));
+    const src = this.src(base); this.srcNow = src;
+    $("#pcTitle").innerHTML = `${esc(base)} / EUR <span class="state ${src === "bv" ? "up" : "n"}">${src === "bv" ? "Bitvavo · live" : "Binance price, converted to euros"}</span>`;
+    $("#pcLegend").innerHTML = `<span class="skel" style="width:240px"></span>`;
+    try {
+      let c;
+      if (src === "bv") {
+        const k = await getJSON(`${API.bv}/${base}-EUR/candles?interval=${this.iv}&limit=500`);
+        c = k.map(r => ({ time: r[0] / 1000, open: +r[1], high: +r[2], low: +r[3], close: +r[4], volume: +r[5] })).reverse();
+      } else {
+        const k = await getJSON(`${API.bn}/klines?symbol=${base}USDT&interval=${this.iv}&limit=500`); const fx = S.eurPerUsdt || 1;
+        c = k.map(r => ({ time: r[0] / 1000, open: r[1] * fx, high: r[2] * fx, low: r[3] * fx, close: r[4] * fx, volume: +r[5] }));
+      }
+      if (id !== this._id) return;
+      this.candles = c; this.setAll();
+      this.chart.timeScale().setVisibleLogicalRange({ from: c.length - 120, to: c.length + 5 });
+      this.overlays(); this.legend(); this.header(); this.openWs();
+    } catch (e) { if (id === this._id) $("#pcLegend").innerHTML = `<span class="down">Couldn't load ${esc(base)} candles (${esc(e.message)}). Pick another coin or interval.</span>`; }
+  },
+  setAll() {
+    const c = this.candles; if (!c.length) return; const up = cssVar("--up"), down = cssVar("--down");
+    this.s.candle.setData(c.map(({ time, open, high, low, close }) => ({ time, open, high, low, close })));
+    this.s.vol.setData(c.map(x => ({ time: x.time, value: x.volume, color: (x.close >= x.open ? up : down) + "55" })));
+    const cl = c.map(x => x.close), t = c.map(x => x.time); const line = a => a.map((v, i) => v == null ? { time: t[i] } : { time: t[i], value: v });
+    this.s.ema20.setData(line(Ind.ema(cl, 20))); this.s.ema50.setData(line(Ind.ema(cl, 50)));
+  },
+  bar(b) {
+    const c = this.candles, last = c[c.length - 1];
+    if (last && last.time === b.time) c[c.length - 1] = b; else if (!last || b.time > last.time) { c.push(b); if (c.length > 1500) c.shift(); } else return;
+    const up = cssVar("--up"), down = cssVar("--down");
+    this.s.candle.update({ time: b.time, open: b.open, high: b.high, low: b.low, close: b.close });
+    this.s.vol.update({ time: b.time, value: b.volume, color: (b.close >= b.open ? up : down) + "55" });
+    const cl = c.map(x => x.close), i = c.length - 1;
+    const e20 = Ind.ema(cl, 20)[i], e50 = Ind.ema(cl, 50)[i];
+    if (e20 != null) this.s.ema20.update({ time: b.time, value: e20 }); if (e50 != null) this.s.ema50.update({ time: b.time, value: e50 });
+    this.legend(); this.header(b.close);
+  },
+  openWs() {
+    const base = this.base, iv = this.iv;
+    if (this.srcNow === "bv") {
+      const m = base + "-EUR"; const ws = new WebSocket(API.bvWs); this.ws = ws;
+      ws.onopen = () => { this.retry = 0; ws.send(JSON.stringify({ action: "subscribe", channels: [{ name: "candles", interval: [iv], markets: [m] }] })); };
+      ws.onmessage = ev => { const d = JSON.parse(ev.data); if (d.event === "candle" && d.market === m && d.interval === iv) for (const r of d.candle || []) this.bar({ time: r[0] / 1000, open: +r[1], high: +r[2], low: +r[3], close: +r[4], volume: +r[5] }); };
+      ws.onclose = () => { const dl = Math.min(30000, 1000 * 2 ** this.retry++); setTimeout(() => { if (this.ws === ws) this.openWs(); }, dl); };
+      ws.onerror = () => ws.close();
+    } else {
+      const ws = new WebSocket(`${API.bnWs}/ws/${base.toLowerCase()}usdt@kline_${iv}`); this.ws = ws;
+      ws.onopen = () => { this.retry = 0; };
+      ws.onmessage = ev => { const k = JSON.parse(ev.data).k; const fx = S.eurPerUsdt || 1; if (k) this.bar({ time: k.t / 1000, open: k.o * fx, high: k.h * fx, low: k.l * fx, close: k.c * fx, volume: +k.v }); };
+      ws.onclose = () => { const dl = Math.min(30000, 1000 * 2 ** this.retry++); setTimeout(() => { if (this.ws === ws) this.openWs(); }, dl); };
+      ws.onerror = () => ws.close();
+    }
+  },
+  closeWs() { if (this.ws) { const w = this.ws; this.ws = null; w.onclose = null; try { w.close(); } catch {} } },
+  applyInd() {
+    if (!this.chart) return;
+    this.s.ema20.applyOptions({ visible: !!this.ind.ema20 }); this.s.ema50.applyOptions({ visible: !!this.ind.ema50 }); this.s.vol.applyOptions({ visible: !!this.ind.vol });
+    $$("#pcInd [data-pind]").forEach(b => b.setAttribute("aria-pressed", !!this.ind[b.dataset.pind]));
+    $("#pcKey").hidden = !this.ind.trades;
+    this.key = ""; this.overlays(); this.legend();
+  },
+  /** Price lines (average buy, stop, target, limit orders) and trade markers for the shown coin. */
+  overlays() {
+    if (!this.chart || !this.candles.length || !Practice.st) return;
+    const st = Practice.st, b = this.base, p = st.pos[b], ords = st.orders.filter(o => o.base === b), hist = st.hist.filter(h => h.base === b);
+    const key = JSON.stringify([b, this.iv, p && [p.cost, p.qty, p.sl, p.tp], ords.map(o => o.id), hist.length, this.ind.trades, this.candles[0].time, this.candles.length > 0 && isDark()]);
+    if (key === this.key) return; this.key = key;
+    for (const l of this.lines) this.s.candle.removePriceLine(l); this.lines = []; this.extra = [];
+    if (!this.ind.trades) { this.s.candle.setMarkers([]); this.chart.priceScale("right").applyOptions({ autoScale: true }); return; }
+    const add = (price, color, style, title) => { this.extra.push(price); this.lines.push(this.s.candle.createPriceLine({ price, color, lineWidth: style === 0 ? 2 : 1, lineStyle: style, axisLabelVisible: true, title })); };
+    if (p) { add(p.cost / p.qty, cssVar("--accent"), 0, "avg buy"); if (p.sl) add(p.sl, cssVar("--down"), 2, "stop-loss"); if (p.tp) add(p.tp, cssVar("--up"), 2, "take-profit"); }
+    for (const o of ords) add(o.px, cssVar("--warn"), 1, o.side === "buy" ? "buy limit" : "sell limit");
+    // snap each trade to the candle it happened in
+    const times = this.candles.map(x => x.time); const snap = ts => { let lo = 0, hi = times.length - 1; if (ts < times[0]) return null; while (lo < hi) { const m = (lo + hi + 1) >> 1; times[m] <= ts ? lo = m : hi = m - 1; } return times[lo]; };
+    const marks = hist.map(h => ({ t: snap(h.ts / 1000), h })).filter(x => x.t != null).sort((a, z) => a.t - z.t)
+      .map(({ t, h }) => h.side === "buy" ? { time: t, position: "belowBar", color: cssVar("--up"), shape: "arrowUp", text: "Buy" } : { time: t, position: "aboveBar", color: cssVar("--down"), shape: "arrowDown", text: h.pnl >= 0 ? "Sell +" + plain(h.pnl, 0) : "Sell −" + plain(-h.pnl, 0) });
+    this.s.candle.setMarkers(marks);
+    this.chart.priceScale("right").applyOptions({ autoScale: true }); // re-run autoscale with the new lines
+  },
+  legend(pt) {
+    const c = this.candles; if (!c.length) return;
+    let bar = c[c.length - 1]; if (pt?.time) bar = c.find(x => x.time === pt.time) || bar;
+    const cls = bar.close >= bar.open ? "up" : "down", f = v => `<b class="${cls}">€${plain(v)}</b>`;
+    const items = [`O ${f(bar.open)}`, `H ${f(bar.high)}`, `L ${f(bar.low)}`, `C ${f(bar.close)}`, `<span class="${cls}">${pct((bar.close / bar.open - 1) * 100, 2)}</span>`];
+    if (this.ind.ema20) items.push(`<span><i style="background:${SERIES.ema20}"></i>EMA 20</span>`);
+    if (this.ind.ema50) items.push(`<span><i style="background:${SERIES.ema50}"></i>EMA 50</span>`);
+    $("#pcLegend").innerHTML = items.map(x => `<span>${x}</span>`).join("");
+  },
+  header(live) {
+    if (!this.base) return; const b = this.base;
+    const px = live ?? pxEUR(b) ?? this.candles[this.candles.length - 1]?.close; if (px == null) return;
+    const el = $("#pcPrice"); const txt = eur(px);
+    if (el.textContent !== txt) { if (this.lastPx != null) { el.classList.remove("tick-up", "tick-down"); void el.offsetWidth; el.classList.add(px >= this.lastPx ? "tick-up" : "tick-down"); } el.textContent = txt; this.lastPx = px; }
+    const bv = Bitvavo.last.get(b);
+    $("#pcChg").innerHTML = pill(chg24(b));
+    $("#pcHigh").textContent = bv ? eur(bv.h) : "–"; $("#pcLow").textContent = bv ? eur(bv.l) : "–";
+    const p = Practice.st?.pos[b]; $("#pcPosWrap").hidden = !p;
+    if (p) { const v = p.qty * px * (1 - FEE), g = v - p.cost; $("#pcPos").innerHTML = `<span class="${g >= 0 ? "up" : "down"}">${g >= 0 ? "+" : ""}${eur(g)} (${pct(g / p.cost * 100, 1)})</span>`; }
   },
 };
 
