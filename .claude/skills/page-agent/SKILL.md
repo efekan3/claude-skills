@@ -3,6 +3,16 @@ name: page-agent
 description: "Embed an in-page natural-language GUI copilot in web apps."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # page-agent
 
 alibaba/page-agent (https://github.com/alibaba/page-agent, 17k+ stars, MIT) is an in-page GUI agent written in TypeScript. It lives inside a webpage, reads the DOM as text (no screenshots, no multi-modal LLM), and executes natural-language instructions like "click the login button, then fill username as John" against the current page. Pure client-side — the host site just includes a script and passes an OpenAI-compatible LLM endpoint.

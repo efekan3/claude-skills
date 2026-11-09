@@ -3,6 +3,16 @@ name: here-now
 description: "Publish sites to {slug}.here.now and store files in Drives."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # here.now
 
 here.now lets agents publish websites and store private files in cloud Drives.
@@ -49,13 +59,13 @@ If the docs fetch fails or times out, continue with the local skill and live API
 - Optional Drive token variable: `$HERENOW_DRIVE_TOKEN`
 - Optional credentials file: `~/.herenow/credentials`
 - Skill helper paths:
-  - `${HERMES_SKILL_DIR}/scripts/publish.sh` for publishing sites
-  - `${HERMES_SKILL_DIR}/scripts/drive.sh` for private Drive storage
+  - `<skill-dir>/scripts/publish.sh` for publishing sites
+  - `<skill-dir>/scripts/drive.sh` for private Drive storage
 
 ## Create a site
 
 ```bash
-PUBLISH="${HERMES_SKILL_DIR}/scripts/publish.sh"
+PUBLISH="<skill-dir>/scripts/publish.sh"
 bash "$PUBLISH" {file-or-dir} --client hermes
 ```
 
@@ -73,7 +83,7 @@ You can also publish raw files without any HTML. Single files get a rich auto-vi
 ## Update an existing site
 
 ```bash
-PUBLISH="${HERMES_SKILL_DIR}/scripts/publish.sh"
+PUBLISH="<skill-dir>/scripts/publish.sh"
 bash "$PUBLISH" {file-or-dir} --slug {slug} --client hermes
 ```
 
@@ -88,7 +98,7 @@ Use a Drive when the user wants private cloud storage for agent files: documents
 Every signed-in account has a default Drive named `My Drive`.
 
 ```bash
-DRIVE="${HERMES_SKILL_DIR}/scripts/drive.sh"
+DRIVE="<skill-dir>/scripts/drive.sh"
 bash "$DRIVE" default
 bash "$DRIVE" ls "My Drive"
 bash "$DRIVE" put "My Drive" notes/today.md --from ./notes/today.md

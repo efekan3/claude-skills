@@ -3,6 +3,16 @@ name: document-to-action-items
 description: "Extract cited obligations, deadlines, tasks from documents."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # Document to Action Items
 
 Turn documents into cited facts and proposed actions. Extraction is not legal advice, and low-confidence OCR or ambiguous language must remain visible. The `pdf` and `microsoft-office` skills own extraction mechanics; this skill owns what happens to the extracted content.

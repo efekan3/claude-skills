@@ -3,6 +3,16 @@ name: findmy
 description: "Track Apple devices/AirTags via FindMy.app on macOS."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # Find My (Apple)
 
 Track Apple devices and AirTags via the FindMy.app on macOS. Since Apple doesn't

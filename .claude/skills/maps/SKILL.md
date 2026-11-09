@@ -3,6 +3,16 @@ name: maps
 description: "Geocode, POIs, routes, timezones via OpenStreetMap/OSRM."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # Maps Skill
 
 Location intelligence using free, open data sources. 8 commands, 44 POI
@@ -29,12 +39,12 @@ functionality is covered by the `nearby` command below, with the same
 
 Python 3.8+ (stdlib only — no pip installs needed).
 
-Script path: `~/.hermes/skills/maps/scripts/maps_client.py`
+Script path: `<skill-dir>/maps_client.py`
 
 ## Commands
 
 ```bash
-MAPS=~/.hermes/skills/maps/scripts/maps_client.py
+MAPS=<skill-dir>/maps_client.py
 ```
 
 ### search — Geocode a place name
@@ -177,9 +187,9 @@ current.
 ## Verification
 
 ```bash
-python ~/.hermes/skills/maps/scripts/maps_client.py search "Statue of Liberty"
+python <skill-dir>/maps_client.py search "Statue of Liberty"
 # Should return lat ~40.689, lon ~-74.044
 
-python ~/.hermes/skills/maps/scripts/maps_client.py nearby --near "Times Square" --category restaurant --limit 3
+python <skill-dir>/maps_client.py nearby --near "Times Square" --category restaurant --limit 3
 # Should return a list of restaurants within ~500m of Times Square
 ```

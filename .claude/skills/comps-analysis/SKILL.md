@@ -3,11 +3,21 @@ name: comps-analysis
 description: "Build comparable-company valuation workbooks in Excel."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 ## Environment
 
 This skill assumes **headless openpyxl** — you are producing an .xlsx file on disk.
 Follow the `excel-author` skill's conventions for cell coloring, formulas, named ranges, and sensitivity tables.
-Recalculate before delivery: `python /path/to/excel-author/scripts/recalc.py ./out/model.xlsx`.
+Recalculate before delivery: `python <skill-dir>/../excel-author/scripts/recalc.py ./out/model.xlsx`.
 
 # Comparable Company Analysis
 
@@ -29,7 +39,7 @@ This skill teaches the agent to build institutional-grade comparable company ana
 
 **Reference Material & Contextualization:**
 
-An example comparable company analysis is provided in `examples/comps_example.xlsx`. When using this or other example files in this skill directory, use them intelligently:
+No example workbook ships with this skill (the original references `examples/comps_example.xlsx`, which was never included); build the layout from the rules below. When using this or other example files in this skill directory, use them intelligently:
 
 **DO use examples for:**
 - Understanding structural hierarchy (how sections flow)

@@ -3,6 +3,16 @@ name: youtube-content
 description: "YouTube transcripts to summaries, threads, blogs."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # YouTube Content Tool
 
 ## When to use
@@ -13,25 +23,14 @@ Extract transcripts from YouTube videos and convert them into useful formats.
 
 ## Setup
 
-Use `terminal` with the Python from a PM-prepared Hermes source checkout. The
-`youtube` extra declares the helper's dependency; do not install packages into
-Hermes with raw pip or project-discovering `uv run`.
-
-From that checkout, first follow the isolated development-home setup in
-[Package Management](https://hermes-agent.nousresearch.com/docs/reference/package-management#developer-workflow),
-then prepare the extra and reactivate before running the helper:
+The helper needs one package, `youtube-transcript-api`. Install it once in a private venv:
 
 ```bash
-source ./activate
-python -c "import pm; pm.sync_venv(['youtube'], explicit=True)"
-source ./activate
-python -c "import youtube_transcript_api; print(youtube_transcript_api.__file__)"
+python3 -m venv ~/.cache/yt-venv && ~/.cache/yt-venv/bin/pip install -q youtube-transcript-api==1.2.4
+~/.cache/yt-venv/bin/python -c "import youtube_transcript_api; print('ok')"
 ```
 
-On Windows, use `. .\activate.ps1` instead of `source ./activate`. If the terminal
-runs on a different host or in a sandbox, use an explicitly isolated helper
-environment there, not the agent's production environment. Run every command
-below with the interpreter whose import check succeeded.
+Run the helper below with `~/.cache/yt-venv/bin/python` (on Windows: `%USERPROFILE%\.cache\yt-venv\Scripts\python`).
 
 ## Helper Script
 

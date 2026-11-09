@@ -3,6 +3,16 @@ name: grounded-citations
 description: "Ground answers and documents in cited, verifiable sources."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # Grounded Citations
 
 Every claim taken from an outside source gets an inline numbered citation and a
@@ -47,7 +57,7 @@ Override per task with `--ledger <path>` or `HERMES_CITATION_LEDGER`.
 ## How to Run
 
 ```bash
-S=~/.hermes/skills/research/grounded-citations/scripts/sources.py
+S=<skill-dir>/scripts/sources.py
 
 python "$S" reset                                  # start a clean ledger
 python "$S" add https://example.com/a --title "A"  # prints: [1]
@@ -133,8 +143,8 @@ with every claim attributed to the platform it came from:
 | X/Twitter | `xurl` (needs API access) | announcements, developer chatter |
 
 The `reddit-reading` and `rss-feeds` skills are optional. If absent, install with
-`hermes skills install official/social-media/reddit-reading` or
-`hermes skills install official/research/rss-feeds` before using them.
+the `reddit-reading` or
+`rss-feeds` skill (both in this repo) before using them.
 
 Register every URL from every route in the ledger as it arrives (step ②). Keep
 opinion and measurement apart: a Reddit thread is evidence that users *report*

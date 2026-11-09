@@ -26,6 +26,7 @@ from __future__ import annotations  # allow PEP 604 `X | None` on Python 3.9+
 import argparse
 import json
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -95,11 +96,24 @@ def _format_missing_scopes(missing_scopes: list[str]) -> str:
     )
 
 
+GOOGLE_PACKAGES = [
+    "google-api-python-client==2.201.0", "google-auth==2.62.0", "google-auth-oauthlib==1.5.0",
+    "google-auth-httplib2==0.4.4", "httplib2==0.32.0", "pyasn1==0.6.5",
+]
+
+
 def install_deps():
     """Sync Hermes' declared Google extra, ready for the next process."""
     if pm is None:
-        print("ERROR: Run this script in the Hermes environment; use hermes setup first.")
-        return False
+        # Outside Hermes: install the same pinned packages with pip into this interpreter.
+        cmd = [sys.executable, "-m", "pip", "install", "-q", *GOOGLE_PACKAGES]
+        result = subprocess.run(cmd)
+        if result.returncode != 0:
+            print("ERROR: pip install failed. Try a venv: python3 -m venv ~/.cache/gws-venv "
+                  "and run this script with ~/.cache/gws-venv/bin/python.")
+            return False
+        print("Google dependencies installed. Rerun setup to continue OAuth.")
+        return True
     try:
         pm.sync_venv(["google"], explicit=True)
     except Exception as exc:

@@ -3,6 +3,16 @@ name: concept-diagrams
 description: "Generate flat, minimal educational SVG visuals as HTML."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # Concept Diagrams
 
 Generate production-quality SVG diagrams with a unified flat, minimal design system. Output is a single self-contained HTML file that renders identically in any modern browser, with automatic light/dark mode.
@@ -38,7 +48,7 @@ Optional: if the user wants a browsable gallery of multiple diagrams, see "Local
 
 Load the HTML template:
 ```
-skill_view(name="concept-diagrams", file_path="templates/template.html")
+read <skill-dir>/templates/template.html
 ```
 
 The template embeds the full CSS design system (`c-*` color classes, text classes, light/dark variables, arrow marker styles). The SVG you generate relies on these classes being present on the hosting page.
@@ -250,7 +260,7 @@ Write a single `.html` file the user can open directly. No server, no dependenci
 
 ```python
 # 1. Load the template
-template = skill_view("concept-diagrams", "templates/template.html")
+template = Path("<skill-dir>/templates/template.html").read_text()  # from pathlib import Path
 
 # 2. Fill in title, subtitle, and paste your SVG
 html = template.replace(
@@ -327,7 +337,7 @@ The `examples/` directory ships 15 complete, tested diagrams. Browse them for wo
 
 Load any example with:
 ```
-skill_view(name="concept-diagrams", file_path="examples/<filename>")
+read <skill-dir>/examples/<filename>
 ```
 
 ---

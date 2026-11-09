@@ -3,6 +3,16 @@ name: unbroker
 description: "Remove your info from data-broker sites, by name or phone."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # unbroker
 
 Find where a person's personal information (name, addresses, phone, email, relatives) is exposed on
@@ -332,7 +342,7 @@ is where lead buyers get it. The same engine, entered from the number:
 
 ## Verification
 
-- `scripts/run_tests.sh tests/skills/test_unbroker_skill.py` (hermetic; no network), or the
+- (Hermes Agent source checkout only; tests are not shipped here) `scripts/run_tests.sh tests/skills/test_unbroker_skill.py` (hermetic; no network), or the
   dependency-free runner `python tests/skills/test_unbroker_skill.py`.
 - Dry run: `$PDD setup --auto && $PDD doctor && SID=$($PDD intake --full-name "Test Person"
   --email t@example.com --consent | python -c 'import sys,json;print(json.load(sys.stdin)["subject_id"])')

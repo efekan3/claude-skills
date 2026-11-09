@@ -3,6 +3,16 @@ name: telephony
 description: "Provision Twilio numbers, SMS/MMS, and AI outbound calls."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # Telephony — Numbers, Calls, and Texts without Core Tool Changes
 
 This optional skill gives Hermes practical phone capabilities while keeping telephony out of the core tool list.
@@ -121,19 +131,14 @@ This means:
 After installing this skill, locate the script like this:
 
 ```bash
-SCRIPT="$(find ~/.hermes/skills -path '*/telephony/scripts/telephony.py' -print -quit)"
+SCRIPT="<skill-dir>/scripts/telephony.py"
 ```
 
 If `SCRIPT` is empty, the skill is not installed yet.
 
 ## Install
 
-This is an official optional skill, so install it from the Skills Hub:
-
-```bash
-hermes skills search telephony
-hermes skills install official/productivity/telephony
-```
+This skill is already installed; its helper is `<skill-dir>/scripts/telephony.py`.
 
 ## Provider setup
 

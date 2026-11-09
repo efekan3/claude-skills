@@ -3,11 +3,21 @@ name: lbo-model
 description: "Build leveraged buyout workbooks with IRR/MOIC in Excel."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 ## Environment
 
 This skill assumes **headless openpyxl** — you are producing an .xlsx file on disk.
 Follow the `excel-author` skill's conventions for cell coloring, formulas, named ranges, and sensitivity tables.
-Recalculate before delivery: `python /path/to/excel-author/scripts/recalc.py ./out/model.xlsx`.
+Recalculate before delivery: `python <skill-dir>/../excel-author/scripts/recalc.py ./out/model.xlsx`.
 
 ---
 
@@ -18,7 +28,7 @@ Recalculate before delivery: `python /path/to/excel-author/scripts/recalc.py ./o
 Before starting any LBO model:
 1. **If a template file is attached/provided**: Use that template's structure exactly - copy it and populate with the user's data
 2. **If no template is attached**: Ask the user: *"Do you have a specific LBO template you'd like me to use? If not, I can use the standard template which includes Sources & Uses, Operating Model, Debt Schedule, and Returns Analysis."*
-3. **If using the standard template**: Copy `examples/LBO_Model.xlsx` as your starting point and populate it with the user's assumptions
+3. **If using the standard template**: No template workbook ships with this skill (`examples/LBO_Model.xlsx` was never included upstream), so build the layout from scratch following the structure below, and populate it with the user's assumptions
 
 **IMPORTANT**: When a file like `LBO_Model.xlsx` is attached, you MUST use it as your template - do not build from scratch. Even if the template seems complex or has more features than needed, copy it and adapt it to the user's requirements. Never decide to "build from scratch" when a template is provided.
 
@@ -155,7 +165,7 @@ The following calculation patterns frequently cause issues across LBO models. Pa
 
 ### Run Formula Validation
 ```bash
-python /path/to/excel-author/scripts/recalc.py model.xlsx
+python <skill-dir>/../excel-author/scripts/recalc.py model.xlsx
 ```
 Must return success with zero errors.
 

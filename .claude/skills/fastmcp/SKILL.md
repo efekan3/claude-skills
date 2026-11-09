@@ -69,7 +69,7 @@ Prefer a thin server with good names, docstrings, and schemas over a large serve
 Copy a template directly or use the scaffold helper:
 
 ```bash
-python ~/.hermes/skills/mcp/fastmcp/scripts/scaffold_fastmcp.py \
+python <skill-dir>/scripts/scaffold_fastmcp.py \
   --template api_wrapper \
   --name "Acme API" \
   --output ./acme_server.py
@@ -78,7 +78,7 @@ python ~/.hermes/skills/mcp/fastmcp/scripts/scaffold_fastmcp.py \
 Available templates:
 
 ```bash
-python ~/.hermes/skills/mcp/fastmcp/scripts/scaffold_fastmcp.py --list
+python <skill-dir>/scripts/scaffold_fastmcp.py --list
 ```
 
 If copying manually, replace `__SERVER_NAME__` with a real server name.

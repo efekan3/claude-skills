@@ -3,6 +3,16 @@ name: popular-web-designs
 description: "54 real design systems (Stripe, Linear, Vercel) as HTML/CSS."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # Popular Web Designs
 
 54 real-world design systems ready for use when generating HTML/CSS. Each template captures a
@@ -16,13 +26,13 @@ system, shadows, responsive behavior, and practical agent prompts with exact CSS
   Pair it with this skill when the user wants a thoughtfully-designed page styled
   after a known brand: `claude-design` drives the workflow, this skill supplies
   the visual vocabulary.
-- **`design-md`** (optional: `hermes skills install official/creative/design-md`) —
+- **`design-md`** (in this repo) —
   use when the deliverable is a formal DESIGN.md token spec file, not a rendered artifact.
 
 ## How to Use
 
 1. Pick a design from the catalog below
-2. Load it: `skill_view(name="popular-web-designs", file_path="templates/<site>.md")`
+2. Load it: `read <skill-dir>/templates/<site>.md`
 3. Use the design tokens and component specs when generating HTML
 4. Pair with the `generative-widgets` skill to serve the result via cloudflared tunnel
 

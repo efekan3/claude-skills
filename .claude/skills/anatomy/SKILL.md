@@ -3,6 +3,16 @@ name: anatomy
 description: "Explain an idea as an interactive isometric machine figure."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # Anatomy
 
 This skill builds figures that work like a small instrument on a bench: a heavy base on feet, rails with tick rulers, a carriage on bushings, knurled knobs, coil springs, a dial gauge whose needle moves, and screws drawn as tiny dots. The reader understands the idea because they recognise the machine. Every number the figure shows comes from the same model that moves its parts.
@@ -11,16 +21,16 @@ Output is a standalone HTML page (SVG plus optional WebGL layers), a lone `.svg`
 
 ## Running it in Hermes
 
-**Skill directory.** Hermes expands `${HERMES_SKILL_DIR}` to this skill's installed directory. Shell variables don't carry over between terminal calls, so repeat the assignment in every call that uses it:
+**Skill directory.** `<skill-dir>` is this skill's folder (the base directory shown when the skill loads). Shell variables don't carry over between terminal calls, so repeat the assignment in every call that uses it:
 
 ```bash
-SKILL_DIR="${HERMES_SKILL_DIR}"
+SKILL_DIR="<skill-dir>"
 ```
 
 **Never build inside the skill directory.** Every `build.mjs` writes its HTML next to itself, and the examples import `../../kit/` and `../../scripts/`. Lay out a workspace with the same shape: the user's project if they have one, otherwise a folder they name.
 
 ```bash
-SKILL_DIR="${HERMES_SKILL_DIR}"
+SKILL_DIR="<skill-dir>"
 WORK="$HOME/figures/pin-lock"
 mkdir -p "$WORK/figures"
 cp -r "$SKILL_DIR/kit" "$SKILL_DIR/scripts" "$WORK/"

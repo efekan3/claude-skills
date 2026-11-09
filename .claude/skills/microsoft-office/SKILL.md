@@ -3,6 +3,16 @@ name: microsoft-office
 description: "Create, read, and edit Word, PowerPoint, and Excel files."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # Microsoft Office Skill
 
 Create, read, edit, and template Word (`.docx`), PowerPoint (`.pptx`), and
@@ -13,7 +23,7 @@ pages without LibreOffice.
 
 ## When to Use
 
-Pick the format, then read its reference with `skill_view` before working:
+Pick the format, then read its reference from `<skill-dir>/` before working:
 
 | File | Reference | Typical asks |
 | --- | --- | --- |
@@ -104,7 +114,7 @@ The per-format reference has the full flag table.
 ## Procedure
 
 1. Identify the format from the file extension or the ask, and load its
-   reference (`skill_view` with `file_path=references/<format>.md`).
+   reference (read `<skill-dir>/references/<format>.md`).
 2. Set `PY` with the Prerequisites block once per session.
 3. Create, edit, or read with that format's helpers; pass an output path to
    keep the original whenever the helper supports one.

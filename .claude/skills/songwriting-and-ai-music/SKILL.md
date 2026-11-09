@@ -3,6 +3,16 @@ name: songwriting-and-ai-music
 description: "Songwriting craft and Suno AI music prompts."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # Songwriting & AI Music Generation
 
 Everything here is a GUIDELINE, not a rule. Art breaks rules on purpose.
@@ -285,10 +295,10 @@ cover this (heavy dependencies, so not installed by default):
 
 - **heartmula** — full songs with vocals from lyrics + tags
   (open-source Suno alternative, 8-16GB VRAM):
-  `hermes skills install official/creative/heartmula`
+  the `heartmula` skill (in this repo)
 - **audiocraft** — Meta's MusicGen (instrumental text-to-music) and
   AudioGen (sound effects):
-  `hermes skills install official/creative/audiocraft-audio-generation`
+  not in this repo; see github.com/facebookresearch/audiocraft
 
 The lyric-writing and prompting craft in this skill applies to
 heartmula too — its input format is lyrics with bracketed structure

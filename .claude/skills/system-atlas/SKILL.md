@@ -3,6 +3,16 @@ name: system-atlas
 description: "Build explorable isometric architecture atlases as HTML."
 ---
 
+<!-- claude-compat -->
+> **Running this in Claude.** This skill was written for Hermes Agent. Read its tool names as:
+> `terminal` → Bash · `read_file` → Read · `write_file` → Write · `patch` → Edit ·
+> `search_files` → Grep / Glob · `web_search` → WebSearch · `web_extract` → WebFetch (or `curl`) ·
+> `browser_*` → a browser tool or Playwright, if available · `vision_analyze` → open the image with Read ·
+> `delegate_task` → the Agent tool (subagents) · `execute_code` → write a script and run it with Bash ·
+> `clarify` → ask the user · `cronjob` → no built-in scheduler here: run the steps now, or offer to set up a scheduled task.
+> `<skill-dir>` is this skill's folder (the base directory shown when the skill loads).
+> `~/.hermes` / `HERMES_HOME` is only a folder for settings and caches; `hermes …` commands don't exist here — skip them.
+
 # System Atlas Skill
 
 An atlas is one data file (`data.mjs`) that renders two views: an **interactive isometric map** (a single self-contained `atlas.html` — hover to read, click to pin, go inside for steps, moving data packets you can inspect, chapters that reveal the system a few structures at a time), and a **generated text twin** (`SYSTEM.md`) with the decisions table, every structure, the flows, and the open questions by ID. The data file is the only thing anyone edits; both views rebuild from it. It sits beside a hand-written glossary (`CONTEXT.md`) and ADRs.
@@ -48,7 +58,7 @@ Follow the order — each step was earned by a correction the first time round.
 
 1. **Read the inputs before drawing.** The vision doc, the repo's existing surfaces, and whatever prior art the user allows (ask — they may forbid a branch or a source). If you will build on a framework, read its docs first; hand long docs to a subagent via `delegate_task` with your specific design questions and have it return a primer with gotchas and a "what it does not give us" list. Drawing before this produces boxes that don't map to anything real.
 2. **Discuss before drawing.** Propose the structure in chat, mapped to the runtime's real primitives, and ask only the questions you cannot derive from the repo. Take defaults for the rest and say which.
-3. **First atlas — the whole system.** Copy `assets/` into the atlas home (rename `data.example.mjs` to `data.mjs`), fill the data, build with `node`, publish. **Where the atlas home is depends on the repo's docs policy** — ask before committing anything. Docs-friendly repos: `docs/{system}/atlas/` in-tree. Repos that commit only ADRs and `CONTEXT.md`: put the atlas, `SYSTEM.md`, and `research/` in a git-ignored scratch dir and attach `SYSTEM.md` + research to the spec issue when published. (Committing the whole set once produced a 3,900-line docs PR and four review rounds reconciling three restatements of one design.) Load the design-md or architecture-diagram skill via skill_view for HTML-artifact guidance if useful; read `references/design-language.md` for the visual rules either way.
+3. **First atlas — the whole system.** Copy `assets/` into the atlas home (rename `data.example.mjs` to `data.mjs`), fill the data, build with `node`, publish. **Where the atlas home is depends on the repo's docs policy** — ask before committing anything. Docs-friendly repos: `docs/{system}/atlas/` in-tree. Repos that commit only ADRs and `CONTEXT.md`: put the atlas, `SYSTEM.md`, and `research/` in a git-ignored scratch dir and attach `SYSTEM.md` + research to the spec issue when published. (Committing the whole set once produced a 3,900-line docs PR and four review rounds reconciling three restatements of one design.) Load the design-md or architecture-diagram skill for HTML-artifact guidance if useful; read `references/design-language.md` for the visual rules either way.
 4. **Progressive disclosure.** A whole system at once reads as noise. Ten-ish chapters; each adds at most three structures and runs one small flow that only touches revealed structures; the last chapter shows everything with a flow picker. Unrevealed structures stay in the index, dimmed, with their chapter number. Panels are summary-first: one sentence, then *Read more* and *Steps* folded.
 5. **Shapes and labels.** Letters on boxes are not enough. Give each role a shape and put a readable name label on the canvas under every structure — see design-language.
 6. **Text twin.** `CONTEXT.md` is a glossary and nothing else (the nouns, one line each); ADRs only for decisions that are hard to reverse, surprising without context, and the result of a real trade-off — these two are the in-tree pieces. `SYSTEM.md` is generated and `research/` holds evidence; both live with the atlas (scratch dir or `docs/`, per step 3). Don't open issues unless asked.

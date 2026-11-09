@@ -1,13 +1,26 @@
 # Claude skills
 
-154 skills for Claude Code, adapted from [Hermes Agent](https://github.com/NousResearch/hermes-agent)
-by Nous Research (MIT licence, see `LICENSE-hermes-agent`).
+159 skills for Claude Code. Most are adapted from [Hermes Agent](https://github.com/NousResearch/hermes-agent)
+by Nous Research (MIT licence, see `LICENSE-hermes-agent`). Some come straight from their own upstream projects,
+each with its licence file inside the skill folder:
+[archify](https://github.com/tt-a1i/archify) (Apache-2.0/MIT), [impeccable](https://github.com/pbakaus/impeccable) (Apache-2.0),
+[brag, brag-slim](https://github.com/latent-spaces/brag) (MIT), and HeyGen's
+[hyperframes, hyperframes-cli, hyperframes-registry, media-use](https://github.com/heygen-com/hyperframes) (Apache-2.0).
 
 Start a Claude Code session from this repo and everything in `.claude/skills/` loads automatically.
 On your own computer, copy the folders into `~/.claude/skills/`.
 
-Left out: 27 skills that depend on Hermes-only features, 2 empty catalog stubs (archify, impeccable),
-and 2 that jailbreak or strip safety training from AI models.
+Left out: 27 skills that depend on Hermes-only features, and 2 that jailbreak or strip safety training from AI models.
+
+## Changes from the Hermes originals
+
+- Skills that use Hermes tool names start with a short note mapping them to Claude's tools
+  (`terminal` → Bash, `read_file` → Read, `delegate_task` → subagents, …).
+- `skill_view(...)`, `${HERMES_SKILL_DIR}` and `~/.hermes/skills/...` paths now point at the skill's own folder (`<skill-dir>`).
+- Setup steps that only worked inside Hermes now use plain `pip`/`venv` (youtube-content, memento-flashcards, python-debugpy).
+- `google-workspace/scripts/setup.py --install-deps` now works without Hermes (pip fallback).
+- Finance skills point at the shared `excel-author/scripts/recalc.py`; missing example workbooks are called out.
+- The catalog stubs `archify`, `impeccable`, `brag`, `brag-slim` and the single-file `hyperframes` port were replaced by the real upstream skills.
 
 ## 1-ready-to-use — 42 skills
 
@@ -17,7 +30,8 @@ Work in Claude straight away — no installs, no keys.
 |---|---|
 | **one-three-one-rule** ⭐ | 1-3-1 decision briefs: problem, three options, one pick. |
 | **anatomy** | Explain an idea as an interactive isometric machine figure. |
-| ~~archify~~ | Validated interactive HTML diagrams, upstream-maintained. |
+| **archify** | Explorable HTML diagrams: architecture, workflow, sequence, ERD, timeline and more. Needs Node.js. |
+| **impeccable** | Frontend design language with 23 commands (craft, critique, audit, polish, animate …). |
 | **architecture-diagram** | Dark-themed SVG architecture/cloud/infra diagrams as HTML. |
 | **claude-design** | Design one-off HTML artifacts (landing, deck, prototype). |
 | **concept-diagrams** | Generate flat, minimal educational SVG visuals as HTML. |
@@ -76,12 +90,15 @@ Work in Claude Code once you install a program or add an API key (see 'Needs').
 | **solana** | Query Solana wallets, tokens, txs, and NFTs in USD. | Python packages / CLI tools it names |
 | **ascii-art** | ASCII art: pyfiglet, cowsay, boxes, image-to-ascii. | Python packages / CLI tools it names |
 | **ascii-video** | ASCII video: convert video/audio to colored ASCII MP4/GIF. | Python packages / CLI tools it names |
-| **brag** | Project launch video via Hyperframes, upstream-maintained. | key: GITHUB_TOKEN |
-| **brag-slim** | Launch video from a project or URL, upstream-maintained. | Python packages / CLI tools it names |
+| **brag** | Turn a project into a 15–25 s launch video with Hyperframes. | Node.js, ffmpeg; uses the hyperframes skills |
+| **brag-slim** | One-file launch video from a project or URL. | Node.js, ffmpeg |
 | **comfyui** | Generate images, video, and audio via diffusion workflows. | install ["python"] |
 | **draw-your-font** | Turn a handwriting photo into an installable TTF font. | Python packages / CLI tools it names |
 | **heartmula** | HeartMuLa: Suno-like song generation from lyrics + tags. | Python packages / CLI tools it names |
-| **hyperframes** | Render MP4/WebM videos from HTML compositions. | install [node, ffmpeg, npx] |
+| **hyperframes** | Make videos from HTML with HyperFrames (HeyGen's official skill). | Node.js, ffmpeg |
+| **hyperframes-cli** | HyperFrames CLI: scaffold, check, preview, render, publish. | Node.js |
+| **hyperframes-registry** | ~450 ready-made HyperFrames blocks (transitions, titles, charts …). | Node.js |
+| **media-use** | Get or make music, sound effects, images and voiceover for HyperFrames videos. | Node.js; optional HeyGen key |
 | **manim-video** | Manim CE animations: 3Blue1Brown math/algo videos. | Python packages / CLI tools it names |
 | **pixel-art** | Pixel art w/ era palettes (NES, Game Boy, PICO-8). | Python packages / CLI tools it names |
 | **tldraw-offline** | Drive and script tldraw offline canvases with an agent. | Python packages / CLI tools it names |
