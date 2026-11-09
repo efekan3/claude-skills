@@ -14,6 +14,9 @@ const html = fs.readFileSync(path.join(here, "..", "index.html"), "utf8")
   .replace(/<script src="https:\/\/cdn\.jsdelivr\.net\/npm\/lightweight-charts@[^"]+"><\/script>/, '<script src="lightweight-charts.js"></script>');
 if (!html.includes('src="lightweight-charts.js"')) throw new Error("chart library tag not found in index.html");
 fs.writeFileSync(path.join(appDir, "index.html"), html);
+// Anthropic SDK browser bundle for the AI coach (built with: npx esbuild ... --outfile=../vendor/anthropic-sdk.js)
+fs.mkdirSync(path.join(appDir, "vendor"), { recursive: true });
+fs.copyFileSync(path.join(here, "..", "vendor", "anthropic-sdk.js"), path.join(appDir, "vendor", "anthropic-sdk.js"));
 
 (async () => {
   const out = await packager({

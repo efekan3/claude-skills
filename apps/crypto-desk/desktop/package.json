@@ -1,7 +1,7 @@
 {
   "name": "koersdesk",
   "productName": "Koersdesk",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Live crypto markets, charts, news and event-based insights",
   "main": "main.js",
   "private": true,
@@ -11,8 +11,10 @@
     "build:win": "node build.js"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^1.7.0",
     "@electron/packager": "18.3.6",
     "electron": "33.2.1",
+    "esbuild": "^0.24.2",
     "lightweight-charts": "4.1.3"
   }
 }

@@ -5,7 +5,7 @@ SetCompressor /SOLID lzma
 RequestExecutionLevel user
 
 !define APP "Koersdesk"
-!define VERSION "1.0.0"
+!define VERSION "1.1.0"
 !define SRC "dist\Koersdesk-win32-x64"
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP}"
 

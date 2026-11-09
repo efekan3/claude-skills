@@ -239,7 +239,66 @@ canvas#fan { width: 100%; height: 260px; display: block; }
 .disclaimer { font-size: 12px; color: var(--faint); margin-top: 22px; max-width: 90ch; }
 footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px; font-size: 12px; color: var(--faint); display: flex; gap: 16px; flex-wrap: wrap; }
 
+/* ---------- practice ---------- */
+.pr-grid { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 16px; align-items: start; }
+.ticket { display: grid; gap: 12px; }
+.fld { display: grid; gap: 5px; font-size: 12.5px; color: var(--muted); }
+.fld-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.seg-wide { display: grid; grid-template-columns: 1fr 1fr; }
+.seg-wide button { padding: 8px; }
+.seg-wide button[data-side="buy"][aria-pressed="true"] { background: var(--up-bg); color: var(--up); }
+.seg-wide button[data-side="sell"][aria-pressed="true"] { background: var(--down-bg); color: var(--down); }
+.tick-price { font-family: var(--mono); font-size: 20px; font-variant-numeric: tabular-nums; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); justify-content: center; padding: 9px 14px; }
+.btn-primary:hover { filter: brightness(1.08); border-color: var(--accent); }
+.btn-danger { color: var(--down); }
+.checks { display: grid; gap: 6px; font-size: 12.5px; }
+.check { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; align-items: start; padding: 7px 9px; border-radius: 6px; background: var(--panel-2); }
+.check svg { width: 14px; height: 14px; margin-top: 2px; }
+.check.ok svg { color: var(--up); } .check.warn { background: rgba(250,178,25,.1); } .check.warn .dot { background: var(--warn); }
+.check.bad { background: var(--down-bg); } .check.bad .dot { background: var(--down); }
+.check .dot { width: 8px; height: 8px; margin-top: 5px; }
+.coachnotes { display: grid; gap: 10px; }
+.cnote { display: grid; grid-template-columns: 10px minmax(0, 1fr); gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; }
+.cnote h3 { color: var(--text); font-size: 13.5px; }
+.cnote p { margin: 4px 0 0; color: var(--muted); font-size: 13px; max-width: 75ch; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-size: inherit; }
+/* ---------- coach ---------- */
+.co-grid { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 16px; align-items: start; }
+.lessons ol { list-style: none; margin: 0; padding: 6px; display: grid; gap: 2px; counter-reset: l; }
+.lessons li button { width: 100%; display: grid; grid-template-columns: 24px minmax(0, 1fr) 16px; gap: 10px; align-items: center; text-align: left; padding: 8px 10px; border-radius: 6px; border: 0; background: none; cursor: pointer; color: var(--muted); }
+.lessons li button:hover { background: var(--panel-2); color: var(--text); }
+.lessons li button[aria-current="true"] { background: var(--panel-2); color: var(--text); }
+.lessons .n { font-family: var(--mono); font-size: 12px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line-strong); }
+.lessons .done .n { background: var(--up-bg); border-color: var(--up); color: var(--up); }
+.lessons li button svg { width: 14px; height: 14px; color: var(--up); }
+.lesson { padding: 18px 22px; }
+.lesson h2 { font-size: 20px; margin-bottom: 6px; }
+.lesson .lead { color: var(--muted); font-size: 14.5px; max-width: 70ch; margin: 0 0 14px; }
+.lesson section { max-width: 72ch; }
+.lesson section h3 { color: var(--text); font-size: 14px; margin: 18px 0 6px; }
+.lesson section p, .lesson section li { font-size: 14px; line-height: 1.6; }
+.lesson section ul { padding-left: 20px; margin: 6px 0; }
+.lesson .example { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; font-size: 13.5px; margin: 10px 0; }
+.lesson .task { border: 1px dashed var(--accent); border-radius: 8px; padding: 10px 14px; margin: 16px 0; font-size: 13.5px; max-width: 72ch; }
+.quiz { display: grid; gap: 14px; margin-top: 18px; max-width: 72ch; }
+.quiz fieldset { border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px 12px; margin: 0; }
+.quiz legend { font-weight: 500; padding: 0 4px; }
+.quiz label { display: flex; gap: 8px; align-items: flex-start; padding: 5px 0; cursor: pointer; font-size: 13.5px; }
+.quiz .fb { font-size: 13px; margin: 6px 0 0; }
+.strat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.strat { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 6px; align-content: start; }
+.strat h3 { color: var(--text); font-size: 14px; }
+.strat p { margin: 0; color: var(--muted); font-size: 13px; }
+.strat .btn { justify-self: start; margin-top: 4px; }
+.chat { display: grid; gap: 12px; max-height: 460px; overflow-y: auto; padding-right: 4px; }
+.msg { max-width: 80ch; padding: 10px 14px; border-radius: 10px; font-size: 14px; line-height: 1.55; white-space: pre-wrap; }
+.msg.user { justify-self: end; background: var(--accent); color: var(--accent-ink); }
+.msg.coach { justify-self: start; background: var(--panel-2); border: 1px solid var(--line); }
+.msg.coach.thinking { color: var(--muted); }
+.chat-in { display: flex; gap: 8px; }
 @media (max-width: 1100px) {
+  .pr-grid, .co-grid { grid-template-columns: minmax(0, 1fr); }
   .mk-grid, .ch-grid { grid-template-columns: minmax(0, 1fr); }
   .span-7, .span-5, .span-6 { grid-column: span 12; }
 }
@@ -268,6 +327,10 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
   <symbol id="i-out" viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8M18 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h4"/></symbol>
   <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v3h3M4 13a8 8 0 0 0 14.6 4.5M20 20v-3h-3"/></symbol>
   <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h11v4"/><path d="M4 7v11a2 2 0 0 0 2 2h14V9H6a2 2 0 0 1-2-2z"/><circle cx="16" cy="14.5" r="1.2"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6.5z"/></symbol>
   <symbol id="t-up" viewBox="0 0 10 10"><path d="M5 1.5l4 6.5H1z"/></symbol>
   <symbol id="t-down" viewBox="0 0 10 10"><path d="M5 8.5L1 2h8z"/></symbol>
 </svg>
@@ -284,6 +347,8 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
         <a href="#chart" data-route="chart"><svg class="i"><use href="#i-candle"/></svg><span>Chart</span></a>
         <a href="#news" data-route="news"><svg class="i"><use href="#i-news"/></svg><span>News</span></a>
         <a href="#insights" data-route="insights"><svg class="i"><use href="#i-scope"/></svg><span>Insights</span></a>
+        <a href="#practice" data-route="practice"><svg class="i"><use href="#i-wallet"/></svg><span>Practice</span></a>
+        <a href="#coach" data-route="coach"><svg class="i"><use href="#i-cap"/></svg><span>Coach</span></a>
       </nav>
       <div class="spacer"></div>
       <div class="controls">
@@ -406,7 +471,7 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
     </div>
     <aside class="side">
       <div class="panel">
-        <div class="phead"><h2>Order book</h2><span class="faint" style="font-size:12px">top 10 levels</span></div>
+        <div class="phead"><h2>Order book</h2><span class="faint" style="font-size:12px">top 10 levels · <span id="bookUnit">EUR</span></span></div>
         <div class="book" id="book" style="padding-block:8px"><div class="row"><span class="skel"></span></div></div>
       </div>
       <div class="panel">
@@ -484,12 +549,95 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
   <p class="disclaimer">Educational information, not personalised financial advice. Crypto assets can lose substantial value. Past reactions and simulations describe history; they do not predict a price. An event happening near a price move does not prove it caused the move.</p>
 </section>
 
+<!-- ===================== PRACTICE ===================== -->
+<section class="view" id="view-practice" hidden aria-labelledby="prTitle">
+  <div class="phead" style="padding:0 0 14px;border:0">
+    <h1 id="prTitle">Practice trading</h1>
+    <span class="faint" style="font-size:12.5px">Virtual euros, real live Bitvavo prices, 0.25% fee per trade. Nothing here touches real money.</span>
+    <div class="spacer"></div>
+    <button type="button" class="btn" id="prReset">Reset account</button>
+  </div>
+  <div class="panel" style="margin-bottom:16px"><dl class="read" id="prAccount" style="margin:0"></dl></div>
+  <div class="pr-grid">
+    <div class="panel">
+      <div class="phead"><h2>New order</h2></div>
+      <form class="pbody ticket" id="prForm" autocomplete="off">
+        <label class="fld"><span>Coin</span>
+          <span class="input"><input id="prCoin" list="prCoins" placeholder="BTC" required><datalist id="prCoins"></datalist></span>
+        </label>
+        <div class="tick-price" id="prPx">–</div>
+        <div class="seg seg-wide" role="group" aria-label="Side"><button type="button" data-side="buy" aria-pressed="true">Buy</button><button type="button" data-side="sell" aria-pressed="false">Sell</button></div>
+        <div class="seg seg-wide" role="group" aria-label="Order type"><button type="button" data-type="market" aria-pressed="true">Market</button><button type="button" data-type="limit" aria-pressed="false">Limit</button></div>
+        <label class="fld" id="prLimitFld" hidden><span>Limit price (€)</span><span class="input"><input id="prLimit" type="number" step="any" min="0" inputmode="decimal"></span></label>
+        <label class="fld"><span id="prAmtLbl">Amount (€)</span><span class="input"><input id="prAmt" type="number" step="any" min="0" inputmode="decimal" required></span></label>
+        <div class="tools" id="prQuick"></div>
+        <div id="prProtect">
+          <div class="fld-row">
+            <label class="fld"><span>Stop-loss (% below)</span><span class="input"><input id="prSl" type="number" step="0.1" min="0" max="90" placeholder="e.g. 5"></span></label>
+            <label class="fld"><span>Take-profit (% above)</span><span class="input"><input id="prTp" type="number" step="0.1" min="0" placeholder="e.g. 10"></span></label>
+          </div>
+        </div>
+        <div class="checks" id="prChecks" aria-live="polite"></div>
+        <button class="btn btn-primary" type="submit" id="prSubmit">Place buy order</button>
+        <p class="note" id="prMsg" role="status" style="margin:0"></p>
+      </form>
+    </div>
+    <div class="side" style="min-width:0">
+      <div class="panel"><div class="phead"><h2>Open positions</h2></div><div class="tablewrap"><table id="prPos"></table></div></div>
+      <div class="panel"><div class="phead"><h2>Waiting orders</h2></div><div class="tablewrap"><table id="prOrders"></table></div></div>
+      <div class="panel"><div class="phead"><h2>Account value</h2><span class="faint" style="font-size:12px">recorded every minute while the app is open</span></div><div class="pbody"><canvas id="prEq" style="width:100%;height:140px;display:block" aria-label="Account value over time"></canvas></div></div>
+    </div>
+  </div>
+  <div class="pr-grid" style="margin-top:16px">
+    <div class="panel"><div class="phead"><h2>Coach notes</h2><span class="faint" style="font-size:12px">based on how you trade here</span></div><div class="pbody coachnotes" id="prNotes"></div></div>
+    <div class="panel"><div class="phead"><h2>Trade history</h2></div><div class="tablewrap" style="max-height:420px"><table id="prHist"></table></div></div>
+  </div>
+</section>
+
+<!-- ===================== COACH ===================== -->
+<section class="view" id="view-coach" hidden aria-labelledby="coTitle">
+  <div class="phead" style="padding:0 0 14px;border:0">
+    <h1 id="coTitle">Trading coach</h1>
+    <span class="faint" style="font-size:12.5px" id="coProgress"></span>
+  </div>
+  <div class="co-grid">
+    <nav class="panel lessons" aria-label="Lessons"><div class="phead"><h2>Course</h2></div><ol id="coList"></ol></nav>
+    <article class="panel lesson" id="coLesson" aria-live="polite"></article>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <div class="phead"><h2>Strategy lab</h2><span class="faint" style="font-size:12px">test classic strategies on real daily history</span><div class="spacer"></div><div class="tools" id="labCoins" role="group" aria-label="Coin"></div></div>
+    <div class="pbody">
+      <div class="strat-grid" id="labCards"></div>
+      <div id="labOut" style="margin-top:14px"></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <div class="phead"><h2>Ask the coach</h2><span class="faint" style="font-size:12px">AI coach powered by Claude · uses your own Anthropic API key</span></div>
+    <div class="pbody">
+      <div id="chatSetup">
+        <p class="note" style="margin-top:0">The coach reads your practice account and today's market, then answers like a personal trading teacher. It needs an Anthropic API key (create one at console.anthropic.com → API keys). The key is stored only on this computer and sent only to Anthropic. Each answer costs roughly €0.01–0.05.</p>
+        <form class="tools" id="keyForm"><label class="input" style="width:340px;max-width:100%"><input id="apiKey" type="password" placeholder="sk-ant-…" autocomplete="off"></label><button class="btn btn-primary" type="submit">Save key</button></form>
+      </div>
+      <div id="chatBox" hidden>
+        <div class="chat" id="chatLog" aria-live="polite"></div>
+        <div class="tools" id="chatSuggest" style="margin:10px 0"></div>
+        <form class="chat-in" id="chatForm"><label class="input" style="flex:1"><input id="chatInput" placeholder="Ask anything: “Review my last trade”, “How do I set a stop-loss?”" autocomplete="off"></label><button class="btn btn-primary" type="submit" id="chatSend"><svg class="i"><use href="#i-send"/></svg>Send</button></form>
+        <p class="note"><button type="button" class="linkbtn" id="keyForget">Remove API key</button> · <button type="button" class="linkbtn" id="chatClear">Start a new conversation</button></p>
+      </div>
+    </div>
+  </div>
+  <p class="disclaimer">Educational information, not personalised financial advice. Practise risk management before risking real money; crypto assets can lose substantial value, and most short-term traders lose money.</p>
+</section>
+
 <footer>
-  <span>Data: <a href="https://www.coingecko.com/" target="_blank" rel="noopener">CoinGecko</a> (markets), Binance public market data (charts, order book, trades), <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener">alternative.me</a> (Fear &amp; Greed), CoinDesk, Decrypt and Cointelegraph RSS via <a href="https://rss2json.com/" target="_blank" rel="noopener">rss2json</a> (news). Charts by <a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noopener">TradingView Lightweight Charts</a>.</span>
+  <span>Data: <a href="https://bitvavo.com/" target="_blank" rel="noopener">Bitvavo</a> public market data (euro prices, charts, order book, trades), Binance public market data (US dollar prices), <a href="https://www.coingecko.com/" target="_blank" rel="noopener">CoinGecko</a> (market caps), AI coach by <a href="https://www.anthropic.com/" target="_blank" rel="noopener">Anthropic Claude</a>, <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener">alternative.me</a> (Fear &amp; Greed), CoinDesk, Decrypt and Cointelegraph RSS via <a href="https://rss2json.com/" target="_blank" rel="noopener">rss2json</a> (news). Charts by <a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noopener">TradingView Lightweight Charts</a>.</span>
 </footer>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<script src="vendor/anthropic-sdk.js"></script>
 <script>
 "use strict";
 /* =========================================================================
@@ -499,6 +647,8 @@ const API = {
   cg: "https://api.coingecko.com/api/v3",
   bn: "https://data-api.binance.vision/api/v3",
   bnWs: "wss://data-stream.binance.vision",
+  bv: "https://api.bitvavo.com/v2",
+  bvWs: "wss://ws.bitvavo.com/v2/",
   fng: "https://api.alternative.me/fng/?limit=1",
   news: "https://min-api.cryptocompare.com/data/v2/news/?lang=EN",
 };
@@ -512,6 +662,7 @@ const S = {
   cur: store.get("cur", "eur"),
   markets: [], byId: new Map(), bySym: new Map(),
   binance: new Set(), eurPerUsdt: null,
+  bitvavo: new Set(), // base symbols with a trading EUR market on Bitvavo
   watch: new Set(store.get("watch", [])),
   filter: "all", query: "",
   chart: { symbol: store.get("sym", "BTCUSDT"), iv: store.get("iv", "1h"), ind: store.get("ind", { ema20: true, ema50: true, ema200: false, bb: false, vol: true }), lower: store.get("lower", "rsi") },
@@ -573,7 +724,11 @@ matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => { i
 function setCur(c) {
   S.cur = c; store.set("cur", c);
   $("#curEur").setAttribute("aria-pressed", c === "eur"); $("#curUsd").setAttribute("aria-pressed", c === "usd");
+  const bvOn = Bitvavo.ws?.readyState === 1, bnOn = Binance.ws?.readyState === 1;
+  if (c === "eur" && bvOn) live.set("on", "Live · Bitvavo"); else if (bnOn) live.set("on", c === "usd" ? "Live · Binance" : "Live");
   Markets.load(); Global.load();
+  if (loaded.has("chart")) Chart.load();
+  if (loaded.has("insights")) Insights.load();
 }
 $("#curEur").addEventListener("click", () => setCur("eur"));
 $("#curUsd").addEventListener("click", () => setCur("usd"));
@@ -623,7 +778,7 @@ const Binance = {
     live.set("wait", "Connecting");
     const ws = new WebSocket(`${API.bnWs}/ws/!miniTicker@arr`);
     this.ws = ws;
-    ws.onopen = () => { this.retry = 0; live.set("on", "Live"); };
+    ws.onopen = () => { this.retry = 0; if (S.cur === "usd" || !Bitvavo.ws) live.set("on", S.cur === "usd" ? "Live · Binance" : "Live"); };
     ws.onmessage = ev => {
       const arr = JSON.parse(ev.data);
       for (const t of arr) {
@@ -632,12 +787,53 @@ const Binance = {
       }
       Markets.liveTick();
     };
-    ws.onclose = () => { live.set("off", "Reconnecting"); const d = Math.min(30000, 1000 * 2 ** this.retry++); setTimeout(() => this.connect(), d); };
+    ws.onclose = () => { if (S.cur === "usd") live.set("off", "Reconnecting"); const d = Math.min(30000, 1000 * 2 ** this.retry++); setTimeout(() => this.connect(), d); };
     ws.onerror = () => ws.close();
   },
   /** USDT price -> display currency */
   conv(usdt) { if (S.cur === "usd") return usdt; return S.eurPerUsdt ? usdt * S.eurPerUsdt : null; },
 };
+
+/* =========================================================================
+   Bitvavo: real EUR order-book prices (used whenever the currency is EUR)
+   ========================================================================= */
+const Bitvavo = {
+  ws: null, retry: 0, last: new Map(),
+  has(base) { return S.bitvavo.has(base); },
+  async init() {
+    try {
+      const mk = await getJSON(`${API.bv}/markets`);
+      for (const m of mk) if (m.quote === "EUR" && m.status === "trading") S.bitvavo.add(m.base);
+      const tk = await getJSON(`${API.bv}/ticker/24h`);
+      for (const t of tk) this.put(t);
+    } catch (e) { console.warn("Bitvavo", e); }
+    if (S.bitvavo.size) this.connect();
+  },
+  put(t) {
+    if (!t.market?.endsWith("-EUR") || t.last == null) return;
+    this.last.set(t.market.slice(0, -4), { c: +t.last, o: t.open != null ? +t.open : null, h: +t.high, l: +t.low, vq: +t.volumeQuote });
+  },
+  connect() {
+    try { this.ws?.close(); } catch {}
+    const ws = new WebSocket(API.bvWs); this.ws = ws;
+    ws.onopen = () => {
+      this.retry = 0; if (S.cur === "eur") live.set("on", "Live · Bitvavo");
+      ws.send(JSON.stringify({ action: "subscribe", channels: [{ name: "ticker24h", markets: [...S.bitvavo].map(b => b + "-EUR") }] }));
+    };
+    ws.onmessage = ev => {
+      const m = JSON.parse(ev.data);
+      if (m.event === "ticker24h") { for (const t of m.data || []) this.put(t); Markets.liveTick(); }
+    };
+    ws.onclose = () => { if (S.cur === "eur") live.set("off", "Reconnecting"); const d = Math.min(30000, 1000 * 2 ** this.retry++); setTimeout(() => this.connect(), d); };
+    ws.onerror = () => ws.close();
+  },
+};
+/** Live price for a coin in the display currency: Bitvavo for EUR, Binance for USD (or EUR fallback). */
+function livePrice(base) {
+  if (S.cur === "eur" && Bitvavo.last.has(base)) { const t = Bitvavo.last.get(base); return { c: t.c, chg: t.o ? (t.c / t.o - 1) * 100 : null }; }
+  const t = Binance.last.get(base + "USDT"); if (!t) return null;
+  const c = Binance.conv(t.c); return c == null ? null : { c, chg: (t.c / t.o - 1) * 100 };
+}
 
 /* =========================================================================
    Markets
@@ -704,9 +900,9 @@ const Markets = {
           <span class="faint mono" style="width:22px;font-size:12px">${c.market_cap_rank ?? ""}</span>
           ${c.image ? `<img src="${esc(c.image)}" alt="" loading="lazy" width="22" height="22">` : `<span class="mono" style="width:22px;height:22px;border-radius:50%;background:var(--panel-2);display:inline-grid;place-items:center;font-size:9px">${esc(sym.slice(0, 3))}</span>`}
           <span><b>${esc(c.name)}</b> <small>${esc(sym)}</small></span></div></td>
-        <td class="price" data-pair="${S.binance.has(pair) ? pair : ""}">${money(c.current_price)}</td>
+        <td class="price" data-sym="${esc(sym)}">${money(livePrice(sym)?.c ?? c.current_price)}</td>
         <td class="hide-sm">${pill(c.price_change_percentage_1h_in_currency)}</td>
-        <td data-chg="${S.binance.has(pair) ? pair : ""}">${pill(c.price_change_percentage_24h_in_currency)}</td>
+        <td data-chg="${esc(sym)}">${pill(livePrice(sym)?.chg ?? c.price_change_percentage_24h_in_currency)}</td>
         <td class="hide-sm">${pill(c.price_change_percentage_7d_in_currency)}</td>
         <td class="hide-sm num">${compact(c.market_cap)}</td>
         <td class="hide-sm num">${compact(c.total_volume)}</td>
@@ -731,11 +927,10 @@ const Markets = {
     if (this._pending) return; this._pending = true;
     requestAnimationFrame(() => {
       this._pending = false;
-      for (const td of $$("#mkBody td.price[data-pair]")) {
-        const pair = td.dataset.pair; if (!pair) continue;
-        const t = Binance.last.get(pair); if (!t) continue;
-        const v = Binance.conv(t.c); if (v == null) continue;
-        const txt = money(v);
+      Practice.tick();
+      for (const td of $$("#mkBody td.price[data-sym]")) {
+        const lp = livePrice(td.dataset.sym); if (!lp) continue;
+        const v = lp.c; const txt = money(v);
         if (td.textContent !== txt) {
           const prev = parseFloat(td.dataset.v || "0");
           td.textContent = txt; td.dataset.v = v;
@@ -743,8 +938,8 @@ const Markets = {
         }
       }
       for (const td of $$("#mkBody td[data-chg]")) {
-        const t = Binance.last.get(td.dataset.chg); if (!t || !td.dataset.chg) continue;
-        td.innerHTML = pill((t.c / t.o - 1) * 100);
+        const lp = livePrice(td.dataset.chg); if (lp?.chg == null) continue;
+        const html = pill(lp.chg); if (td.innerHTML !== html) td.innerHTML = html;
       }
     });
   },
@@ -839,23 +1034,80 @@ const Chart = {
     S.chart.symbol = sym; store.set("sym", sym); this.cgId = cgId || S.bySym.get(sym.replace(/USDT$/, ""))?.id || null;
     if (this.ready) this.load();
   },
+  /** Which market feeds the chart: Bitvavo EUR when the app is in EUR and the coin is listed there, else Binance USDT. */
+  pickSource(base) { return S.cur === "eur" && S.bitvavo.has(base) ? "bv" : "bn"; },
+  quote() { return this.src === "bv" ? "EUR" : "USDT"; },
+  fmt(v) { return this.src === "bv" ? money(v, "eur") : plain(v) + " USDT"; },
   async load() {
     const { symbol, iv } = S.chart; const base = symbol.replace(/USDT$/, "");
-    $("#chTitle").textContent = `${base} / USDT`; $("#symInput").value = "";
+    this.base = base; this.src = this.pickSource(base); const loadId = (this._loadId = (this._loadId || 0) + 1);
+    $("#chTitle").innerHTML = `${esc(base)} / ${this.quote()} <span class="state ${this.src === "bv" ? "up" : "n"}" title="Where these prices come from">${this.src === "bv" ? "Bitvavo · euro prices" : "Binance · US dollar (USDT) prices"}</span>`;
+    $("#symInput").value = "";
     $$("#ivSeg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.iv === iv));
-    $("#chNotice").hidden = true;
-    this.closeWs();
-    if (S.binance.size && !S.binance.has(symbol)) return this.fallback(base);
+    $("#chNotice").hidden = true; $("#trades").innerHTML = ""; $("#bookUnit").textContent = this.quote();
+    $("#chEurWrap").hidden = this.src === "bv";
+    const cs = this.src === "bv" ? "€" : "$";
+    this.main.applyOptions({ localization: { priceFormatter: v => cs + plain(v) } });
+    this.closeWs(); clearInterval(this._bookTimer);
+    if (S.cur === "eur" && this.src === "bn" && S.bitvavo.size) {
+      $("#chNotice").hidden = false; $("#chNotice").innerHTML = `<p class="note" style="margin:0">${esc(base)} isn't listed on Bitvavo, so this chart shows Binance prices in US dollars (USDT). The euro estimate is next to the price.</p>`;
+    }
+    if (this.src === "bn" && S.binance.size && !S.binance.has(symbol)) return this.fallback(base);
     try {
-      const k = await getJSON(`${API.bn}/klines?symbol=${symbol}&interval=${iv}&limit=1000`);
-      this.candles = k.map(r => ({ time: r[0] / 1000, open: +r[1], high: +r[2], low: +r[3], close: +r[4], volume: +r[5] }));
+      if (this.src === "bv") {
+        const bvIv = iv === "1w" ? "1d" : iv;
+        const k = await getJSON(`${API.bv}/${base}-EUR/candles?interval=${bvIv}&limit=${iv === "1w" ? 1440 : 1000}`);
+        let c = k.map(r => ({ time: r[0] / 1000, open: +r[1], high: +r[2], low: +r[3], close: +r[4], volume: +r[5] })).reverse();
+        if (iv === "1w") c = this.toWeeks(c);
+        if (loadId !== this._loadId) return;
+        this.candles = c;
+      } else {
+        const k = await getJSON(`${API.bn}/klines?symbol=${symbol}&interval=${iv}&limit=1000`);
+        if (loadId !== this._loadId) return;
+        this.candles = k.map(r => ({ time: r[0] / 1000, open: +r[1], high: +r[2], low: +r[3], close: +r[4], volume: +r[5] }));
+      }
       $("#chartMain").hidden = false; $("#chartLower").hidden = false;
       this.setAll(); this.main.timeScale().setVisibleLogicalRange({ from: this.candles.length - 150, to: this.candles.length + 3 });
-      this.legend(); this.openWs(); this.loadBook();
+      this.legend();
+      if (this.src === "bv") { this.openBvWs(); this.loadBvTicker(); this.loadBvTrades(); this.loadBvBook(); this._bookTimer = setInterval(() => { if (!$("#view-chart").hidden) this.loadBvBook(); }, 1500); }
+      else { this.openWs(); this.loadBook(); }
     } catch (e) {
       $("#chNotice").hidden = false; $("#chNotice").innerHTML = `<div class="err">Couldn't load ${esc(base)} candles (${esc(e.message)}). Try another interval or coin.</div>`;
     }
   },
+  /** Monday-start weekly bars from daily bars. */
+  toWeeks(days) {
+    const out = [];
+    for (const d of days) {
+      const dt = new Date(d.time * 1000); const wk = d.time - ((dt.getUTCDay() + 6) % 7) * 86400;
+      const last = out[out.length - 1];
+      if (last && last.time === wk) { last.high = Math.max(last.high, d.high); last.low = Math.min(last.low, d.low); last.close = d.close; last.volume += d.volume; last._days.set(d.time, d); }
+      else out.push({ time: wk, open: d.open, high: d.high, low: d.low, close: d.close, volume: d.volume, _days: new Map([[d.time, d]]) });
+    }
+    return out;
+  },
+  openBvWs() {
+    const m = this.base + "-EUR", iv = S.chart.iv === "1w" ? "1d" : S.chart.iv;
+    const ws = new WebSocket(API.bvWs); this.ws = ws;
+    ws.onopen = () => { this.retry = 0; ws.send(JSON.stringify({ action: "subscribe", channels: [{ name: "candles", interval: [iv], markets: [m] }, { name: "trades", markets: [m] }, { name: "ticker24h", markets: [m] }] })); };
+    ws.onmessage = ev => {
+      const d = JSON.parse(ev.data);
+      if (d.event === "candle" && d.market === m) for (const r of d.candle || []) this.onBar({ time: r[0] / 1000, open: +r[1], high: +r[2], low: +r[3], close: +r[4], volume: +r[5] });
+      else if (d.event === "trade" && d.market === m) this.addTrade(+d.price, +d.amount, d.side === "sell", d.timestamp);
+      else if (d.event === "ticker24h") { const t = (d.data || []).find(x => x.market === m); if (t) this.setHeader(+t.last, t.open ? (t.last / t.open - 1) * 100 : null, +t.high, +t.low, +t.volumeQuote); }
+    };
+    ws.onclose = () => { const dl = Math.min(30000, 1000 * 2 ** this.retry++); setTimeout(() => { if (this.ws === ws) this.openBvWs(); }, dl); };
+    ws.onerror = () => ws.close();
+  },
+  async loadBvTrades() {
+    try {
+      const tr = await getJSON(`${API.bv}/${this.base}-EUR/trades?limit=30`);
+      if (this.src !== "bv") return; $("#trades").innerHTML = "";
+      for (const x of tr.reverse()) this.addTrade(+x.price, +x.amount, x.side === "sell", x.timestamp);
+    } catch {}
+  },
+  async loadBvTicker() { try { const t = await getJSON(`${API.bv}/ticker/24h?market=${this.base}-EUR`); this.setHeader(+t.last, t.open ? (t.last / t.open - 1) * 100 : null, +t.high, +t.low, +t.volumeQuote); } catch {} },
+  async loadBvBook() { try { const d = await getJSON(`${API.bv}/${this.base}-EUR/book?depth=10`); if (this.src === "bv") this.renderBook(d.bids, d.asks); } catch {} },
   async fallback(base) {
     // coin without a Binance USDT pair: show CoinGecko daily closes as candles-less line via area of closes
     const c = S.bySym.get(base);
@@ -921,10 +1173,18 @@ const Chart = {
     ws.onclose = () => { const d = Math.min(30000, 1000 * 2 ** this.retry++); setTimeout(() => { if (this.ws === ws) this.openWs(); }, d); };
     ws.onerror = () => ws.close();
   },
-  onKline(k) {
-    const bar = { time: k.t / 1000, open: +k.o, high: +k.h, low: +k.l, close: +k.c, volume: +k.v };
-    const c = this.candles; const last = c[c.length - 1];
-    if (last && last.time === bar.time) c[c.length - 1] = bar; else if (!last || bar.time > last.time) { c.push(bar); if (c.length > 1500) c.shift(); }
+  onKline(k) { this.onBar({ time: k.t / 1000, open: +k.o, high: +k.h, low: +k.l, close: +k.c, volume: +k.v }); },
+  onBar(bar) {
+    const c = this.candles; let last = c[c.length - 1];
+    if (S.chart.iv === "1w" && this.src === "bv") {
+      // merge a live daily candle into its week
+      const dt = new Date(bar.time * 1000); const wk = bar.time - ((dt.getUTCDay() + 6) % 7) * 86400;
+      if (!last || last.time !== wk) { if (last && wk < last.time) return; last = { time: wk, open: bar.open, high: bar.high, low: bar.low, close: bar.close, volume: 0, _days: new Map() }; c.push(last); }
+      last._days.set(bar.time, bar);
+      const ds = [...last._days.values()].sort((a, b) => a.time - b.time);
+      bar = { time: wk, open: ds[0].open, high: Math.max(...ds.map(x => x.high)), low: Math.min(...ds.map(x => x.low)), close: ds[ds.length - 1].close, volume: ds.reduce((a, x) => a + x.volume, 0), _days: last._days };
+      c[c.length - 1] = bar;
+    } else if (last && last.time === bar.time) c[c.length - 1] = bar; else if (!last || bar.time > last.time) { c.push(bar); if (c.length > 1500) c.shift(); }
     else return;
     // cheap path: candle + volume update; indicators recomputed once per second at most
     const up = cssVar("--up"), down = cssVar("--down");
@@ -942,18 +1202,20 @@ const Chart = {
     const m = Ind.macd(cl); put(this.s.macd, m.macd[i]); put(this.s.sig, m.signal[i]);
     if (m.hist[i] != null) this.s.macdH.update({ time: t, value: m.hist[i], color: (m.hist[i] >= 0 ? cssVar("--up") : cssVar("--down")) + "88" });
   },
-  onTicker(d) {
-    const p = +d.c; const ch = +d.P;
-    $("#chPrice").textContent = plain(p); $("#chPrice").className = "ch-price " + (ch >= 0 ? "up" : "down");
-    $("#chChg").innerHTML = pill(ch); $("#chHigh").textContent = plain(+d.h); $("#chLow").textContent = plain(+d.l);
-    $("#chVol").textContent = compact(+d.q, "usd");
+  onTicker(d) { this.setHeader(+d.c, +d.P, +d.h, +d.l, +d.q); },
+  setHeader(p, ch, hi, lo, volQ) {
+    this.lastPrice = p;
+    $("#chPrice").textContent = this.fmt(p); $("#chPrice").className = "ch-price " + ((ch ?? 0) >= 0 ? "up" : "down");
+    $("#chChg").innerHTML = pill(ch); $("#chHigh").textContent = this.fmt(hi); $("#chLow").textContent = this.fmt(lo);
+    $("#chVol").textContent = compact(volQ, this.src === "bv" ? "eur" : "usd");
     $("#chEur").textContent = S.eurPerUsdt ? money(p * S.eurPerUsdt, "eur") : "–";
-    document.title = `${plain(p)} ${S.chart.symbol.replace(/USDT$/, "")} · Koersdesk`;
+    document.title = `${this.fmt(p)} ${this.base} · Koersdesk`;
+    Practice.onPrice?.();
   },
-  onTrade(t) {
+  onTrade(t) { this.addTrade(+t.p, +t.q, t.m, t.T); }, // Binance: buyer is maker => aggressive sell
+  addTrade(p, q, sell, ts) {
     const el = $("#trades"); const row = document.createElement("div");
-    const sell = t.m; // buyer is maker => aggressive sell
-    row.innerHTML = `<span class="${sell ? "down" : "up"}">${plain(+t.p)}</span><span>${plain(+t.q, 5)}</span><span class="faint">${new Date(t.T).toLocaleTimeString([], { hour12: false })}</span>`;
+    row.innerHTML = `<span class="${sell ? "down" : "up"}">${plain(p)}</span><span>${plain(q, 5)}</span><span class="faint">${new Date(ts).toLocaleTimeString([], { hour12: false })}</span>`;
     el.prepend(row); while (el.children.length > 30) el.lastChild.remove();
   },
   async loadBook() { try { const d = await getJSON(`${API.bn}/depth?symbol=${S.chart.symbol}&limit=10`); this.renderBook(d.bids, d.asks); } catch {} },
@@ -962,7 +1224,7 @@ const Chart = {
     const mx = Math.max(...a.map(x => x[0] * x[1]), ...b.map(x => x[0] * x[1]), 1);
     const row = (cls, [p, q]) => `<div class="row ${cls}"><i style="width:${(p * q / mx * 100).toFixed(1)}%"></i><span class="${cls === "ask" ? "down" : "up"}">${plain(p)}</span><span>${plain(q, 4)}</span><span>${compact(p * q, "")}</span></div>`;
     const spread = a.length && b.length ? a[a.length - 1][0] - b[0][0] : null;
-    $("#book").innerHTML = `<div class="row hdr"><span>Price</span><span>Amount</span><span>Total USDT</span></div>${a.map(x => row("ask", x)).join("")}<div class="mid"><span>${b.length ? plain(b[0][0]) : "–"}</span><span class="faint" style="font-size:12px">spread ${spread != null ? plain(spread) : "–"}</span></div>${b.map(x => row("bid", x)).join("")}`;
+    $("#book").innerHTML = `<div class="row hdr"><span>Price (${this.quote()})</span><span>Amount</span><span>Total ${this.quote()}</span></div>${a.map(x => row("ask", x)).join("")}<div class="mid"><span>${b.length ? plain(b[0][0]) : "–"}</span><span class="faint" style="font-size:12px">spread ${spread != null ? plain(spread) : "–"}</span></div>${b.map(x => row("bid", x)).join("")}`;
   },
 };
 $$("#ivSeg button").forEach(b => b.addEventListener("click", () => { S.chart.iv = b.dataset.iv; store.set("iv", S.chart.iv); Chart.load(); }));
@@ -976,9 +1238,10 @@ $$("#lowerSeg button").forEach(b => b.addEventListener("click", () => { S.chart.
   const pick = sym => { close(); inp.blur(); Chart.setSymbol(sym + "USDT"); };
   function show() {
     const q = inp.value.trim().toUpperCase();
-    const fromMk = S.markets.filter(c => S.binance.has(c.symbol.toUpperCase() + "USDT")).map(c => ({ sym: c.symbol.toUpperCase(), name: c.name, img: c.image }));
+    const tradable = s => S.binance.has(s + "USDT") || (S.cur === "eur" && S.bitvavo.has(s));
+    const fromMk = S.markets.filter(c => tradable(c.symbol.toUpperCase())).map(c => ({ sym: c.symbol.toUpperCase(), name: c.name, img: c.image }));
     let list = fromMk.filter(c => !q || c.sym.includes(q) || c.name.toUpperCase().includes(q));
-    if (q && S.binance.has(q + "USDT") && !list.some(c => c.sym === q)) list.unshift({ sym: q, name: q + " (Binance pair)", img: "" });
+    if (q && tradable(q) && !list.some(c => c.sym === q)) list.unshift({ sym: q, name: q + (S.cur === "eur" && S.bitvavo.has(q) ? " · Bitvavo" : " · Binance"), img: "" });
     items = list.slice(0, 12); active = -1;
     box.innerHTML = items.length ? items.map((c, i) => `<button type="button" role="option" data-i="${i}">${c.img ? `<img src="${esc(c.img)}" alt="" width="18" height="18">` : `<span style="width:18px"></span>`}<b style="font-weight:500">${esc(c.sym)}</b><span class="faint">${esc(c.name)}</span></button>`).join("") : `<p class="note" style="padding:10px">No Binance USDT pair matches “${esc(inp.value)}”.</p>`;
     box.hidden = false; inp.setAttribute("aria-expanded", "true");
@@ -1125,24 +1388,38 @@ const Insights = {
     $("#inCoins").innerHTML = IN_COINS.map(c => `<button type="button" class="chip" data-ic="${c}" aria-pressed="${S.insight.sym === c}">${c}</button>`).join("");
     $("#evCats").innerHTML = Object.entries(CATS).map(([k, v]) => `<button type="button" class="chip" data-ec="${k}" aria-pressed="${S.insight.cat === k}">${v}</button>`).join("");
   },
+  src(sym) { return S.cur === "eur" && S.bitvavo.has(sym) ? "bv" : "bn"; },
   async daily(sym) {
-    if (S.insight.cache.has(sym)) return S.insight.cache.get(sym);
-    const out = { t: [], o: [], h: [], l: [], c: [] }; let start = Date.UTC(2017, 7, 1);
-    for (let guard = 0; guard < 8; guard++) {
-      const k = await getJSON(`${API.bn}/klines?symbol=${sym}USDT&interval=1d&limit=1000&startTime=${start}`);
-      for (const r of k) { out.t.push(r[0]); out.o.push(+r[1]); out.h.push(+r[2]); out.l.push(+r[3]); out.c.push(+r[4]); }
-      if (k.length < 1000) break; start = k[k.length - 1][0] + 86400000;
+    const src = this.src(sym), key = src + ":" + sym;
+    if (S.insight.cache.has(key)) return S.insight.cache.get(key);
+    const out = { t: [], o: [], h: [], l: [], c: [], src, quote: src === "bv" ? "EUR" : "USDT", cur: src === "bv" ? "eur" : "usd" };
+    if (src === "bv") {
+      // Bitvavo returns newest first; walk backwards with `end` until history runs out (from 2019).
+      const rows = []; let end = Date.now();
+      for (let guard = 0; guard < 8; guard++) {
+        const k = await getJSON(`${API.bv}/${sym}-EUR/candles?interval=1d&limit=1440&end=${end}`);
+        rows.push(...k); if (k.length < 1440) break; end = k[k.length - 1][0] - 1;
+      }
+      rows.sort((a, b) => a[0] - b[0]);
+      for (const r of rows) { if (out.t.length && out.t[out.t.length - 1] === r[0]) continue; out.t.push(r[0]); out.o.push(+r[1]); out.h.push(+r[2]); out.l.push(+r[3]); out.c.push(+r[4]); }
+    } else {
+      let start = Date.UTC(2017, 7, 1);
+      for (let guard = 0; guard < 8; guard++) {
+        const k = await getJSON(`${API.bn}/klines?symbol=${sym}USDT&interval=1d&limit=1000&startTime=${start}`);
+        for (const r of k) { out.t.push(r[0]); out.o.push(+r[1]); out.h.push(+r[2]); out.l.push(+r[3]); out.c.push(+r[4]); }
+        if (k.length < 1000) break; start = k[k.length - 1][0] + 86400000;
+      }
     }
     // drop the still-open daily candle so every number refers to completed days
-    if (out.t.length && out.t[out.t.length - 1] + 86400000 > Date.now()) for (const a of Object.values(out)) a.pop();
-    S.insight.cache.set(sym, out); return out;
+    if (out.t.length && out.t[out.t.length - 1] + 86400000 > Date.now()) for (const a of [out.t, out.o, out.h, out.l, out.c]) a.pop();
+    S.insight.cache.set(key, out); return out;
   },
   async load() {
     const sym = S.insight.sym; $("#inStatus").textContent = `Loading ${sym} daily history…`;
     ["#inRead", "#inScen", "#inAnalog", "#evBars"].forEach(s => $(s).innerHTML = `<div style="padding:14px"><span class="skel"></span></div>`);
     try {
       const d = await this.daily(sym); this.data = d;
-      $("#inStatus").textContent = `${sym}/USDT · ${d.c.length.toLocaleString()} daily candles since ${new Date(d.t[0]).toISOString().slice(0, 10)} · last close ${new Date(d.t[d.t.length - 1]).toISOString().slice(0, 10)}`;
+      $("#inStatus").textContent = `${sym}/${d.quote} on ${d.src === "bv" ? "Bitvavo (euro prices)" : "Binance (US dollar prices)"} · ${d.c.length.toLocaleString()} daily candles since ${new Date(d.t[0]).toISOString().slice(0, 10)} · last close ${new Date(d.t[d.t.length - 1]).toISOString().slice(0, 10)}`;
       const f = this.features(d);
       this.renderRead(d, f); this.renderScen(d, f); this.renderEvents(d); this.renderAnalog(d, f); this.sim(d); this.renderUpcoming(d);
     } catch (e) {
@@ -1168,28 +1445,28 @@ const Insights = {
     const h = f.macd.hist[i], h1 = f.macd.hist[i - 1]; const macdS = h > 0 ? st("up", h > h1 ? "momentum rising" : "momentum fading") : st("down", h < h1 ? "momentum falling" : "losing downside");
     const dd = p / f.ath - 1;
     const cells = [
-      ["Last daily close", money(p, "usd"), `${pill((p / d.c[i - 1] - 1) * 100)} vs. previous day`],
+      ["Last daily close", money(p, d.cur), `${pill((p / d.c[i - 1] - 1) * 100)} vs. previous day`],
       ["Trend " + trend, pct((p / f.ema200[i] - 1) * 100, 1), `vs. 200-day average (${plain(f.ema200[i])}); 50-day at ${plain(f.ema50[i])}`],
       ["RSI 14 " + rsiS, rsi.toFixed(1), "Above 70 often means a run is stretched; below 30, oversold."],
       ["MACD " + macdS, (h >= 0 ? "+" : "") + plain(h, 2), "Histogram: gap between the MACD line and its signal line."],
       ["30-day momentum", pct(f.r30[i] * 100, 1), "Change versus 30 days ago."],
       ["Volatility (30d, yearly)", pct(f.vol30[i] * 100, 0).replace("+", ""), `A typical day moves about ${(f.vol30[i] / Math.sqrt(365) * 100).toFixed(1)}%.`],
-      ["From all-time high", pct(dd * 100, 1), `High ${money(f.ath, "usd")} on ${new Date(d.t[f.athI]).toISOString().slice(0, 10)}`],
+      ["From all-time high", pct(dd * 100, 1), `High ${money(f.ath, d.cur)} on ${new Date(d.t[f.athI]).toISOString().slice(0, 10)}`],
       ["30-day range", `${plain(f.lo30)} – ${plain(f.hi30)}`, `Price sits at ${((p - f.lo30) / (f.hi30 - f.lo30 || 1) * 100).toFixed(0)}% of this range.`],
     ];
     $("#inRead").innerHTML = cells.map(([k, v, s]) => `<div><dt>${k}</dt><dd>${v}</dd><p>${s}</p></div>`).join("");
   },
   renderScen(d, f) {
-    const i = f.n - 1, p = d.c[i]; const e50 = f.ema50[i], e200 = f.ema200[i];
+    const i = f.n - 1, p = d.c[i]; const e50 = f.ema50[i], e200 = f.ema200[i]; const lvl = v => money(v, d.cur);
     const above = p > e200; const sym = S.insight.sym;
     const aboveP = [f.hi30, e50].filter(x => x > p), belowP = [f.lo30, e200, e50].filter(x => x < p);
     const recLvl = aboveP.length ? Math.min(...aboveP) : f.hi30;
     const supLvl = belowP.length ? Math.max(...belowP) : f.lo30;
     const dot = v => `<span class="dot" style="background:var(--${v})"></span>`;
     const blocks = [
-      [dot("up") + " Recovery / continuation", `A daily close above <b class="mono">${plain(recLvl)}</b> (${recLvl === f.hi30 ? "the 30-day high" : "the 50-day average"}) would put ${sym} back above recent resistance. ${above ? "With price already above the 200-day average, that would extend the uptrend." : `It would still be below the 200-day average at <b class="mono">${plain(e200)}</b>, so the bigger trend would remain down until that level is reclaimed.`} Watch for rising volume on the breakout; a close back below it voids the case.`],
-      [dot("faint") + " Range", `Holding between <b class="mono">${plain(supLvl)}</b> and <b class="mono">${plain(recLvl)}</b> keeps ${sym} in a range while the market waits for a catalyst${UPCOMING[0] ? ` such as the ${UPCOMING[0].title.toLowerCase()} on ${UPCOMING[0].date}` : ""}. RSI near 50 and a flat MACD would fit this case.`],
-      [dot("down") + " Breakdown", `A daily close below <b class="mono">${plain(supLvl)}</b> would break the nearest support and open the way toward the 30-day low${f.lo30 < supLvl ? ` at <b class="mono">${plain(f.lo30)}</b>` : ""}. Typical daily swings are about ${(f.vol30[i] / Math.sqrt(365) * 100).toFixed(1)}%, so a single wick through the level is weaker evidence than a daily close.`],
+      [dot("up") + " Recovery / continuation", `A daily close above <b class="mono">${lvl(recLvl)}</b> (${recLvl === f.hi30 ? "the 30-day high" : "the 50-day average"}) would put ${sym} back above recent resistance. ${above ? "With price already above the 200-day average, that would extend the uptrend." : `It would still be below the 200-day average at <b class="mono">${lvl(e200)}</b>, so the bigger trend would remain down until that level is reclaimed.`} Watch for rising volume on the breakout; a close back below it voids the case.`],
+      [dot("faint") + " Range", `Holding between <b class="mono">${lvl(supLvl)}</b> and <b class="mono">${lvl(recLvl)}</b> keeps ${sym} in a range while the market waits for a catalyst${UPCOMING[0] ? ` such as the ${UPCOMING[0].title.toLowerCase()} on ${UPCOMING[0].date}` : ""}. RSI near 50 and a flat MACD would fit this case.`],
+      [dot("down") + " Breakdown", `A daily close below <b class="mono">${lvl(supLvl)}</b> would break the nearest support and open the way toward the 30-day low${f.lo30 < supLvl ? ` at <b class="mono">${lvl(f.lo30)}</b>` : ""}. Typical daily swings are about ${(f.vol30[i] / Math.sqrt(365) * 100).toFixed(1)}%, so a single wick through the level is weaker evidence than a daily close.`],
     ];
     $("#inScen").innerHTML = blocks.map(([h, p]) => `<div><h3>${h}</h3><p>${p}</p></div>`).join("") +
       `<p class="note">Levels come from the last 30 completed daily candles and the 50/200-day exponential averages. These are conditions to watch, not forecasts, and no probability is attached to them.</p>`;
@@ -1292,9 +1569,472 @@ $("#evCats").addEventListener("click", e => { const b = e.target.closest("[data-
 addEventListener("resize", () => { clearTimeout(Insights._rz); Insights._rz = setTimeout(() => Insights.redrawFan(), 150); });
 
 /* =========================================================================
+   Practice: paper trading in virtual euros at live prices
+   ========================================================================= */
+function pxEUR(base) {
+  const b = Bitvavo.last.get(base); if (b) return b.c;
+  const t = Binance.last.get(base + "USDT"); if (t && S.eurPerUsdt) return t.c * S.eurPerUsdt;
+  return null;
+}
+function chg24(base) {
+  const b = Bitvavo.last.get(base); if (b?.o) return (b.c / b.o - 1) * 100;
+  const t = Binance.last.get(base + "USDT"); return t ? (t.c / t.o - 1) * 100 : null;
+}
+const eur = v => money(v, "eur");
+const FEE = 0.0025;
+const Practice = {
+  st: null, side: "buy", type: "market", sellAll: false,
+  fresh() { return { start: 10000, cash: 10000, pos: {}, orders: [], hist: [], eq: [[Date.now(), 10000]], created: Date.now() }; },
+  load() { this.st = store.get("paper", null) || this.fresh(); },
+  save() { store.set("paper", this.st); },
+  value() { let v = this.st.cash + this.reserved(); for (const [b, p] of Object.entries(this.st.pos)) v += p.qty * (pxEUR(b) ?? p.cost / p.qty); return v; },
+  reserved() { return this.st.orders.filter(o => o.side === "buy").reduce((a, o) => a + o.eur, 0); },
+  coins() {
+    const fromMk = S.markets.map(c => c.symbol.toUpperCase()).filter(s => pxEUR(s) != null);
+    return [...new Set([...fromMk, ...[...S.bitvavo].sort()])];
+  },
+  /* ---- execution ---- */
+  buy(base, eurAmt, px, why, sl, tp) {
+    const qty = eurAmt * (1 - FEE) / px;
+    const p = this.st.pos[base] || (this.st.pos[base] = { qty: 0, cost: 0, opened: Date.now(), sl: null, tp: null });
+    p.qty += qty; p.cost += eurAmt;
+    if (sl) p.sl = px * (1 - sl / 100); if (tp) p.tp = px * (1 + tp / 100);
+    this.st.hist.unshift({ ts: Date.now(), base, side: "buy", qty, px, eur: eurAmt, fee: eurAmt * FEE, why, sl: !!(sl || p.sl), chg: chg24(base), size: eurAmt / this.value() });
+  },
+  sell(base, qty, px, why) {
+    const p = this.st.pos[base]; if (!p) return;
+    qty = Math.min(qty, p.qty); const gross = qty * px; const proceeds = gross * (1 - FEE);
+    const costPart = p.cost * qty / p.qty; const pnl = proceeds - costPart;
+    p.qty -= qty; p.cost -= costPart; this.st.cash += proceeds;
+    this.st.hist.unshift({ ts: Date.now(), base, side: "sell", qty, px, eur: proceeds, fee: gross * FEE, pnl, pnlPct: pnl / costPart * 100, held: Date.now() - p.opened, why });
+    if (p.qty * px < 0.01) delete this.st.pos[base];
+  },
+  submit() {
+    const base = $("#prCoin").value.trim().toUpperCase(); const px = pxEUR(base);
+    const amt = parseFloat($("#prAmt").value); const msg = $("#prMsg");
+    if (px == null) { msg.textContent = `No live euro price for ${base || "that coin"}. Pick a coin from the list.`; return; }
+    if (!(amt > 0)) { msg.textContent = "Enter an amount in euros."; return; }
+    const sl = parseFloat($("#prSl").value) || null, tp = parseFloat($("#prTp").value) || null;
+    const lim = parseFloat($("#prLimit").value);
+    if (this.type === "limit" && !(lim > 0)) { msg.textContent = "Enter the limit price you want to trade at."; return; }
+    if (this.side === "buy") {
+      if (amt > this.st.cash + 1e-9) { msg.textContent = `You have ${eur(this.st.cash)} available to buy with.`; return; }
+      if (this.type === "market") { this.st.cash -= amt; this.buy(base, amt, px, "market", sl, tp); msg.textContent = `Bought ${plain(amt * (1 - FEE) / px, 6)} ${base} at ${eur(px)}.`; }
+      else { this.st.cash -= amt; this.st.orders.push({ id: Date.now(), base, side: "buy", px: lim, eur: amt, sl, tp, ts: Date.now() }); msg.textContent = `Buy order placed: ${eur(amt)} of ${base} when the price is ${eur(lim)} or lower.`; }
+    } else {
+      const p = this.st.pos[base]; if (!p) { msg.textContent = `You don't hold any ${base}.`; return; }
+      const qty = this.sellAll ? p.qty : Math.min(p.qty, amt / (this.type === "limit" ? lim : px));
+      if (this.type === "market") { this.sell(base, qty, px, "market"); msg.textContent = `Sold ${plain(qty, 6)} ${base} at ${eur(px)}.`; }
+      else { this.st.orders.push({ id: Date.now(), base, side: "sell", px: lim, qty, ts: Date.now() }); msg.textContent = `Sell order placed: ${plain(qty, 6)} ${base} when the price is ${eur(lim)} or higher.`; }
+    }
+    this.sellAll = false; $("#prAmt").value = ""; this.save(); this.render(); this.renderChecks();
+  },
+  tick() {
+    if (!this.st) return; let changed = false;
+    for (const o of [...this.st.orders]) {
+      const px = pxEUR(o.base); if (px == null) continue;
+      if (o.side === "buy" && px <= o.px) { this.buy(o.base, o.eur, o.px, "limit", o.sl, o.tp); this.st.orders = this.st.orders.filter(x => x !== o); changed = true; }
+      if (o.side === "sell" && px >= o.px && this.st.pos[o.base]) { this.sell(o.base, o.qty, o.px, "limit"); this.st.orders = this.st.orders.filter(x => x !== o); changed = true; }
+    }
+    for (const [b, p] of Object.entries(this.st.pos)) {
+      const px = pxEUR(b); if (px == null) continue;
+      if (p.sl && px <= p.sl) { this.sell(b, p.qty, px, "stop-loss"); changed = true; }
+      else if (p.tp && px >= p.tp) { this.sell(b, p.qty, px, "take-profit"); changed = true; }
+    }
+    const last = this.st.eq[this.st.eq.length - 1];
+    if (!last || Date.now() - last[0] > 60000) { this.st.eq.push([Date.now(), this.value()]); if (this.st.eq.length > 3000) this.st.eq.shift(); changed = true; }
+    if (changed) this.save();
+    if (!$("#view-practice").hidden && (changed || Date.now() - (this._r || 0) > 1000)) { this._r = Date.now(); this.render(); }
+  },
+  onPrice() {},
+  /* ---- ticket ---- */
+  setSide(s) { this.side = s; this.sellAll = false; $$("[data-side]").forEach(b => b.setAttribute("aria-pressed", b.dataset.side === s)); $("#prProtect").hidden = s === "sell"; $("#prSubmit").textContent = s === "buy" ? "Place buy order" : "Place sell order"; $("#prSubmit").style.background = s === "sell" ? "var(--down)" : ""; $("#prSubmit").style.borderColor = s === "sell" ? "var(--down)" : ""; this.quick(); this.renderChecks(); },
+  setType(t) { this.type = t; $$("[data-type]").forEach(b => b.setAttribute("aria-pressed", b.dataset.type === t)); $("#prLimitFld").hidden = t !== "limit"; if (t === "limit" && !$("#prLimit").value) { const px = pxEUR($("#prCoin").value.trim().toUpperCase()); if (px) $("#prLimit").value = +px.toPrecision(6); } this.renderChecks(); },
+  quick() {
+    const base = $("#prCoin").value.trim().toUpperCase(); const px = pxEUR(base); const p = this.st.pos[base];
+    const opts = this.side === "buy" ? [["5%", .05], ["10%", .1], ["25%", .25]].map(([l, f]) => [l + " of cash", this.st.cash * f, false]) : p && px ? [["25%", .25], ["50%", .5], ["All", 1]].map(([l, f]) => [l, p.qty * px * f, f === 1]) : [];
+    $("#prQuick").innerHTML = opts.map(([l, v, all], i) => `<button type="button" class="chip" data-q="${i}">${l}</button>`).join("");
+    $$("#prQuick [data-q]").forEach(b => b.addEventListener("click", () => { const [, v, all] = opts[+b.dataset.q]; $("#prAmt").value = Math.floor(v * 100) / 100; this.sellAll = all; this.renderChecks(); }));
+  },
+  renderChecks() {
+    const base = $("#prCoin").value.trim().toUpperCase(); const px = pxEUR(base);
+    $("#prPx").innerHTML = px ? `${eur(px)} <span style="font-size:13px">${pill(chg24(base))}</span>` : `<span class="faint" style="font-size:14px">Pick a coin to see its live price</span>`;
+    const amt = parseFloat($("#prAmt").value) || 0; const V = this.value(); const out = [];
+    const ck = (lvl, html) => out.push(`<div class="check ${lvl}">${lvl === "ok" ? `<svg class="i"><use href="#i-check"/></svg>` : `<span class="dot"></span>`}<span>${html}</span></div>`);
+    if (px && amt > 0 && this.side === "buy") {
+      const size = amt / V * 100; const sl = parseFloat($("#prSl").value), tp = parseFloat($("#prTp").value);
+      ck(size <= 20 ? "ok" : size <= 40 ? "warn" : "bad", `Position size <b>${size.toFixed(0)}%</b> of your account. ${size > 20 ? "Big for one coin; most coaches keep a single trade under 10–20%." : "Sensible."}`);
+      if (sl > 0) {
+        const risk = amt * sl / 100 + amt * FEE * 2, rp = risk / V * 100;
+        ck(rp <= 2 ? "ok" : rp <= 5 ? "warn" : "bad", `If the stop-loss hits you lose about <b>${eur(risk)}</b> (${rp.toFixed(1)}% of your account). ${rp > 2 ? "The 1–2% rule says risk less per trade: use a smaller amount or a tighter stop." : "Within the 1–2% rule."}`);
+        if (tp > 0) { const rr = tp / sl; ck(rr >= 1.5 ? "ok" : "warn", `Reward-to-risk <b>${rr.toFixed(1)} : 1</b>. ${rr < 1.5 ? "You'd need to be right most of the time to profit. Aim for 2 : 1 or more." : "Good: one win covers more than one loss."}`); }
+        ck("ok", `Stop-loss at <b>${eur(px * (1 - sl / 100))}</b>${tp > 0 ? `, take-profit at <b>${eur(px * (1 + tp / 100))}</b>` : ""}.`);
+      } else ck("warn", `No stop-loss. Decide where your idea is wrong <i>before</i> you buy (lesson 3).`);
+      const c = chg24(base); if (c != null && c > 15) ck("warn", `${base} is already up ${c.toFixed(0)}% in 24 hours. Buying after a big jump is often FOMO; wait for a pullback or a plan (lesson 9).`);
+      const lastLoss = this.st.hist.find(h => h.side === "sell" && h.pnl < 0);
+      if (lastLoss && Date.now() - lastLoss.ts < 30 * 60000) ck("warn", `You closed a loss ${Math.round((Date.now() - lastLoss.ts) / 60000)} minutes ago. Quick re-entries after a loss are a classic “revenge trade”. Is this part of your plan?`);
+    }
+    if (px && amt > 0 && this.side === "sell") {
+      const p = this.st.pos[base];
+      if (!p) ck("bad", `You don't hold any ${base} in your practice account.`);
+      else { const avg = p.cost / p.qty; const g = (px * (1 - FEE) / avg - 1) * 100; ck(g >= 0 ? "ok" : "warn", `You bought at an average of <b>${eur(avg)}</b>; selling now is <b>${pct(g, 1)}</b> after fees. ${g < 0 ? "Is your stop-loss level hit, or is this fear? Follow your plan." : ""}`); }
+    }
+    $("#prChecks").innerHTML = out.join("");
+  },
+  /* ---- account & tables ---- */
+  render() {
+    const st = this.st; const V = this.value(); const pnl = V - st.start;
+    const closed = st.hist.filter(h => h.side === "sell"); const wins = closed.filter(h => h.pnl > 0);
+    const invested = V - st.cash - this.reserved();
+    $("#prAccount").innerHTML = [
+      ["Account value", eur(V), `${pill(pnl / st.start * 100)} since you started with ${eur(st.start)}`],
+      ["Profit / loss", `<span class="${pnl >= 0 ? "up" : "down"}">${pnl >= 0 ? "+" : ""}${eur(pnl)}</span>`, `fees paid ${eur(st.hist.reduce((a, h) => a + (h.fee || 0), 0))}`],
+      ["Cash available", eur(st.cash), st.orders.length ? `${eur(this.reserved())} reserved for buy orders` : "ready to trade"],
+      ["Invested", eur(invested), `${Object.keys(st.pos).length} coin${Object.keys(st.pos).length === 1 ? "" : "s"}`],
+      ["Closed trades", String(closed.length), closed.length ? `${Math.round(wins.length / closed.length * 100)}% were profitable` : "none yet"],
+    ].map(([k, v, s]) => `<div><dt>${k}</dt><dd>${v}</dd><p>${s}</p></div>`).join("");
+    const pos = Object.entries(st.pos);
+    $("#prPos").innerHTML = pos.length ? `<thead><tr><th class="l" scope="col">Coin</th><th scope="col">Amount</th><th scope="col">Avg. buy</th><th scope="col">Now</th><th scope="col">Value</th><th scope="col">Profit / loss</th><th scope="col" class="hide-sm">Stop / target</th><th scope="col"></th></tr></thead><tbody>` +
+      pos.map(([b, p]) => { const px = pxEUR(b) ?? p.cost / p.qty; const val = p.qty * px * (1 - FEE); const g = val - p.cost;
+        return `<tr style="cursor:default"><td class="l"><b style="font-weight:500">${esc(b)}</b></td><td class="mono">${plain(p.qty, 6)}</td><td class="mono">${eur(p.cost / p.qty)}</td><td class="mono">${eur(px)}</td><td class="mono">${eur(val)}</td><td><span class="mono ${g >= 0 ? "up" : "down"}">${g >= 0 ? "+" : ""}${eur(g)}</span> ${pill(g / p.cost * 100, 1)}</td><td class="mono hide-sm" style="font-size:12px">${p.sl ? eur(p.sl) : '<span class="warn-t">none</span>'} / ${p.tp ? eur(p.tp) : "–"}</td><td><button type="button" class="btn" data-close="${esc(b)}">Sell all</button></td></tr>`; }).join("") + "</tbody>"
+      : `<tbody><tr><td class="l" style="white-space:normal;padding:18px 12px">No open positions. Buy something on the left. Start small and add a stop-loss.</td></tr></tbody>`;
+    $("#prOrders").innerHTML = st.orders.length ? `<thead><tr><th class="l" scope="col">Order</th><th scope="col">Price</th><th scope="col">Now</th><th scope="col">Size</th><th scope="col"></th></tr></thead><tbody>` +
+      st.orders.map(o => `<tr style="cursor:default"><td class="l"><span class="${o.side === "buy" ? "up" : "down"}">${o.side === "buy" ? "Buy" : "Sell"}</span> ${esc(o.base)} · limit</td><td class="mono">${eur(o.px)}</td><td class="mono">${eur(pxEUR(o.base))}</td><td class="mono">${o.side === "buy" ? eur(o.eur) : plain(o.qty, 6) + " " + esc(o.base)}</td><td><button type="button" class="btn" data-cancel="${o.id}">Cancel</button></td></tr>`).join("") + "</tbody>"
+      : `<tbody><tr><td class="l" style="white-space:normal;padding:14px 12px" class="faint">No waiting limit orders.</td></tr></tbody>`;
+    $("#prHist").innerHTML = st.hist.length ? `<thead><tr><th class="l" scope="col">When</th><th class="l" scope="col">Trade</th><th scope="col">Price</th><th scope="col">Total</th><th scope="col">Result</th></tr></thead><tbody>` +
+      st.hist.slice(0, 60).map(h => `<tr style="cursor:default"><td class="l faint" style="font-size:12px">${new Date(h.ts).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</td><td class="l"><span class="${h.side === "buy" ? "up" : "down"}">${h.side === "buy" ? "Buy" : "Sell"}</span> ${plain(h.qty, 6)} ${esc(h.base)} <span class="faint" style="font-size:12px">${h.why}</span></td><td class="mono">${eur(h.px)}</td><td class="mono">${eur(h.eur)}</td><td>${h.side === "sell" ? `<span class="mono ${h.pnl >= 0 ? "up" : "down"}">${h.pnl >= 0 ? "+" : ""}${eur(h.pnl)}</span>` : '<span class="faint">–</span>'}</td></tr>`).join("") + "</tbody>"
+      : `<tbody><tr><td class="l faint" style="padding:14px 12px">Your trades will appear here.</td></tr></tbody>`;
+    this.drawEq(); this.renderNotes();
+  },
+  drawEq() {
+    const cv = $("#prEq"); if (!cv.offsetWidth) return; const pts = this.st.eq.concat([[Date.now(), this.value()]]);
+    const dpr = devicePixelRatio || 1, W = cv.offsetWidth, H = cv.offsetHeight; cv.width = W * dpr; cv.height = H * dpr;
+    const ctx = cv.getContext("2d"); ctx.scale(dpr, dpr);
+    const vs = pts.map(p => p[1]); const mn = Math.min(...vs, this.st.start), mx = Math.max(...vs, this.st.start); const pad = (mx - mn) * 0.1 || 50;
+    const x = i => 4 + i / Math.max(pts.length - 1, 1) * (W - 80), y = v => 6 + (1 - (v - mn + pad) / (mx - mn + 2 * pad)) * (H - 14);
+    ctx.strokeStyle = cssVar("--line"); ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(4, y(this.st.start)); ctx.lineTo(W - 76, y(this.st.start)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = cssVar("--muted"); ctx.font = "11px IBM Plex Mono, monospace"; ctx.fillText("start", W - 72, y(this.st.start) - 6);
+    const up = vs[vs.length - 1] >= this.st.start; ctx.strokeStyle = cssVar(up ? "--up" : "--down"); ctx.lineWidth = 2; ctx.beginPath(); pts.forEach((p, i) => ctx.lineTo(x(i), y(p[1]))); ctx.stroke();
+    ctx.fillStyle = cssVar("--text"); ctx.fillText(money(vs[vs.length - 1], "eur", 0), W - 72, y(vs[vs.length - 1]) + 4);
+  },
+  notes() {
+    const st = this.st, n = [], V = this.value();
+    const closed = st.hist.filter(h => h.side === "sell"); const buys = st.hist.filter(h => h.side === "buy");
+    if (!st.hist.length) n.push(["good", "Start small", "Buy a small amount (5–10% of your account) of a coin you've looked at on the Chart tab, and set a stop-loss. The goal of practice is good habits, not big profits.", "risk"]);
+    if (buys.length >= 3 && buys.filter(b => !b.sl).length / buys.length > 0.5) n.push(["bad", "Most of your buys have no stop-loss", `${buys.filter(b => !b.sl).length} of ${buys.length} buys had no exit plan. Without one, a small loss can turn into a big one while you hope it comes back.`, "stops"]);
+    const big = buys.filter(b => b.size > 0.25).length; if (big) n.push(["warn", "Some positions were very large", `${big} buy${big > 1 ? "s were" : " was"} over 25% of your account. One bad move then hurts a lot. Size positions so a stop-loss costs at most 1–2%.`, "risk"]);
+    const chase = buys.filter(b => b.chg != null && b.chg > 15).length; if (chase) n.push(["warn", "Chasing pumps", `${chase} time${chase > 1 ? "s" : ""} you bought a coin already up more than 15% that day. Late buyers often get caught in the pullback.`, "psych"]);
+    const day = st.hist.filter(h => Date.now() - h.ts < 86400000).length; if (day > 8) n.push(["warn", "Lots of trading today", `${day} trades in 24 hours. Fees add up (${eur(st.hist.filter(h => Date.now() - h.ts < 86400000).reduce((a, h) => a + h.fee, 0))} today) and more trades rarely means better results.`, "psych"]);
+    const ps = Object.entries(st.pos).map(([b, p]) => [b, p.qty * (pxEUR(b) ?? 0)]).sort((a, b) => b[1] - a[1]);
+    if (ps.length && ps[0][1] / V > 0.5) n.push(["warn", `Over half your account is in ${ps[0][0]}`, "Concentration makes your result depend on one coin. Spread risk or reduce the position.", "risk"]);
+    if (closed.length >= 4) {
+      const w = closed.filter(h => h.pnl > 0), l = closed.filter(h => h.pnl <= 0);
+      const aw = w.length ? w.reduce((a, h) => a + h.pnl, 0) / w.length : 0, al = l.length ? -l.reduce((a, h) => a + h.pnl, 0) / l.length : 0;
+      const pf = l.length ? w.reduce((a, h) => a + h.pnl, 0) / -l.reduce((a, h) => a + h.pnl, 0) : Infinity;
+      n.push([pf >= 1 ? "good" : "warn", `Win rate ${Math.round(w.length / closed.length * 100)}%, average win ${eur(aw)}, average loss ${eur(al)}`, pf >= 1 ? `Profit factor ${isFinite(pf) ? pf.toFixed(2) : "∞"}: your wins outweigh your losses. Keep the same discipline.` : `Your losses outweigh your wins (profit factor ${pf.toFixed(2)}). ${al > aw ? "Losing trades are bigger than winning ones: cut losers earlier with stops and let winners reach their target." : "Look at which setups lose and stop taking them."}`, "rr"]);
+      const hw = w.length ? w.reduce((a, h) => a + h.held, 0) / w.length : 0, hl = l.length ? l.reduce((a, h) => a + h.held, 0) / l.length : 0;
+      if (w.length && l.length && hl > hw * 1.5) n.push(["warn", "You hold losers longer than winners", "Taking profits quickly but hoping losers recover is the most common beginner mistake. Let your stop-loss decide, not hope.", "psych"]);
+    }
+    const stops = closed.filter(h => h.why === "stop-loss").length; if (stops) n.push(["good", `${stops} stop-loss${stops > 1 ? "es" : ""} did their job`, "A stop that triggers isn't a failure. It's the plan working and keeping a loss small.", "stops"]);
+    return n;
+  },
+  renderNotes() {
+    const LT = Object.fromEntries(LESSONS.map((l, i) => [l.id, `${i + 1}. ${l.title}`]));
+    $("#prNotes").innerHTML = this.notes().map(([lvl, t, p, les]) => `<div class="cnote"><span class="dot" style="margin-top:6px;background:var(--${lvl === "good" ? "up" : lvl === "warn" ? "warn" : "down"})"></span><div><h3>${t}</h3><p>${p} ${les ? `<a href="#coach" data-lesson="${les}">Lesson: ${esc(LT[les] || "")}</a>` : ""}</p></div></div>`).join("") || `<p class="note">Nothing to flag. Keep trading with a plan.</p>`;
+  },
+  init() {
+    this.load();
+    $$("[data-side]").forEach(b => b.addEventListener("click", () => this.setSide(b.dataset.side)));
+    $$("[data-type]").forEach(b => b.addEventListener("click", () => this.setType(b.dataset.type)));
+    $("#prForm").addEventListener("submit", e => { e.preventDefault(); this.submit(); });
+    for (const id of ["#prCoin", "#prAmt", "#prSl", "#prTp", "#prLimit"]) $(id).addEventListener("input", () => { if (id === "#prAmt") this.sellAll = false; if (id === "#prCoin") this.quick(); this.renderChecks(); });
+    $("#prPos").addEventListener("click", e => { const b = e.target.closest("[data-close]"); if (!b) return; const base = b.dataset.close, px = pxEUR(base); if (px) { this.sell(base, this.st.pos[base].qty, px, "manual"); this.save(); this.render(); } });
+    $("#prOrders").addEventListener("click", e => { const b = e.target.closest("[data-cancel]"); if (!b) return; const o = this.st.orders.find(x => String(x.id) === b.dataset.cancel); if (o?.side === "buy") this.st.cash += o.eur; this.st.orders = this.st.orders.filter(x => x !== o); this.save(); this.render(); });
+    $("#prReset").addEventListener("click", e => {
+      const b = e.currentTarget;
+      if (b.dataset.armed) { this.st = this.fresh(); this.save(); this.render(); b.textContent = "Reset account"; delete b.dataset.armed; b.classList.remove("btn-danger"); $("#prMsg").textContent = "Account reset to €10,000."; return; }
+      b.dataset.armed = "1"; b.textContent = "Click again to reset to €10,000"; b.classList.add("btn-danger");
+      setTimeout(() => { if (b.dataset.armed) { delete b.dataset.armed; b.textContent = "Reset account"; b.classList.remove("btn-danger"); } }, 4000);
+    });
+    $("#prNotes").addEventListener("click", e => { const a = e.target.closest("[data-lesson]"); if (a) Coach.open(a.dataset.lesson); });
+  },
+  show() {
+    $("#prCoins").innerHTML = this.coins().map(s => `<option value="${esc(s)}"></option>`).join("");
+    if (!$("#prCoin").value) $("#prCoin").value = "BTC";
+    this.quick(); this.renderChecks(); this.render();
+  },
+};
+
+/* =========================================================================
+   Coach: course, strategy lab, AI coach chat
+   ========================================================================= */
+const LESSONS = [
+  { id: "basics", title: "How a trade works", lead: "Before strategy comes mechanics: what you actually pay, and why the price on screen isn't always the price you get.",
+    body: `<h3>Bid, ask and spread</h3><p>Every market has buyers (the <b>bid</b>, the highest price someone will pay) and sellers (the <b>ask</b>, the lowest price someone will sell for). The gap is the <b>spread</b>. Open the Chart tab: the order book shows asks in red above and bids in green below.</p>
+      <h3>Market vs. limit orders</h3><ul><li><b>Market order</b>: buy or sell right now at the best available price. Fast, but you pay the spread and accept whatever the price is.</li><li><b>Limit order</b>: “only buy at €X or lower” (or sell at €X or higher). You control the price, but it may never fill.</li></ul>
+      <h3>Fees</h3><p>Exchanges charge a fee on every trade, typically 0.1–0.25% per side. A buy and a sell together cost about 0.5%. That sounds small, but 50 round trips cost about 25% of the money you trade.</p>
+      <div class="example">Example: you buy €1,000 of BTC with a 0.25% fee. You get €997.50 worth of BTC. The price has to rise about 0.5% before selling breaks even.</div>`,
+    task: "In Practice, place one market buy of €200 and one limit buy 2% below the current price. Watch which one fills.",
+    quiz: [{ q: "You want to buy ETH only if it drops to €2,000. Which order?", o: ["Market order", "Limit order at €2,000", "Stop-loss at €2,000"], a: 1, why: "A limit buy waits until the price reaches your level or lower." },
+           { q: "Why does trading very often hurt results even with a 50% win rate?", o: ["The spread and fees are paid on every trade", "Exchanges block frequent traders", "Charts are less accurate"], a: 0, why: "Costs are certain; edge is not. Each trade starts slightly negative." }] },
+  { id: "risk", title: "Risk first: position size", lead: "Professional traders think about how much they can lose before how much they can win. The size of a position matters more than the coin.",
+    body: `<h3>The 1–2% rule</h3><p>Decide how much of your account you're willing to lose on one trade, usually <b>1–2%</b>. With €10,000 that's €100–€200. That is the most a single trade may cost you if it goes wrong.</p>
+      <h3>From risk to position size</h3><p><b>Position size = money at risk ÷ distance to your stop-loss.</b></p>
+      <div class="example">Account €10,000, you accept €150 risk (1.5%). You plan a stop-loss 6% below your entry. Position size = €150 ÷ 0.06 = <b>€2,500</b>. If the stop hits, you lose about €150, not more.</div>
+      <h3>Why it matters</h3><p>After a 50% loss you need +100% just to get back to even. Small, controlled losses keep you in the game long enough to learn and to catch the good trades.</p><ul><li>Lose 10% → need +11% to recover</li><li>Lose 25% → need +33%</li><li>Lose 50% → need +100%</li></ul>`,
+    task: "In Practice, fill in a stop-loss and watch the check that tells you what % of your account you risk. Adjust the amount until it's under 2%.",
+    quiz: [{ q: "Account €5,000, risk 2%, stop 10% below entry. Position size?", o: ["€500", "€1,000", "€100"], a: 1, why: "2% of €5,000 = €100; €100 ÷ 0.10 = €1,000." },
+           { q: "You're down 50%. What gain gets you back to your starting balance?", o: ["+50%", "+75%", "+100%"], a: 2, why: "Half your money must double to return to where you started." }] },
+  { id: "stops", title: "Stop-loss and take-profit", lead: "A plan has two exits written down before you enter: where you're wrong, and where you take profit.",
+    body: `<h3>Stop-loss</h3><p>A stop-loss sells automatically if the price falls to your level. Put it where your idea is <i>proven wrong</i>, for example just under a recent low or a support level, not at a random round number.</p>
+      <h3>Take-profit</h3><p>A take-profit sells automatically at your target, for example near the next resistance. It stops you from giving back gains out of greed.</p>
+      <h3>Rules that help</h3><ul><li>Never move a stop further away to “give it room”. That's hoping, not planning.</li><li>You may move a stop up once the trade is in profit (a <b>trailing</b> stop) to protect gains.</li><li>Leave room for normal noise: if a coin moves 4% on a quiet day, a 1% stop will get hit by random wiggles.</li></ul>
+      <div class="example">BTC at €67,000. The last swing low is €64,500. A stop at €64,300 (−4%) sits under that low. A target at €72,000 (+7.5%) is the next resistance.</div>`,
+    task: "Open a practice buy with a stop-loss and a take-profit, then leave it alone. Let the plan, not your feelings, close it.",
+    quiz: [{ q: "Where is a sensible place for a stop-loss?", o: ["Exactly at a round number like €60,000", "Just below a recent swing low or support", "As far away as possible so it never triggers"], a: 1, why: "If price breaks the level your idea depends on, the idea is wrong. Round numbers attract stop hunts." },
+           { q: "Your trade is losing and close to the stop. What do you do?", o: ["Move the stop lower to give it room", "Keep the stop where you planned it", "Remove the stop and wait"], a: 1, why: "Moving stops away turns small planned losses into big unplanned ones." }] },
+  { id: "rr", title: "Reward-to-risk and win rate", lead: "You don't have to be right most of the time. You need wins that are bigger than your losses.",
+    body: `<h3>Reward-to-risk (R:R)</h3><p>If you risk €100 to make €200, your R:R is 2 : 1. Divide the distance to your target by the distance to your stop.</p>
+      <h3>Break-even win rate</h3><ul><li>R:R 1 : 1 → you must win more than 50% of trades</li><li>R:R 2 : 1 → about 34% is enough</li><li>R:R 3 : 1 → about 25% is enough</li></ul>
+      <p>This is why traders skip setups where the target is close and the stop is far away.</p>
+      <h3>Expectancy</h3><p>Expectancy = (win rate × average win) − (loss rate × average loss). Positive expectancy over many trades is the real goal. One trade tells you nothing.</p>
+      <div class="example">10 trades, 4 wins of €200, 6 losses of €100 → +€800 − €600 = <b>+€200</b>, despite losing 60% of the time.</div>`,
+    task: "Look at the Coach notes in Practice after 5 closed trades. Compare your average win with your average loss.",
+    quiz: [{ q: "With a 3 : 1 reward-to-risk, roughly what win rate breaks even?", o: ["25%", "50%", "75%"], a: 0, why: "One win of 3 units pays for three losses of 1 unit." },
+           { q: "Which matters more over 100 trades?", o: ["Win rate alone", "Expectancy (wins × size vs. losses × size)", "The number of trades"], a: 1, why: "A high win rate with huge losses still loses money." }] },
+  { id: "trend", title: "Candles and trend", lead: "Each candle tells you who won a period: buyers or sellers. Trend tells you which side has been winning over time.",
+    body: `<h3>Reading a candle</h3><p>Green: closed higher than it opened. Red: closed lower. The thin <b>wicks</b> show the highest and lowest prices reached. A long wick means price went there but got pushed back.</p>
+      <h3>Trend by structure</h3><ul><li><b>Uptrend</b>: higher highs and higher lows.</li><li><b>Downtrend</b>: lower highs and lower lows.</li><li><b>Range</b>: price bouncing between the same high and low.</li></ul>
+      <h3>Moving averages</h3><p>The EMA 50 and EMA 200 on the Chart tab smooth price out. Price above a rising 200-day average is a classic sign of a long-term uptrend; below a falling one, a downtrend. Averages lag: they confirm trends, they don't predict them.</p>
+      <h3>Use more than one timeframe</h3><p>Check the daily chart for the main trend, then a 1h or 4h chart for timing. Trading against the daily trend on a 5-minute chart is swimming against the current.</p>`,
+    task: "On the Chart tab, switch BTC to 1D with EMA 50 and EMA 200 on. Is price above or below each average? What does the Insights tab call the trend?",
+    quiz: [{ q: "A series of higher highs and higher lows is…", o: ["A downtrend", "An uptrend", "A range"], a: 1, why: "Buyers keep pushing to new highs and defending higher lows." },
+           { q: "What's the main weakness of moving averages?", o: ["They lag behind price", "They only work on Bitcoin", "They change after the fact"], a: 0, why: "They're built from past prices, so they confirm moves late." }] },
+  { id: "levels", title: "Support and resistance", lead: "Prices remember. Levels where many people bought or sold before often matter again.",
+    body: `<h3>Support</h3><p>A price area where buyers stepped in before. Price often bounces there, until it doesn't. A clean break below support is a warning.</p>
+      <h3>Resistance</h3><p>An area where sellers took control before. Breaking above it with strong volume can start a new move up.</p>
+      <h3>Flip</h3><p>Broken resistance often becomes support (and the other way round). Traders who missed the breakout buy the retest.</p>
+      <h3>Practical tips</h3><ul><li>Think in <b>zones</b>, not exact prices.</li><li>The more touches and the higher the timeframe, the stronger the level.</li><li>Stops just under support, targets just under resistance.</li></ul>`,
+    task: "Use the 30-day range in Insights as rough support and resistance. Plan a practice trade with a stop under support and a target under resistance.",
+    quiz: [{ q: "Price breaks above strong resistance and then comes back to it. What often happens?", o: ["The old resistance acts as support", "The level no longer matters", "Price always falls back into the range"], a: 0, why: "This is the “flip”. It doesn't always hold, so keep your stop." },
+           { q: "Where do you place targets relative to resistance?", o: ["Just above it", "Just below it", "Exactly on it"], a: 1, why: "Others sell at resistance, so price may turn just before it." }] },
+  { id: "momentum", title: "RSI, MACD and volume", lead: "Indicators describe momentum. They are helpers for a plan, not signals to blindly follow.",
+    body: `<h3>RSI (Relative Strength Index)</h3><p>Measures how strong recent up moves were compared with down moves, on a 0–100 scale. Above 70 is “overbought” and below 30 “oversold”. In a strong trend RSI can stay above 70 for weeks, so overbought is not a sell signal by itself.</p>
+      <h3>MACD</h3><p>The gap between a fast and a slow moving average. When the MACD line crosses above its signal line, momentum is turning up. The histogram on the Chart tab shows that gap growing or shrinking.</p>
+      <h3>Volume</h3><p>Moves on high volume are more trustworthy. A breakout on thin volume often fails.</p>
+      <h3>Divergence</h3><p>Price makes a new high but RSI makes a lower high: momentum is fading. It's a warning, not a guarantee.</p>`,
+    task: "Switch the lower chart between RSI and MACD on a 4h BTC chart. Find a moment where RSI went above 70. What did price do next?",
+    quiz: [{ q: "RSI is 78 during a strong uptrend. What does that mean?", o: ["Sell immediately", "Momentum is strong, the move may be stretched", "The trend has ended"], a: 1, why: "Overbought readings can last a long time in trends." },
+           { q: "A breakout on very low volume is…", o: ["More reliable", "Less reliable", "Unrelated to reliability"], a: 1, why: "Few participants means little conviction behind the move." }] },
+  { id: "strategies", title: "Strategies that beginners can test", lead: "A strategy is a written set of rules: when to enter, when to exit, how much to risk. Here are four classic ones. Test them in the Strategy lab below.",
+    body: `<h3>1. Dollar-cost averaging (DCA)</h3><p>Buy a fixed amount every week or month, whatever the price. No timing needed and less stress. It suits long-term investing more than trading.</p>
+      <h3>2. Trend following</h3><p>Hold while the trend is up (e.g. EMA 50 above EMA 200), step aside when it turns down. You miss the exact bottom and top, but you aim to catch the big middle and avoid long bear markets.</p>
+      <h3>3. Breakout</h3><p>Buy when price closes above its highest level of the last 20 days, sell when it closes below the lowest of the last 10. It catches strong moves but has many small false starts.</p>
+      <h3>4. Mean reversion (range trading)</h3><p>Buy when RSI is very low (below 30) and sell when it recovers. It works in ranges and fails in strong downtrends, where “cheap” keeps getting cheaper.</p>
+      <h3>Pick one and keep a journal</h3><p>Mixing strategies trade by trade is how plans fall apart. Write down why you entered every practice trade, then review.</p>`,
+    task: "Run all four strategies in the Strategy lab on BTC, then on a smaller coin. Which one held up best, and in which kind of market?",
+    quiz: [{ q: "Which strategy needs no market timing?", o: ["Breakout", "Dollar-cost averaging", "Mean reversion"], a: 1, why: "DCA buys on a schedule regardless of price." },
+           { q: "When does mean reversion usually fail?", o: ["In sideways ranges", "In strong downtrends", "On high volume days"], a: 1, why: "Oversold can get far more oversold when a trend is down." }] },
+  { id: "psych", title: "Psychology: FOMO, revenge and overtrading", lead: "Most losses come from behaviour, not from bad analysis. Knowing the traps is half the protection.",
+    body: `<h3>FOMO (fear of missing out)</h3><p>Buying because something already went up 30%. Late buyers often provide the exit liquidity for early ones. If you missed a move, wait for the next setup.</p>
+      <h3>Revenge trading</h3><p>After a loss you immediately jump into another trade to “win it back”, usually bigger and without a plan. Take a break after a loss instead.</p>
+      <h3>Overtrading</h3><p>Trading out of boredom. Fees add up and quality drops. Fewer, better trades almost always beat many average ones.</p>
+      <h3>Holding losers, selling winners</h3><p>People hate realising a loss, so they hold losers and quickly sell winners. That's the opposite of what works. Let your stop and target decide.</p>
+      <h3>The trading journal</h3><p>For each trade, write the reason, the plan (entry, stop, target), and afterwards what happened and how you felt. Patterns in your own behaviour show up fast.</p>`,
+    task: "Make your next five practice trades only with a written reason, stop and target. Then read the Coach notes.",
+    quiz: [{ q: "You just took a loss. The healthiest next step is…", o: ["Double the size to win it back", "Pause and review the trade", "Remove your stop-losses"], a: 1, why: "Emotional re-entries are the classic revenge trade." },
+           { q: "A coin is up 40% today and everyone is talking about it. A disciplined trader…", o: ["Buys immediately", "Waits for a setup that fits the plan", "Shorts it with leverage"], a: 1, why: "Chasing late is FOMO. Plans come first." }] },
+  { id: "plan", title: "Your trading plan and leverage", lead: "Put everything together in a plan you can follow, and understand why leverage is the fastest way to lose an account.",
+    body: `<h3>A one-page plan</h3><ul><li><b>Markets</b>: which coins and which timeframe.</li><li><b>Setup</b>: the exact condition you trade (e.g. trend up on daily + pullback to EMA 50 on 4h).</li><li><b>Risk</b>: max 1–2% per trade, max 3 open trades.</li><li><b>Exits</b>: stop under the last swing low; target at 2R or the next resistance.</li><li><b>Review</b>: weekly journal review. Stop trading for the week after losing 5% of the account.</li></ul>
+      <h3>Leverage and futures</h3><p>Leverage lets you trade with borrowed money. At 10× leverage, a 10% move against you wipes out the whole position (“liquidation”). Crypto moves 10% in a day regularly. Beginners should learn without leverage first. This app deliberately doesn't offer it.</p>
+      <h3>From practice to real money</h3><p>Only consider real trades after a long stretch of practice where you followed your plan and the results held up. Start with small amounts you can afford to lose completely.</p>`,
+    task: "Write your own one-page plan (a note on your PC is fine). Then use Ask the coach: paste the plan and ask for feedback.",
+    quiz: [{ q: "At 10× leverage, roughly what move against you liquidates the position?", o: ["1%", "10%", "50%"], a: 1, why: "10× magnifies a 10% move into a 100% loss of your margin." },
+           { q: "What belongs in a trading plan?", o: ["Only which coins to buy", "Setup, risk per trade, exits and a review routine", "Price predictions for next year"], a: 1, why: "A plan defines behaviour, not predictions." }] },
+];
+
+const Coach = {
+  prog: null, cur: null, msgs: [], client: null, busy: false,
+  init() {
+    this.prog = store.get("coach", { done: {}, cur: LESSONS[0].id }); this.cur = this.prog.cur;
+    $("#coList").addEventListener("click", e => { const b = e.target.closest("[data-l]"); if (b) this.open(b.dataset.l, true); });
+    $("#labCoins").innerHTML = ["BTC", "ETH", "SOL", "XRP", "ADA", "DOGE"].map((c, i) => `<button type="button" class="chip" data-lc="${c}" aria-pressed="${i === 0}">${c}</button>`).join("");
+    this.labSym = "BTC";
+    $("#labCoins").addEventListener("click", e => { const b = e.target.closest("[data-lc]"); if (!b) return; this.labSym = b.dataset.lc; $$("#labCoins [data-lc]").forEach(x => x.setAttribute("aria-pressed", x === b)); if (this.labLast) this.runLab(this.labLast); });
+    $("#labCards").innerHTML = STRATS.map(s => `<div class="strat"><h3>${s.name}</h3><p>${s.rule}</p><button type="button" class="btn" data-run="${s.id}">Test on history</button></div>`).join("");
+    $("#labCards").addEventListener("click", e => { const b = e.target.closest("[data-run]"); if (b) this.runLab(b.dataset.run); });
+    // chat
+    $("#keyForm").addEventListener("submit", e => { e.preventDefault(); const k = $("#apiKey").value.trim(); if (!k) return; store.set("apiKey", k); $("#apiKey").value = ""; this.client = null; this.showChat(); });
+    $("#keyForget").addEventListener("click", () => { store.set("apiKey", ""); this.client = null; this.showChat(); });
+    $("#chatClear").addEventListener("click", () => { this.msgs = []; this.renderChat(); });
+    $("#chatForm").addEventListener("submit", e => { e.preventDefault(); const t = $("#chatInput").value.trim(); if (t) { $("#chatInput").value = ""; this.ask(t); } });
+    $("#chatSuggest").innerHTML = ["Review my practice trades", "Explain stop-losses with an example in euros", "Which strategy fits a beginner?", "Quiz me on risk management", "What is the market doing today?"].map(s => `<button type="button" class="chip" data-sug="${esc(s)}">${esc(s)}</button>`).join("");
+    $("#chatSuggest").addEventListener("click", e => { const b = e.target.closest("[data-sug]"); if (b) this.ask(b.dataset.sug); });
+  },
+  show() { this.renderList(); this.renderLesson(); this.showChat(); },
+  open(id, keepScroll) { this.cur = id; this.prog.cur = id; store.set("coach", this.prog); if (location.hash !== "#coach") location.hash = "coach"; else { this.renderList(); this.renderLesson(); } if (!keepScroll) setTimeout(() => $("#coLesson").scrollIntoView({ block: "start" }), 50); },
+  renderList() {
+    const done = Object.keys(this.prog.done).length;
+    $("#coProgress").textContent = `${done} of ${LESSONS.length} lessons completed`;
+    $("#coList").innerHTML = LESSONS.map((l, i) => `<li class="${this.prog.done[l.id] ? "done" : ""}"><button type="button" data-l="${l.id}" aria-current="${l.id === this.cur}"><span class="n">${i + 1}</span><span>${esc(l.title)}</span>${this.prog.done[l.id] ? `<svg class="i" aria-label="completed"><use href="#i-check"/></svg>` : "<span></span>"}</button></li>`).join("");
+  },
+  renderLesson() {
+    const i = LESSONS.findIndex(l => l.id === this.cur), l = LESSONS[i] || LESSONS[0];
+    $("#coLesson").innerHTML = `<h2>${i + 1}. ${esc(l.title)}</h2><p class="lead">${l.lead}</p><section>${l.body}</section>
+      <div class="task"><b>Try it:</b> ${l.task}</div>
+      <form class="quiz" id="quiz"><h3 style="color:var(--text);font-size:14px">Check yourself</h3>${l.quiz.map((q, qi) => `<fieldset><legend>${esc(q.q)}</legend>${q.o.map((o, oi) => `<label><input type="radio" name="q${qi}" value="${oi}"> ${esc(o)}</label>`).join("")}<p class="fb" id="fb${qi}" hidden></p></fieldset>`).join("")}
+      <div class="tools"><button class="btn btn-primary" type="submit">Check answers</button>${i < LESSONS.length - 1 ? `<button class="btn" type="button" id="nextL">Next lesson</button>` : ""}</div></form>`;
+    $("#quiz").addEventListener("submit", e => {
+      e.preventDefault(); let ok = 0;
+      l.quiz.forEach((q, qi) => { const v = $(`input[name=q${qi}]:checked`); const fb = $("#fb" + qi); fb.hidden = false;
+        if (v && +v.value === q.a) { ok++; fb.className = "fb up"; fb.textContent = "Correct. " + q.why; } else { fb.className = "fb down"; fb.textContent = (v ? "Not quite. " : "Pick an answer. ") + q.why; } });
+      if (ok === l.quiz.length) { this.prog.done[l.id] = true; store.set("coach", this.prog); this.renderList(); }
+    });
+    $("#nextL")?.addEventListener("click", () => this.open(LESSONS[i + 1].id));
+  },
+  /* ---- strategy lab ---- */
+  async runLab(id) {
+    this.labLast = id; const s = STRATS.find(x => x.id === id); const out = $("#labOut");
+    out.innerHTML = `<p class="note"><span class="skel" style="width:200px"></span></p>`;
+    try {
+      const d = await Insights.daily(this.labSym); const r = backtest(d, id);
+      const cur = d.cur; const yrs = (d.t[d.t.length - 1] - d.t[r.start]) / 3.156e10;
+      out.innerHTML = `<h3 style="color:var(--text);font-size:14px;margin-bottom:8px">${s.name} on ${this.labSym} · ${new Date(d.t[r.start]).toISOString().slice(0, 10)} to ${new Date(d.t[d.t.length - 1]).toISOString().slice(0, 10)} (${yrs.toFixed(1)} years, ${d.src === "bv" ? "Bitvavo EUR" : "Binance USDT"})</h3>
+        <div class="tablewrap"><table><thead><tr><th class="l" scope="col"></th><th scope="col">Total return</th><th scope="col">Worst drop</th><th scope="col">Trades</th><th scope="col">Winning trades</th><th scope="col">Time invested</th></tr></thead><tbody>
+        <tr style="cursor:default"><td class="l"><span class="dot" style="background:#3987e5"></span> ${s.name}</td><td class="mono ${r.ret >= 0 ? "up" : "down"}">${pct(r.ret * 100, 0)}</td><td class="mono down">${pct(-r.mdd * 100, 0)}</td><td class="mono">${r.trades}</td><td class="mono">${r.trades ? Math.round(r.win * 100) + "%" : "–"}</td><td class="mono">${Math.round(r.inMkt * 100)}%</td></tr>
+        <tr style="cursor:default"><td class="l"><span class="dot" style="background:var(--faint)"></span> Buy and hold</td><td class="mono ${r.bh >= 0 ? "up" : "down"}">${pct(r.bh * 100, 0)}</td><td class="mono down">${pct(-r.bhMdd * 100, 0)}</td><td class="mono">1</td><td class="mono">–</td><td class="mono">100%</td></tr></tbody></table></div>
+        <canvas id="labChart" style="width:100%;height:220px;display:block;margin-top:10px" aria-label="Strategy value versus buy and hold"></canvas>
+        <p class="note">${r.note} Simulated on daily closes with a 0.25% fee per trade, starting with ${money(1000, cur)}. History doesn't repeat exactly; a strategy that worked in the past can fail in the future.</p>`;
+      drawLines($("#labChart"), [[r.curve, "#3987e5", s.name], [r.bhCurve, cssVar("--faint"), "Buy and hold"]], d.t.slice(r.start), cur);
+    } catch (e) { out.innerHTML = `<div class="err">Couldn't load ${esc(this.labSym)} history (${esc(e.message)}).</div>`; }
+  },
+  /* ---- AI coach ---- */
+  showChat() { const k = store.get("apiKey", ""); $("#chatSetup").hidden = !!k; $("#chatBox").hidden = !k; if (k) this.renderChat(); },
+  renderChat() {
+    const log = $("#chatLog");
+    log.innerHTML = this.msgs.length ? this.msgs.map(m => `<div class="msg ${m.role === "user" ? "user" : "coach"}">${esc(m.shown)}</div>`).join("") : `<div class="msg coach">Hi! I'm your trading coach. Ask me anything about trading, or tap a suggestion. I can see your practice account and today's prices, so I can give feedback on your own trades.</div>`;
+    log.scrollTop = log.scrollHeight;
+  },
+  context() {
+    const st = Practice.st, V = Practice.value();
+    const pos = Object.entries(st.pos).map(([b, p]) => { const px = pxEUR(b); return `${b}: ${plain(p.qty, 6)} @ avg ${eur(p.cost / p.qty)}, now ${eur(px)}, P/L ${pct(((px ?? 0) * p.qty / p.cost - 1) * 100, 1)}, stop ${p.sl ? eur(p.sl) : "none"}, target ${p.tp ? eur(p.tp) : "none"}`; }).join("; ") || "none";
+    const hist = st.hist.slice(0, 12).map(h => `${new Date(h.ts).toISOString().slice(0, 16)} ${h.side} ${plain(h.qty, 6)} ${h.base} @ ${eur(h.px)} (${h.why})${h.side === "sell" ? ` P/L ${eur(h.pnl)}` : `${h.sl ? " with stop" : " no stop"}, ${Math.round((h.size || 0) * 100)}% of account`}`).join("\n") || "no trades yet";
+    const mk = ["BTC", "ETH", "SOL", "XRP"].map(b => `${b} ${eur(pxEUR(b))} (${pct(chg24(b), 1)} 24h)`).join(", ");
+    const notes = Practice.notes().map(n => n[1]).join("; ");
+    const les = LESSONS.filter(l => this.prog.done[l.id]).map(l => l.title).join(", ") || "none";
+    return `<context time="${new Date().toISOString()}">
+Practice account: value ${eur(V)}, started with ${eur(st.start)}, cash ${eur(st.cash)}.
+Open positions: ${pos}
+Recent trades (newest first):
+${hist}
+App's automatic coach notes: ${notes || "none"}
+Lessons completed: ${les}
+Live market (Bitvavo EUR): ${mk}. Fear & Greed index: ${$("#gFg").textContent} (${$("#gFgLabel").textContent}).
+</context>`;
+  },
+  async ask(text) {
+    if (this.busy) return;
+    if (!window.Anthropic) { this.msgs.push({ role: "user", content: text, shown: text }, { role: "assistant", content: "", shown: "The AI coach library didn't load. Reinstall the app or reload the page." }); this.renderChat(); return; }
+    const key = store.get("apiKey", ""); if (!key) return this.showChat();
+    this.client ||= new window.Anthropic({ apiKey: key, dangerouslyAllowBrowser: true });
+    const userMsg = { role: "user", content: `${this.context()}\n\n${text}`, shown: text };
+    this.msgs.push(userMsg); const out = { role: "assistant", content: [], shown: "" }; this.msgs.push(out);
+    this.busy = true; $("#chatSend").disabled = true; this.renderChat();
+    const bubble = $("#chatLog").lastElementChild; bubble.classList.add("thinking"); bubble.textContent = "Thinking…";
+    try {
+      const stream = this.client.beta.messages.stream({
+        model: "claude-opus-5-5",
+        max_tokens: 16000,
+        betas: ["server-side-fallback-2026-07-01"],
+        fallbacks: "default",
+        output_config: { effort: "low" },
+        system: COACH_SYSTEM,
+        messages: this.msgs.slice(0, -1).map(m => ({ role: m.role, content: m.content })),
+      });
+      for await (const ev of stream) {
+        if (ev.type === "content_block_delta" && ev.delta.type === "text_delta") {
+          out.shown += ev.delta.text; bubble.classList.remove("thinking"); bubble.textContent = out.shown; $("#chatLog").scrollTop = $("#chatLog").scrollHeight;
+        }
+      }
+      const final = await stream.finalMessage();
+      out.content = final.content;
+      if (final.stop_reason === "refusal") { out.shown ||= "I can't help with that one. Try asking it differently, or ask about trading basics."; bubble.textContent = out.shown; }
+      if (!out.shown) { out.shown = "(no answer)"; bubble.textContent = out.shown; }
+    } catch (e) {
+      const A = window.Anthropic;
+      const why = e instanceof A.AuthenticationError ? "Your API key was rejected. Remove it below and add a valid key."
+        : e instanceof A.PermissionDeniedError ? "This API key isn't allowed to use this model. Check your Anthropic account."
+        : e instanceof A.RateLimitError ? "Too many requests or no credit left on your Anthropic account. Wait a moment, or check your billing."
+        : e instanceof A.APIConnectionError ? "Couldn't reach Anthropic. Check your internet connection."
+        : e instanceof A.APIError ? `Anthropic returned an error (${e.status}). Try again in a moment.` : `Something went wrong: ${e.message}`;
+      this.msgs.splice(this.msgs.length - 2, 2); this.renderChat();
+      const err = document.createElement("div"); err.className = "msg coach"; err.style.color = "var(--down)"; err.textContent = why; $("#chatLog").append(err);
+    } finally { this.busy = false; $("#chatSend").disabled = false; }
+  },
+};
+const COACH_SYSTEM = `You are Koersdesk Coach, a patient and honest crypto trading coach inside a practice-trading app called Koersdesk. The student is a beginner who uses the euro exchange Bitvavo and practises with virtual money (a €10,000 paper account with a 0.25% fee per trade). The app also has a 10-lesson course (how a trade works; position sizing and the 1–2% rule; stop-loss and take-profit; reward-to-risk and expectancy; candles and trend; support and resistance; RSI, MACD and volume; four strategies: DCA, trend following, breakout, mean reversion; trading psychology; writing a trading plan and the dangers of leverage) and a Strategy lab that backtests those strategies.
+
+How to coach:
+- Teach risk management before anything else. Tie advice to concrete numbers in euros, using the student's own account where possible.
+- Each user message starts with a <context> block: their practice account, recent trades, the app's automatic notes, completed lessons and a live market snapshot with its timestamp. Use it to give specific, honest feedback on their actual trades: praise good habits, name mistakes plainly, and say what to do differently next time. Don't repeat the context back.
+- Explain any term the first time you use it. Keep answers short and conversational (usually under 200 words) unless the student asks for depth. Use plain text without Markdown headings; short lists are fine.
+- When it helps, point to the matching lesson or suggest an exercise in the Practice tab.
+- If asked to quiz them, ask one question at a time and wait for the answer.
+- Market questions: describe what the snapshot shows and possible conditional scenarios. Never claim to know where prices will go, never invent prices or news beyond the snapshot, and say when information may be outdated.
+- This is education, not personalised financial advice. Don't tell them to buy or sell specific coins with real money, don't promise profits, and steer beginners away from leverage, futures and borrowing.
+- Reply in the language the student writes in.`;
+
+const STRATS = [
+  { id: "dca", name: "Weekly DCA", rule: "Invest the same amount every week for the whole period, never sell. Compared with putting everything in on day one." },
+  { id: "trend", name: "Trend following (EMA 50/200)", rule: "Hold while the 50-day average is above the 200-day average; sell when it crosses below." },
+  { id: "breakout", name: "20-day breakout", rule: "Buy when the close beats the highest high of the last 20 days; sell when it closes under the lowest low of the last 10." },
+  { id: "rsi", name: "RSI mean reversion", rule: "Buy when the 14-day RSI drops below 30; sell when it recovers above 55." },
+];
+function backtest(d, id) {
+  const c = d.c, n = c.length, start = id === "trend" ? 200 : id === "breakout" ? 20 : id === "rsi" ? 15 : 0;
+  const ema50 = Ind.ema(c, 50), ema200 = Ind.ema(c, 200), rsi = Ind.rsi(c);
+  let cash = 1000, qty = 0, entry = 0, trades = 0, wins = 0, inDays = 0; const curve = [];
+  const buy = i => { qty = cash * (1 - FEE) / c[i]; entry = cash; cash = 0; };
+  const sell = i => { const v = qty * c[i] * (1 - FEE); trades++; if (v > entry) wins++; cash = v; qty = 0; };
+  if (id === "dca") {
+    const weeks = Math.ceil((n - start) / 7), per = 1000 / weeks; let invested = 0; let left = 1000;
+    for (let i = start; i < n; i++) { if ((i - start) % 7 === 0 && left > 0.01) { const a = Math.min(per, left); qty += a * (1 - FEE) / c[i]; left -= a; invested += a; } inDays += qty > 0 ? 1 : 0; curve.push(left + qty * c[i]); }
+    trades = weeks; wins = 0;
+  } else {
+    for (let i = start; i < n; i++) {
+      if (id === "trend") { if (!qty && ema50[i] > ema200[i]) buy(i); else if (qty && ema50[i] < ema200[i]) sell(i); }
+      if (id === "rsi") { if (!qty && rsi[i] < 30) buy(i); else if (qty && rsi[i] > 55) sell(i); }
+      if (id === "breakout") {
+        let hi = -Infinity, lo = Infinity; for (let j = i - 20; j < i; j++) hi = Math.max(hi, d.h[j]); for (let j = i - 10; j < i; j++) lo = Math.min(lo, d.l[j]);
+        if (!qty && c[i] > hi) buy(i); else if (qty && c[i] < lo) sell(i);
+      }
+      if (qty) inDays++; curve.push(cash + qty * c[i]);
+    }
+    if (qty) { trades++; if (qty * c[n - 1] * (1 - FEE) > entry) wins++; }
+  }
+  const bhCurve = []; const q0 = 1000 * (1 - FEE) / c[start]; for (let i = start; i < n; i++) bhCurve.push(q0 * c[i]);
+  const mdd = a => { let pk = -Infinity, m = 0; for (const v of a) { pk = Math.max(pk, v); m = Math.max(m, 1 - v / pk); } return m; };
+  const ret = curve[curve.length - 1] / 1000 - 1, bh = bhCurve[bhCurve.length - 1] / 1000 - 1;
+  const note = id === "dca" ? `DCA ${ret > bh ? "beat" : "trailed"} a single lump-sum buy here; its real strength is a smoother ride and no need to time the market.`
+    : ret > bh ? `Over this period the strategy beat buy-and-hold${mdd(curve) < mdd(bhCurve) ? " with smaller drops" : ""}.` : `Over this period buy-and-hold did better${mdd(curve) < mdd(bhCurve) ? ", but the strategy had smaller drops along the way" : ""}.`;
+  return { start, curve, bhCurve, ret, bh, mdd: mdd(curve), bhMdd: mdd(bhCurve), trades, win: trades ? wins / trades : 0, inMkt: inDays / (n - start), note };
+}
+function drawLines(cv, series, times, cur) {
+  if (!cv?.offsetWidth) return; const dpr = devicePixelRatio || 1, W = cv.offsetWidth, H = cv.offsetHeight; cv.width = W * dpr; cv.height = H * dpr;
+  const ctx = cv.getContext("2d"); ctx.scale(dpr, dpr);
+  const all = series.flatMap(s => s[0]).filter(v => v > 0); const mn = Math.min(...all), mx = Math.max(...all);
+  const padR = 64, padB = 20; const N = series[0][0].length;
+  const x = i => 4 + i / (N - 1) * (W - padR - 8), y = v => 6 + (1 - (Math.log(v) - Math.log(mn)) / (Math.log(mx) - Math.log(mn) || 1)) * (H - padB - 10);
+  ctx.font = "11px IBM Plex Mono, monospace"; ctx.strokeStyle = cssVar("--line"); ctx.fillStyle = cssVar("--muted");
+  for (let k = 0; k <= 3; k++) { const v = Math.exp(Math.log(mn) + (Math.log(mx) - Math.log(mn)) * k / 3); ctx.beginPath(); ctx.moveTo(4, y(v)); ctx.lineTo(W - padR, y(v)); ctx.stroke(); ctx.fillText(compact(v, cur), W - padR + 6, y(v) + 4); }
+  [0, Math.floor(N / 2), N - 1].forEach((i, k) => { const t = new Date(times[i]).getUTCFullYear() + "-" + String(new Date(times[i]).getUTCMonth() + 1).padStart(2, "0"); ctx.fillText(t, Math.min(Math.max(x(i) - (k ? 26 : 0), 4), W - padR - 52), H - 4); });
+  for (const [vals, col] of [...series].reverse()) { ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.beginPath(); vals.forEach((v, i) => ctx.lineTo(x(i), y(v))); ctx.stroke(); }
+}
+
+/* =========================================================================
    Router + boot
    ========================================================================= */
-const ROUTES = ["markets", "chart", "news", "insights"]; const loaded = new Set();
+const ROUTES = ["markets", "chart", "news", "insights", "practice", "coach"]; const loaded = new Set();
 function route() {
   const r = ROUTES.includes(location.hash.slice(1)) ? location.hash.slice(1) : "markets";
   for (const v of ROUTES) $("#view-" + v).hidden = v !== r;
@@ -1303,6 +2043,9 @@ function route() {
   if (r === "news" && !loaded.has("news")) { loaded.add("news"); News.renderChips(); News.load(); }
   if (r === "insights" && !loaded.has("insights")) { loaded.add("insights"); Insights.renderCoinChips(); Insights.load(); }
   if (r === "insights") requestAnimationFrame(() => Insights.redrawFan());
+  if (r === "practice") Practice.show();
+  if (r === "coach") Coach.show();
+  scrollTo(0, 0);
 }
 addEventListener("hashchange", route);
 
@@ -1311,7 +2054,8 @@ addEventListener("hashchange", route);
   $("#themeBtn use").setAttribute("href", isDark() ? "#i-sun" : "#i-moon");
   $("#curEur").setAttribute("aria-pressed", S.cur === "eur"); $("#curUsd").setAttribute("aria-pressed", S.cur === "usd");
   Markets.render();
-  await Binance.init();
+  Practice.init(); Coach.init();
+  await Promise.all([Binance.init(), Bitvavo.init()]);
   route();
   Markets.load(); Global.load(); Markets.trending();
   setInterval(() => Markets.load(), 60000);
