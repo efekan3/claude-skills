@@ -292,7 +292,11 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
 .strat p { margin: 0; color: var(--muted); font-size: 13px; }
 .strat .btn { justify-self: start; margin-top: 4px; }
 .chat { display: grid; gap: 12px; max-height: 460px; overflow-y: auto; padding-right: 4px; }
-.msg { max-width: 80ch; padding: 10px 14px; border-radius: 10px; font-size: 14px; line-height: 1.55; white-space: pre-wrap; }
+.msg { max-width: 80ch; padding: 10px 14px; border-radius: 10px; font-size: 14px; line-height: 1.55; }
+.msg p { margin: 0 0 8px; } .msg p:last-child, .msg ul:last-child { margin-bottom: 0; }
+.msg ul { margin: 4px 0 8px; padding-left: 18px; }
+.msg .opts { display: grid; gap: 6px; margin-top: 8px; }
+.msg .opts .btn { justify-content: flex-start; text-align: left; }
 .msg.user { justify-self: end; background: var(--accent); color: var(--accent-ink); }
 .msg.coach { justify-self: start; background: var(--panel-2); border: 1px solid var(--line); }
 .msg.coach.thinking { color: var(--muted); }
@@ -614,31 +618,23 @@ footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 14px;
   </div>
 
   <div class="panel" style="margin-top:16px">
-    <div class="phead"><h2>Ask the coach</h2><span class="faint" style="font-size:12px">AI coach powered by Claude · uses your own Anthropic API key</span></div>
+    <div class="phead"><h2>Ask the coach</h2><span class="faint" style="font-size:12px">built into the app · free, works offline for lessons and reviews</span></div>
     <div class="pbody">
-      <div id="chatSetup">
-        <p class="note" style="margin-top:0">The coach reads your practice account and today's market, then answers like a personal trading teacher. It needs an Anthropic API key (create one at console.anthropic.com → API keys). The key is stored only on this computer and sent only to Anthropic. Each answer costs roughly €0.01–0.05.</p>
-        <form class="tools" id="keyForm"><label class="input" style="width:340px;max-width:100%"><input id="apiKey" type="password" placeholder="sk-ant-…" autocomplete="off"></label><button class="btn btn-primary" type="submit">Save key</button></form>
-      </div>
-      <div id="chatBox" hidden>
-        <div class="chat" id="chatLog" aria-live="polite"></div>
-        <div class="tools" id="chatSuggest" style="margin:10px 0"></div>
-        <form class="chat-in" id="chatForm"><label class="input" style="flex:1"><input id="chatInput" placeholder="Ask anything: “Review my last trade”, “How do I set a stop-loss?”" autocomplete="off"></label><button class="btn btn-primary" type="submit" id="chatSend"><svg class="i"><use href="#i-send"/></svg>Send</button></form>
-        <p class="note"><button type="button" class="linkbtn" id="keyForget">Remove API key</button> · <button type="button" class="linkbtn" id="chatClear">Start a new conversation</button></p>
-      </div>
+      <div class="chat" id="chatLog" aria-live="polite"></div>
+      <div class="tools" id="chatSuggest" style="margin:10px 0"></div>
+      <form class="chat-in" id="chatForm"><label class="input" style="flex:1"><input id="chatInput" placeholder="Try: “review my trades”, “what is RSI”, “account 10000 risk 1% stop 5%”, “how is SOL”" autocomplete="off"></label><button class="btn btn-primary" type="submit" id="chatSend"><svg class="i"><use href="#i-send"/></svg>Send</button></form>
+      <p class="note"><button type="button" class="linkbtn" id="chatClear">Start a new conversation</button></p>
     </div>
   </div>
   <p class="disclaimer">Educational information, not personalised financial advice. Practise risk management before risking real money; crypto assets can lose substantial value, and most short-term traders lose money.</p>
 </section>
 
 <footer>
-  <span>Data: <a href="https://bitvavo.com/" target="_blank" rel="noopener">Bitvavo</a> public market data (euro prices, charts, order book, trades), Binance public market data (US dollar prices), <a href="https://www.coingecko.com/" target="_blank" rel="noopener">CoinGecko</a> (market caps), AI coach by <a href="https://www.anthropic.com/" target="_blank" rel="noopener">Anthropic Claude</a>, <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener">alternative.me</a> (Fear &amp; Greed), CoinDesk, Decrypt and Cointelegraph RSS via <a href="https://rss2json.com/" target="_blank" rel="noopener">rss2json</a> (news). Charts by <a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noopener">TradingView Lightweight Charts</a>.</span>
+  <span>Data: <a href="https://bitvavo.com/" target="_blank" rel="noopener">Bitvavo</a> public market data (euro prices, charts, order book, trades), Binance public market data (US dollar prices), <a href="https://www.coingecko.com/" target="_blank" rel="noopener">CoinGecko</a> (market caps), <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener">alternative.me</a> (Fear &amp; Greed), CoinDesk, Decrypt and Cointelegraph RSS via <a href="https://rss2json.com/" target="_blank" rel="noopener">rss2json</a> (news). Charts by <a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noopener">TradingView Lightweight Charts</a>.</span>
 </footer>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
-<script src="vendor/anthropic-sdk.js"></script>
-<script>
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script><script>
 "use strict";
 /* =========================================================================
    Koersdesk — everything runs in the browser against public, keyless APIs.
@@ -1863,15 +1859,19 @@ const Coach = {
     $("#labCoins").addEventListener("click", e => { const b = e.target.closest("[data-lc]"); if (!b) return; this.labSym = b.dataset.lc; $$("#labCoins [data-lc]").forEach(x => x.setAttribute("aria-pressed", x === b)); if (this.labLast) this.runLab(this.labLast); });
     $("#labCards").innerHTML = STRATS.map(s => `<div class="strat"><h3>${s.name}</h3><p>${s.rule}</p><button type="button" class="btn" data-run="${s.id}">Test on history</button></div>`).join("");
     $("#labCards").addEventListener("click", e => { const b = e.target.closest("[data-run]"); if (b) this.runLab(b.dataset.run); });
-    // chat
-    $("#keyForm").addEventListener("submit", e => { e.preventDefault(); const k = $("#apiKey").value.trim(); if (!k) return; store.set("apiKey", k); $("#apiKey").value = ""; this.client = null; this.showChat(); });
-    $("#keyForget").addEventListener("click", () => { store.set("apiKey", ""); this.client = null; this.showChat(); });
+    // chat (built-in, free)
+    store.set("apiKey", ""); // remove any key saved by version 1.1.0
     $("#chatClear").addEventListener("click", () => { this.msgs = []; this.renderChat(); });
     $("#chatForm").addEventListener("submit", e => { e.preventDefault(); const t = $("#chatInput").value.trim(); if (t) { $("#chatInput").value = ""; this.ask(t); } });
-    $("#chatSuggest").innerHTML = ["Review my practice trades", "Explain stop-losses with an example in euros", "Which strategy fits a beginner?", "Quiz me on risk management", "What is the market doing today?"].map(s => `<button type="button" class="chip" data-sug="${esc(s)}">${esc(s)}</button>`).join("");
+    $("#chatSuggest").innerHTML = ["Review my trades", "What is the market doing today?", "Quiz me", "What is a stop-loss?", "Account 10000 risk 1% stop 5%", "How is SOL?", "Which strategy fits a beginner?"].map(s => `<button type="button" class="chip" data-sug="${esc(s)}">${esc(s)}</button>`).join("");
     $("#chatSuggest").addEventListener("click", e => { const b = e.target.closest("[data-sug]"); if (b) this.ask(b.dataset.sug); });
+    $("#chatLog").addEventListener("click", e => {
+      const a = e.target.closest("[data-qa]"); if (a) { this.answerQuiz(a.dataset.qa, a.textContent); return; }
+      const s = e.target.closest("[data-say]"); if (s) { this.ask(s.dataset.say); return; }
+      const l = e.target.closest("[data-lesson]"); if (l) { e.preventDefault(); this.open(l.dataset.lesson); }
+    });
   },
-  show() { this.renderList(); this.renderLesson(); this.showChat(); },
+  show() { this.renderList(); this.renderLesson(); this.renderChat(); },
   open(id, keepScroll) { this.cur = id; this.prog.cur = id; store.set("coach", this.prog); if (location.hash !== "#coach") location.hash = "coach"; else { this.renderList(); this.renderLesson(); } if (!keepScroll) setTimeout(() => $("#coLesson").scrollIntoView({ block: "start" }), 50); },
   renderList() {
     const done = Object.keys(this.prog.done).length;
@@ -1908,81 +1908,164 @@ const Coach = {
       drawLines($("#labChart"), [[r.curve, "#3987e5", s.name], [r.bhCurve, cssVar("--faint"), "Buy and hold"]], d.t.slice(r.start), cur);
     } catch (e) { out.innerHTML = `<div class="err">Couldn't load ${esc(this.labSym)} history (${esc(e.message)}).</div>`; }
   },
-  /* ---- AI coach ---- */
-  showChat() { const k = store.get("apiKey", ""); $("#chatSetup").hidden = !!k; $("#chatBox").hidden = !k; if (k) this.renderChat(); },
+  /* ---- built-in coach chat (free, rule-based, uses live data in the browser) ---- */
   renderChat() {
     const log = $("#chatLog");
-    log.innerHTML = this.msgs.length ? this.msgs.map(m => `<div class="msg ${m.role === "user" ? "user" : "coach"}">${esc(m.shown)}</div>`).join("") : `<div class="msg coach">Hi! I'm your trading coach. Ask me anything about trading, or tap a suggestion. I can see your practice account and today's prices, so I can give feedback on your own trades.</div>`;
+    const hello = `<p>Hi! I'm your built-in trading coach. I can review your practice trades, explain any trading term, calculate a safe position size, quiz you, and describe the market or a coin using live Bitvavo prices.</p><p class="faint" style="font-size:12.5px">I'm not an internet AI: I follow trading-coach rules written into this app, so I'm free and private. Tap a suggestion below to start.</p>`;
+    log.innerHTML = [{ role: "coach", html: hello }, ...this.msgs].map(m => `<div class="msg ${m.role === "user" ? "user" : "coach"}">${m.html}</div>`).join("");
     log.scrollTop = log.scrollHeight;
   },
-  context() {
-    const st = Practice.st, V = Practice.value();
-    const pos = Object.entries(st.pos).map(([b, p]) => { const px = pxEUR(b); return `${b}: ${plain(p.qty, 6)} @ avg ${eur(p.cost / p.qty)}, now ${eur(px)}, P/L ${pct(((px ?? 0) * p.qty / p.cost - 1) * 100, 1)}, stop ${p.sl ? eur(p.sl) : "none"}, target ${p.tp ? eur(p.tp) : "none"}`; }).join("; ") || "none";
-    const hist = st.hist.slice(0, 12).map(h => `${new Date(h.ts).toISOString().slice(0, 16)} ${h.side} ${plain(h.qty, 6)} ${h.base} @ ${eur(h.px)} (${h.why})${h.side === "sell" ? ` P/L ${eur(h.pnl)}` : `${h.sl ? " with stop" : " no stop"}, ${Math.round((h.size || 0) * 100)}% of account`}`).join("\n") || "no trades yet";
-    const mk = ["BTC", "ETH", "SOL", "XRP"].map(b => `${b} ${eur(pxEUR(b))} (${pct(chg24(b), 1)} 24h)`).join(", ");
-    const notes = Practice.notes().map(n => n[1]).join("; ");
-    const les = LESSONS.filter(l => this.prog.done[l.id]).map(l => l.title).join(", ") || "none";
-    return `<context time="${new Date().toISOString()}">
-Practice account: value ${eur(V)}, started with ${eur(st.start)}, cash ${eur(st.cash)}.
-Open positions: ${pos}
-Recent trades (newest first):
-${hist}
-App's automatic coach notes: ${notes || "none"}
-Lessons completed: ${les}
-Live market (Bitvavo EUR): ${mk}. Fear & Greed index: ${$("#gFg").textContent} (${$("#gFgLabel").textContent}).
-</context>`;
-  },
+  say(role, html) { this.msgs.push({ role, html }); if (this.msgs.length > 80) this.msgs.splice(0, 2); this.renderChat(); },
   async ask(text) {
     if (this.busy) return;
-    if (!window.Anthropic) { this.msgs.push({ role: "user", content: text, shown: text }, { role: "assistant", content: "", shown: "The AI coach library didn't load. Reinstall the app or reload the page." }); this.renderChat(); return; }
-    const key = store.get("apiKey", ""); if (!key) return this.showChat();
-    this.client ||= new window.Anthropic({ apiKey: key, dangerouslyAllowBrowser: true });
-    const userMsg = { role: "user", content: `${this.context()}\n\n${text}`, shown: text };
-    this.msgs.push(userMsg); const out = { role: "assistant", content: [], shown: "" }; this.msgs.push(out);
-    this.busy = true; $("#chatSend").disabled = true; this.renderChat();
-    const bubble = $("#chatLog").lastElementChild; bubble.classList.add("thinking"); bubble.textContent = "Thinking…";
-    try {
-      const stream = this.client.beta.messages.stream({
-        model: "claude-opus-5-5",
-        max_tokens: 16000,
-        betas: ["server-side-fallback-2026-07-01"],
-        fallbacks: "default",
-        output_config: { effort: "low" },
-        system: COACH_SYSTEM,
-        messages: this.msgs.slice(0, -1).map(m => ({ role: m.role, content: m.content })),
-      });
-      for await (const ev of stream) {
-        if (ev.type === "content_block_delta" && ev.delta.type === "text_delta") {
-          out.shown += ev.delta.text; bubble.classList.remove("thinking"); bubble.textContent = out.shown; $("#chatLog").scrollTop = $("#chatLog").scrollHeight;
-        }
-      }
-      const final = await stream.finalMessage();
-      out.content = final.content;
-      if (final.stop_reason === "refusal") { out.shown ||= "I can't help with that one. Try asking it differently, or ask about trading basics."; bubble.textContent = out.shown; }
-      if (!out.shown) { out.shown = "(no answer)"; bubble.textContent = out.shown; }
-    } catch (e) {
-      const A = window.Anthropic;
-      const why = e instanceof A.AuthenticationError ? "Your API key was rejected. Remove it below and add a valid key."
-        : e instanceof A.PermissionDeniedError ? "This API key isn't allowed to use this model. Check your Anthropic account."
-        : e instanceof A.RateLimitError ? "Too many requests or no credit left on your Anthropic account. Wait a moment, or check your billing."
-        : e instanceof A.APIConnectionError ? "Couldn't reach Anthropic. Check your internet connection."
-        : e instanceof A.APIError ? `Anthropic returned an error (${e.status}). Try again in a moment.` : `Something went wrong: ${e.message}`;
-      this.msgs.splice(this.msgs.length - 2, 2); this.renderChat();
-      const err = document.createElement("div"); err.className = "msg coach"; err.style.color = "var(--down)"; err.textContent = why; $("#chatLog").append(err);
-    } finally { this.busy = false; $("#chatSend").disabled = false; }
+    this.say("user", esc(text));
+    this.busy = true; $("#chatSend").disabled = true;
+    try { this.say("coach", await Bot.reply(text)); }
+    catch (e) { this.say("coach", `<p>Something went wrong while I looked that up (${esc(e.message)}). Try again in a moment.</p>`); }
+    finally { this.busy = false; $("#chatSend").disabled = false; }
+  },
+  answerQuiz(code, label) {
+    const [li, qi, oi] = code.split("-").map(Number); const q = LESSONS[li]?.quiz[qi]; if (!q) return;
+    this.say("user", esc(label));
+    const ok = oi === q.a;
+    this.say("coach", `<p><b class="${ok ? "up" : "down"}">${ok ? "Correct!" : "Not quite."}</b> ${ok ? "" : `The answer is “${esc(q.o[q.a])}”. `}${esc(q.why)}</p><p>From lesson ${li + 1}: <a href="#coach" data-lesson="${LESSONS[li].id}">${esc(LESSONS[li].title)}</a>.</p><div class="opts"><button type="button" class="btn" data-say="Quiz me">Another question</button></div>`);
   },
 };
-const COACH_SYSTEM = `You are Koersdesk Coach, a patient and honest crypto trading coach inside a practice-trading app called Koersdesk. The student is a beginner who uses the euro exchange Bitvavo and practises with virtual money (a €10,000 paper account with a 0.25% fee per trade). The app also has a 10-lesson course (how a trade works; position sizing and the 1–2% rule; stop-loss and take-profit; reward-to-risk and expectancy; candles and trend; support and resistance; RSI, MACD and volume; four strategies: DCA, trend following, breakout, mean reversion; trading psychology; writing a trading plan and the dangers of leverage) and a Strategy lab that backtests those strategies.
 
-How to coach:
-- Teach risk management before anything else. Tie advice to concrete numbers in euros, using the student's own account where possible.
-- Each user message starts with a <context> block: their practice account, recent trades, the app's automatic notes, completed lessons and a live market snapshot with its timestamp. Use it to give specific, honest feedback on their actual trades: praise good habits, name mistakes plainly, and say what to do differently next time. Don't repeat the context back.
-- Explain any term the first time you use it. Keep answers short and conversational (usually under 200 words) unless the student asks for depth. Use plain text without Markdown headings; short lists are fine.
-- When it helps, point to the matching lesson or suggest an exercise in the Practice tab.
-- If asked to quiz them, ask one question at a time and wait for the answer.
-- Market questions: describe what the snapshot shows and possible conditional scenarios. Never claim to know where prices will go, never invent prices or news beyond the snapshot, and say when information may be outdated.
-- This is education, not personalised financial advice. Don't tell them to buy or sell specific coins with real money, don't promise profits, and steer beginners away from leverage, futures and borrowing.
-- Reply in the language the student writes in.`;
+/* Built-in coach brain: intent rules + glossary + live data. Free and local. */
+const GLOSSARY = [
+  { k: /stop.?loss|\bstops?\b/, t: "Stop-loss", les: "stops", a: "An order that sells automatically when the price falls to a level you chose in advance. It caps your loss on a trade.", ex: V => `With ${eur(V)} in your account and a buy of ${eur(V * 0.1)} with a stop 5% below, the most you lose is about ${eur(V * 0.1 * 0.05 + V * 0.1 * FEE * 2)} including fees.` },
+  { k: /take.?profit|\btarget\b/, t: "Take-profit", les: "stops", a: "An order that sells automatically when the price reaches your target, so you lock in a gain instead of hoping for more.", ex: () => "Buy at €100 with a take-profit at €110: if price touches €110 the position closes with about +10% minus fees." },
+  { k: /\brsi\b|relative strength/, t: "RSI", les: "momentum", a: "The Relative Strength Index measures momentum from 0 to 100. Above 70 means the price rose fast (overbought), below 30 means it fell fast (oversold). In strong trends it can stay extreme for weeks, so it's a warning, not a signal.", ex: () => "Switch the lower chart on the Chart tab to RSI to see it live." },
+  { k: /\bmacd\b/, t: "MACD", les: "momentum", a: "The gap between a fast (12) and slow (26) moving average, with a signal line. When MACD crosses above its signal line, momentum is turning up; below, momentum is turning down.", ex: () => "The bars under the chart (histogram) grow when momentum strengthens and shrink when it fades." },
+  { k: /\bema\b|moving average|\bsma\b|gemiddelde/, t: "Moving average (EMA)", les: "trend", a: "The average price over a number of periods, drawn as a line. EMA gives more weight to recent prices. Price above a rising 200-day average is a classic sign of an uptrend.", ex: () => "Turn on EMA 50 and EMA 200 on the 1D chart: when the 50 is above the 200, the trend is usually up." },
+  { k: /bollinger/, t: "Bollinger Bands", les: "momentum", a: "A 20-period average with bands two standard deviations above and below. Wide bands mean high volatility; a tight squeeze often comes before a big move.", ex: () => "Turn on Bollinger on the Chart tab and look for squeezes." },
+  { k: /support/, t: "Support", les: "levels", a: "A price zone where buyers stepped in before, so price often bounces there. When support breaks, it often turns into resistance.", ex: () => "The 30-day low in the Insights tab is a simple first support level." },
+  { k: /resistance|weerstand/, t: "Resistance", les: "levels", a: "A price zone where sellers took over before. Breaking above it on strong volume can start a new move up.", ex: () => "The 30-day high in Insights is a simple first resistance level." },
+  { k: /spread|\bbid\b|\bask\b/, t: "Spread (bid and ask)", les: "basics", a: "The bid is the highest price a buyer pays, the ask the lowest price a seller accepts. The gap is the spread, a hidden cost of every market order.", ex: () => "The order book on the Chart tab shows the spread between the red asks and green bids." },
+  { k: /limit order|\blimit\b/, t: "Limit order", les: "basics", a: "An order that only fills at your price or better: buy at €X or lower, sell at €X or higher. You control the price but it may never fill.", ex: () => "In Practice, choose Limit and set a price 2% below the current one to try it." },
+  { k: /market order/, t: "Market order", les: "basics", a: "An order that fills immediately at the best price available. Fast, but you pay the spread.", ex: () => "Practice uses market orders by default." },
+  { k: /\bdca\b|dollar.?cost|cost averag|periodiek/, t: "Dollar-cost averaging (DCA)", les: "strategies", a: "Investing the same amount on a fixed schedule (for example €50 every week) regardless of price. No timing needed and less stress.", ex: () => "Test 'Weekly DCA' in the Strategy lab to compare it with buying everything at once." },
+  { k: /leverage|hefboom|futures|margin|liquidat/, t: "Leverage", les: "plan", a: "Trading with borrowed money. At 10× leverage a 10% move against you wipes out the whole position (liquidation). Crypto moves 10% in a day regularly, so beginners should avoid it.", ex: V => `With 10× leverage on ${eur(V * 0.1)}, a 10% drop loses the full ${eur(V * 0.1)}.` },
+  { k: /\bfomo\b|fear of missing/, t: "FOMO", les: "psych", a: "Fear of missing out: buying because something already went up a lot. Late buyers often get caught in the pullback.", ex: () => "The Practice ticket warns you when a coin is already up more than 15% in 24 hours." },
+  { k: /revenge/, t: "Revenge trading", les: "psych", a: "Jumping straight into a new trade after a loss to win it back, usually bigger and without a plan. Take a break after a loss instead.", ex: () => "Practice warns you if you buy within 30 minutes of closing a loss." },
+  { k: /risk.?reward|reward.?risk|r:r|\brr\b|expectancy/, t: "Reward-to-risk", les: "rr", a: "How much you aim to win compared with how much you risk. Target distance ÷ stop distance. At 2 : 1 you only need to win about 34% of trades to break even.", ex: () => "Stop 5% below, target 10% above → reward-to-risk 2 : 1." },
+  { k: /position size|positiegrootte|how much (should|to) (i )?buy|1% rule|2% rule/, t: "Position size", les: "risk", a: "How much you put into one trade. Position size = money you accept to lose ÷ distance to your stop-loss.", ex: V => `${eur(V)} account, risk 1% (${eur(V * 0.01)}), stop 5% below entry → buy about ${eur(V * 0.01 / 0.05)}.` },
+  { k: /volatil/, t: "Volatility", les: "momentum", a: "How much the price typically moves. Higher volatility means bigger swings both ways, so you need wider stops and smaller positions.", ex: () => "Insights shows each coin's typical daily move." },
+  { k: /\bfee|kosten|commission/, t: "Fees", les: "basics", a: "Every trade costs a fee, typically 0.1–0.25% per side. A buy plus a sell costs about 0.5%, so frequent trading eats returns.", ex: V => `50 round trips of ${eur(V * 0.1)} cost about ${eur(V * 0.1 * 0.005 * 50)} in fees.` },
+  { k: /candle|kaars|wick/, t: "Candles", les: "trend", a: "Each candle shows the open, high, low and close for one period. Green closed higher than it opened, red lower. Long wicks show prices that were rejected.", ex: () => "Hover over candles on the Chart tab to see their open, high, low and close." },
+  { k: /trend/, t: "Trend", les: "trend", a: "Uptrend: higher highs and higher lows. Downtrend: lower highs and lower lows. Trading with the main trend is usually easier than against it.", ex: () => "Insights labels each coin's trend from its 50- and 200-day averages." },
+  { k: /bull|bear|stier|beer/, t: "Bull and bear market", les: "trend", a: "A bull market is a long period of rising prices, a bear market a long period of falling prices (often −20% or more from the top).", ex: () => "The 200-day average is a common dividing line between the two." },
+  { k: /market cap|marktwaarde/, t: "Market cap", les: "basics", a: "Price × number of coins in circulation. It tells you how big a project is; small caps move more and are riskier.", ex: () => "The Markets tab sorts coins by market cap." },
+  { k: /stablecoin|usdt|usdc/, t: "Stablecoin", les: "basics", a: "A token designed to stay at 1 dollar or 1 euro (like USDT, USDC or EURC). Traders park money in them between trades.", ex: () => "Binance prices in this app are quoted in USDT, a dollar stablecoin." },
+  { k: /breakout/, t: "Breakout", les: "strategies", a: "When price closes above resistance (or below support). Strong breakouts come with high volume; weak ones often fail and fall back.", ex: () => "Test the 20-day breakout strategy in the Strategy lab." },
+  { k: /journal|dagboek/, t: "Trading journal", les: "psych", a: "A log of every trade: why you entered, your stop and target, what happened and how you felt. It shows your own bad habits quickly.", ex: () => "Your Trade history in Practice is a start; add your reasons in a note." },
+];
+const COIN_NAMES = { bitcoin: "BTC", btc: "BTC", ethereum: "ETH", ether: "ETH", eth: "ETH", solana: "SOL", sol: "SOL", ripple: "XRP", xrp: "XRP", cardano: "ADA", ada: "ADA", dogecoin: "DOGE", doge: "DOGE", chainlink: "LINK", link: "LINK", bnb: "BNB", avalanche: "AVAX", avax: "AVAX", polkadot: "DOT", dot: "DOT", litecoin: "LTC", ltc: "LTC", shiba: "SHIB", shib: "SHIB", pepe: "PEPE", sui: "SUI", tron: "TRX", trx: "TRX" };
+const lessonLink = id => { const i = LESSONS.findIndex(l => l.id === id); return i < 0 ? "" : `<a href="#coach" data-lesson="${id}">Lesson ${i + 1}: ${esc(LESSONS[i].title)}</a>`; };
+const chips = (...xs) => `<div class="opts">${xs.map(x => `<button type="button" class="btn" data-say="${esc(x)}">${esc(x)}</button>`).join("")}</div>`;
+
+const Bot = {
+  askedQuiz: [],
+  async reply(raw) {
+    const t = raw.toLowerCase();
+    if (/^(hi|hey|hello|hallo|hoi|yo|goedemorgen|good (morning|evening))\b/.test(t)) return `<p>Hi! What would you like to work on?</p>${chips("Review my trades", "Quiz me", "Where do I start?")}`;
+    if (/review|feedback|my trades|how am i doing|mijn trades|beoordeel|evaluat|what am i doing wrong/.test(t)) return this.review();
+    if (/quiz|test me|overhoor|toets/.test(t)) return this.quiz();
+    const nums = this.sizing(t); if (nums) return nums;
+    if (/strateg/.test(t)) return this.strategy();
+    if (/where do i start|beginner|hoe begin|start learning|new to|nieuw/.test(t)) return this.start();
+    const coin = this.findCoin(t);
+    const wantsCall = /should i|moet ik|buy|sell|kopen|verkopen|prediction|voorspel|go up|go down|stijgen|dalen/.test(t);
+    if (coin && wantsCall) return `<p>I won't tell you to buy or sell. Nobody can reliably predict the next move, and it's your decision. Here's how ${esc(coin)} looks right now so you can make a plan with a stop-loss and a sensible size:</p>` + await this.coin(coin);
+    if (coin && !/what is|wat is|explain|uitleg/.test(t)) return this.coin(coin);
+    if (/market|today|vandaag|markt|nieuws|what.?s happening|hoe staat/.test(t)) return this.market();
+    const g = GLOSSARY.find(x => x.k.test(t));
+    if (g) return `<p><b>${g.t}.</b> ${g.a}</p><p class="example" style="margin:8px 0">${g.ex(Practice.value())}</p><p>${lessonLink(g.les)}</p>`;
+    if (/thank|bedankt|dank/.test(t)) return `<p>You're welcome. Keep practising with small positions and a stop-loss on every trade.</p>`;
+    if (/buy|sell|should i|moet ik|kopen|verkopen|prediction|voorspel|will .* go up/.test(t)) return `<p>I can't tell you what to buy or where a price will go. Nobody reliably can. What I can do is help you decide like a professional: check the trend, choose your stop, size the position so a loss costs at most 1–2%, and practise it here first.</p>${coin ? "" : chips("How is BTC?", "Account 10000 risk 1% stop 5%", "What is a stop-loss?")}`;
+    return `<p>I didn't catch that. I'm a built-in coach, so I understand these kinds of questions:</p><ul><li>“review my trades”</li><li>“what is RSI” (or any term: stop-loss, spread, leverage, DCA…)</li><li>“account 5000 risk 1% stop 4%”</li><li>“how is ETH” or “market today”</li><li>“quiz me” or “which strategy fits me”</li></ul>`;
+  },
+  findCoin(t) {
+    for (const [w, s] of Object.entries(COIN_NAMES)) if (new RegExp(`\\b${w}\\b`).test(t)) return s;
+    const m = t.toUpperCase().match(/\b[A-Z]{2,6}\b/g) || [];
+    return m.find(s => S.bitvavo.has(s) && !["RSI", "EMA", "SMA", "DCA", "MACD", "FOMO", "USD", "EUR"].includes(s)) || null;
+  },
+  sizing(t) {
+    if (!/(risk|riskeer|stop|account|rekening|size)/.test(t) || !/\d/.test(t)) return null;
+    const num = re => { const m = t.match(re); return m ? parseFloat(m[1].replace(",", ".")) : null; };
+    const acct = num(/(?:account|rekening|capital|kapitaal|balance|saldo)\D{0,6}([\d.,]+)/) ?? num(/€\s?([\d.,]+)/) ?? Practice.value();
+    const risk = num(/risk\w*\D{0,6}([\d.,]+)\s*%/) ?? 1;
+    const stop = num(/stop\w*\D{0,6}([\d.,]+)\s*%/);
+    const A = typeof acct === "number" && acct > 100 ? acct : Practice.value();
+    if (!stop) return `<p>To size a position I need your stop-loss distance in %. Example: “account ${Math.round(A)} risk ${risk}% stop 5%”.</p>`;
+    const riskEur = A * risk / 100, size = riskEur / (stop / 100);
+    return `<p>Account <b>${eur(A)}</b>, risk <b>${risk}%</b> = <b>${eur(riskEur)}</b> you accept to lose, stop <b>${stop}%</b> below entry.</p><p>Position size = ${eur(riskEur)} ÷ ${stop}% = <b>${eur(size)}</b>${size > A ? " (more than your account: use a wider stop or accept less risk)" : ` (${(size / A * 100).toFixed(0)}% of the account)`}.</p><p>If the stop hits you lose about ${eur(riskEur + size * FEE * 2)} including fees. ${risk > 2 ? "That's above the usual 1–2%; consider risking less." : "That's within the 1–2% rule."}</p><p>${lessonLink("risk")}</p>`;
+  },
+  review() {
+    const st = Practice.st, V = Practice.value(), pnl = V - st.start;
+    const closed = st.hist.filter(h => h.side === "sell"), buys = st.hist.filter(h => h.side === "buy");
+    if (!st.hist.length) return `<p>You haven't made any practice trades yet. Open the <a href="#practice">Practice</a> tab and try this: buy 5–10% of your account in BTC with a 4% stop-loss and an 8% take-profit. Then ask me again.</p>`;
+    const out = [`<p>Your practice account is worth <b>${eur(V)}</b>: <b class="${pnl >= 0 ? "up" : "down"}">${pnl >= 0 ? "+" : ""}${eur(pnl)}</b> since you started. ${buys.length} buy${buys.length === 1 ? "" : "s"}, ${closed.length} closed trade${closed.length === 1 ? "" : "s"}.</p>`];
+    const good = [], fix = [];
+    const withStop = buys.filter(b => b.sl).length;
+    (withStop / buys.length >= 0.8 ? good : fix).push(withStop / buys.length >= 0.8 ? `You use stop-losses on ${withStop} of ${buys.length} buys. That's the most important habit.` : `Only ${withStop} of ${buys.length} buys had a stop-loss. Set one before every buy.`);
+    const avgSize = buys.reduce((a, b) => a + (b.size || 0), 0) / buys.length;
+    (avgSize <= 0.2 ? good : fix).push(`Your average position is ${(avgSize * 100).toFixed(0)}% of your account${avgSize <= 0.2 ? ", a sensible size." : ". Keep single trades under 10–20%."}`);
+    if (closed.length) {
+      const w = closed.filter(h => h.pnl > 0), l = closed.filter(h => h.pnl <= 0);
+      const aw = w.length ? w.reduce((a, h) => a + h.pnl, 0) / w.length : 0, al = l.length ? -l.reduce((a, h) => a + h.pnl, 0) / l.length : 0;
+      out.push(`<p>Closed trades: ${w.length} winners (avg ${eur(aw)}), ${l.length} losers (avg ${eur(-al)}).</p>`);
+      if (l.length && w.length) (aw >= al ? good : fix).push(aw >= al ? "Your average win is bigger than your average loss. Good." : "Your average loss is bigger than your average win. Let winners run to the target and cut losers at the stop.");
+      const stopped = closed.filter(h => h.why === "stop-loss").length; if (stopped) good.push(`${stopped} trade${stopped > 1 ? "s were" : " was"} closed by your stop-loss: the plan worked.`);
+      const manualLoss = closed.filter(h => h.why === "manual" && h.pnl < 0).length; if (manualLoss >= 2) fix.push(`You closed ${manualLoss} losing trades by hand. Was that your plan, or nerves?`);
+    }
+    const last = st.hist[0];
+    if (last?.side === "buy") out.push(`<p>Last trade: you bought ${esc(last.base)} at ${eur(last.px)}${last.chg > 15 ? ` after it was already up ${last.chg.toFixed(0)}% that day (watch for FOMO)` : ""}, ${last.sl ? "with a stop-loss" : "without a stop-loss"}.</p>`);
+    for (const n of Practice.notes().filter(n => n[0] !== "good").slice(0, 2)) if (!fix.some(f => f.includes(n[1].slice(0, 12)))) fix.push(n[1] + ".");
+    if (good.length) out.push(`<p><b class="up">Going well</b></p><ul>${good.map(g => `<li>${g}</li>`).join("")}</ul>`);
+    if (fix.length) out.push(`<p><b class="down">To improve</b></p><ul>${fix.map(g => `<li>${g}</li>`).join("")}</ul>`);
+    out.push(`<p>Next step: ${fix.length ? "pick the first point to improve and make your next three trades with it in mind." : "keep the same discipline and try a different strategy in the Strategy lab."}</p>`);
+    return out.join("");
+  },
+  quiz() {
+    const all = LESSONS.flatMap((l, li) => l.quiz.map((q, qi) => [li, qi]));
+    let pool = all.filter(([li, qi]) => !this.askedQuiz.includes(li + "-" + qi)); if (!pool.length) { this.askedQuiz = []; pool = all; }
+    const [li, qi] = pool[Math.floor(Math.random() * pool.length)]; this.askedQuiz.push(li + "-" + qi);
+    const q = LESSONS[li].quiz[qi];
+    return `<p><b>Question</b> (lesson ${li + 1}): ${esc(q.q)}</p><div class="opts">${q.o.map((o, oi) => `<button type="button" class="btn" data-qa="${li}-${qi}-${oi}">${esc(o)}</button>`).join("")}</div>`;
+  },
+  strategy() {
+    return `<p>For a beginner I'd start in this order:</p><ul><li><b>Weekly DCA</b> for any long-term money: no timing, little stress.</li><li><b>Trend following</b> for practice trades: only buy when the daily trend is up (price and EMA 50 above EMA 200), always with a stop under the last swing low.</li><li><b>Breakouts</b> and <b>RSI mean reversion</b> once you're consistent: they need more experience and more discipline.</li></ul><p>Test each one in the Strategy lab above on a few coins, and notice how much they drop along the way, not just the return.</p><p>${lessonLink("strategies")}</p>`;
+  },
+  start() {
+    return `<p>A good path:</p><ul><li>Do lessons 1–3 (how trades work, position size, stop-losses).</li><li>Make 5 small practice trades, each with a stop-loss and a target.</li><li>Ask me “review my trades”.</li><li>Then lessons 4–9, and test strategies in the Strategy lab.</li><li>Write your own plan (lesson 10).</li></ul><p>${lessonLink("basics")}</p>`;
+  },
+  async market() {
+    const coins = ["BTC", "ETH", "SOL", "XRP"].filter(b => pxEUR(b) != null);
+    const lines = coins.map(b => `<li><b>${b}</b> ${eur(pxEUR(b))} <span class="${chg24(b) >= 0 ? "up" : "down"}">${pct(chg24(b), 1)}</span> in 24h</li>`).join("");
+    const ch = [...Bitvavo.last.entries()].filter(([, v]) => v.o && v.vq > 50000).map(([b, v]) => [b, (v.c / v.o - 1) * 100]);
+    const up = ch.filter(x => x[1] > 0).length; const top = [...ch].sort((a, b) => b[1] - a[1]);
+    const fg = $("#gFg").textContent, fgl = $("#gFgLabel").textContent;
+    let trend = "";
+    try { const d = await Insights.daily("BTC"); const f = Insights.features(d); const i = f.n - 1; const p = d.c[i];
+      trend = `<p>Bigger picture: BTC is ${p > f.ema200[i] ? "above" : "below"} its 200-day average (${money(f.ema200[i], d.cur)}) and ${pct((p / f.ath - 1) * 100, 0)} from its all-time high. Daily RSI is ${f.rsi[i].toFixed(0)}${f.rsi[i] < 35 ? ", close to oversold" : f.rsi[i] > 65 ? ", running hot" : ""}.</p>`; } catch {}
+    return `<p>Right now on Bitvavo (${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}):</p><ul>${lines}</ul>${ch.length ? `<p>${up} of ${ch.length} actively traded coins are up over 24 hours. Biggest gainers: ${top.slice(0, 3).map(x => `${x[0]} ${pct(x[1], 0)}`).join(", ")}. Biggest losers: ${top.slice(-3).reverse().map(x => `${x[0]} ${pct(x[1], 0)}`).join(", ")}.</p>` : ""}${fg && fg !== "–" ? `<p>The Fear &amp; Greed index is <b>${esc(fg)}</b> (${esc(fgl)}). ${+fg < 30 ? "Fear often means people are selling; patient traders wait for the trend to turn instead of guessing the bottom." : +fg > 70 ? "Greed often comes before pullbacks; be careful chasing." : ""}</p>` : ""}${trend}<p>For headlines, open the <a href="#news">News</a> tab. This is a snapshot, not a forecast.</p>`;
+  },
+  async coin(sym) {
+    const px = pxEUR(sym);
+    if (px == null && !S.binance.has(sym + "USDT")) return `<p>I couldn't find live prices for ${esc(sym)} on Bitvavo or Binance.</p>`;
+    const d = await Insights.daily(sym); const f = Insights.features(d); const i = f.n - 1, p = d.c[i];
+    if (f.n < 60) return `<p>${esc(sym)} is too new for a trend reading (only ${f.n} days of history). Live price: ${px ? eur(px) : "–"}.</p>`;
+    const m = v => money(v, d.cur);
+    const trend = f.n > 200 ? (p > f.ema200[i] ? (p > f.ema50[i] ? "an uptrend (above both its 50- and 200-day averages)" : "a pullback inside an uptrend (above the 200-day, below the 50-day average)") : (p < f.ema50[i] ? "a downtrend (below both averages)" : "a recovery attempt (above the 50-day, still below the 200-day average)")) : "too young for a 200-day trend";
+    const r = f.rsi[i];
+    return `<p><b>${esc(sym)}</b>${px ? ` trades at <b>${eur(px)}</b> (${pct(chg24(sym), 1)} today)` : ""}. On the daily chart it's in ${trend}.</p>
+      <ul><li>RSI ${r.toFixed(0)}: ${r > 70 ? "momentum is stretched high" : r < 30 ? "oversold, sellers have been in control" : "neutral momentum"}.</li><li>Last 30 days: ${pct(f.r30[i] * 100, 1)}, range ${m(f.lo30)} – ${m(f.hi30)}.</li><li>A typical day moves about ${(f.vol30[i] / Math.sqrt(365) * 100).toFixed(1)}%, so a stop tighter than ~${Math.max(2, (f.vol30[i] / Math.sqrt(365) * 200)).toFixed(0)}% may get hit by normal noise.</li><li>${pct((p / f.ath - 1) * 100, 0)} from its all-time high of ${m(f.ath)}.</li></ul>
+      <p>What to watch: a daily close above ${m(f.hi30)} would break the 30-day range upwards; below ${m(f.lo30)} would break it downwards. Plan your stop on the other side of the level you trade.</p>
+      <p class="faint" style="font-size:12.5px">From ${d.src === "bv" ? "Bitvavo euro" : "Binance US dollar"} daily data, last closed day ${new Date(d.t[i]).toISOString().slice(0, 10)}. A description, not a prediction.</p>${chips(`Account ${Math.round(Practice.value())} risk 1% stop ${Math.max(2, Math.round(f.vol30[i] / Math.sqrt(365) * 200))}%`)}`;
+  },
+};
 
 const STRATS = [
   { id: "dca", name: "Weekly DCA", rule: "Invest the same amount every week for the whole period, never sell. Compared with putting everything in on day one." },
