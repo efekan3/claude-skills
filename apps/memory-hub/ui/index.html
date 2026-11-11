@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Memory Hub</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%233f6fd8'/%3E%3Ctext x='16' y='22' font-size='17' text-anchor='middle' fill='white' font-family='sans-serif'%3EM%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-logo">M</span> Memory Hub</div>
+      <nav class="nav" id="nav">
+        <a href="#/" data-r="overzicht"><span class="ico">◎</span> Overzicht</a>
+        <a href="#/gesprekken" data-r="gesprekken"><span class="ico">☰</span> Alle gesprekken</a>
+        <a href="#/projecten" data-r="projecten"><span class="ico">▦</span> Projecten &amp; onderwerpen</a>
+        <a href="#/geheugen" data-r="geheugen"><span class="ico">✦</span> Geheugen</a>
+        <a href="#/instellingen" data-r="instellingen"><span class="ico">⚙</span> Import &amp; instellingen</a>
+      </nav>
+      <div class="sidebar-foot">
+        <div id="sync-pill" class="row small"></div>
+        <label class="switch small" title="Thema"><span>Thema</span>
+          <select id="theme-select" class="small">
+            <option value="auto">Automatisch</option>
+            <option value="light">Licht</option>
+            <option value="dark">Donker</option>
+          </select>
+        </label>
+        <div>Alles staat lokaal op deze computer.</div>
+      </div>
+    </aside>
+    <main id="app"><div class="loading">Laden…</div></main>
+  </div>
+  <div class="toast-wrap" id="toasts"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

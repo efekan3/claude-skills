@@ -22,6 +22,12 @@ Left out: 27 skills that depend on Hermes-only features, and 2 that jailbreak or
 - Finance skills point at the shared `excel-author/scripts/recalc.py`; missing example workbooks are called out.
 - The catalog stubs `archify`, `impeccable`, `brag`, `brag-slim` and the single-file `hyperframes` port were replaced by the real upstream skills.
 
+## Apps
+
+| App | Wat het is |
+|---|---|
+| **[Memory Hub](apps/memory-hub/)** | Lokaal archief van je Claude-gesprekken (Claude Code automatisch, claude.ai via export) met zoekfunctie, geheugen, back-ups, een eigen MCP-server en de skill `memory-hub`. Installeren: `python apps/memory-hub/memory_hub.py install` — zie de [handleiding](apps/memory-hub/HANDLEIDING.md). |
+
 ## 1-ready-to-use — 42 skills
 
 Work in Claude straight away — no installs, no keys.
