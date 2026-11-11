@@ -16,7 +16,7 @@ MEMORY_KINDS = ("voorkeur", "beslissing", "doel", "actie", "feit")
 MEMORY_ORIGINS = ("user_stated", "assistant_suggested", "inferred")
 MEMORY_STATUSES = ("actief", "voorstel", "vervangen", "afgerond", "verworpen")
 ORIGIN_LABEL = {"user_stated": "door jou gezegd", "assistant_suggested": "voorgesteld door Claude", "inferred": "afgeleid"}
-SOURCE_LABEL = {"claude_code": "Claude Code", "claude_ai_export": "claude.ai (export)", "test": "Testgesprek"}
+SOURCE_LABEL = {"claude_code": "Claude Code", "claude_code_cloud": "Claude Code (cloud)", "claude_ai_export": "claude.ai (export)", "test": "Testgesprek"}
 STALE_DAYS = 180
 
 

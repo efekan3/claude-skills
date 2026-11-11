@@ -195,6 +195,26 @@ class T02_ExportImport(unittest.TestCase):
         self.assertFalse((config.import_dir() / "export-TEST.zip").exists())
 
 
+class T02b_CloudImport(unittest.TestCase):
+    def test_cloud_sessions(self):
+        conn = db.connect()
+        data = {"format": "memory-hub-cloud-v1", "sessions": [{"id": "session_TEST1", "title": "[TEST] Cloudsessie", "complete": False,
+                "created_at": "2026-11-01T10:00:00Z", "updated_at": "2026-11-01T10:05:00Z", "url": "https://claude.ai/code/session_TEST1",
+                "messages": [{"uuid": "c2", "role": "assistant", "text": "Antwoord Walrusplan", "created_at": "2026-11-01T10:01:00Z", "tools": ["Bash"]},
+                             {"uuid": "c1", "role": "user", "text": "[TEST] vraag over Walrusplan", "created_at": "2026-11-01T10:00:00Z"}]}]}
+        p = TMP / "cloud-TEST.json"
+        p.write_text(json.dumps(data), encoding="utf-8")
+        r = importer_export.import_path(conn, p)
+        self.assertEqual((r["new_conversations"], r["new_messages"]), (1, 2))
+        r = importer_export.import_path(conn, p)
+        self.assertEqual(r["new_messages"], 0)
+        hit = store.search_messages(conn, "Walrusplan")
+        conv = store.get_conversation(conn, hit[0]["conversation_id"])
+        self.assertEqual([m["role"] for m in conv["messages"]], ["user", "assistant"])  # op tijd gesorteerd
+        self.assertTrue(conv["missing_info"])  # onvolledig eerlijk gemeld
+        self.assertEqual(conv["url"], "https://claude.ai/code/session_TEST1")
+
+
 class T03_SearchMemoryPersistence(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

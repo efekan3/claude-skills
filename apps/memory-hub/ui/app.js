@@ -8,7 +8,7 @@ const HL_S = "\u0002", HL_E = "\u0003";
 const KINDS = ["voorkeur", "beslissing", "doel", "actie", "feit"];
 const STATUSES = ["actief", "voorstel", "vervangen", "afgerond", "verworpen"];
 const ORIGINS = { user_stated: "door jou gezegd", assistant_suggested: "voorgesteld door Claude", inferred: "afgeleid" };
-const SOURCES = { claude_code: "Claude Code", claude_ai_export: "claude.ai (export)", test: "Testgesprek" };
+const SOURCES = { claude_code: "Claude Code", claude_code_cloud: "Claude Code (cloud)", claude_ai_export: "claude.ai (export)", test: "Testgesprek" };
 const state = { projects: [], topics: [], tags: [], viewClick: null };
 const KIND_LABELS = { voorkeur: "Voorkeuren", beslissing: "Beslissingen", doel: "Doelen", actie: "Acties", feit: "Feiten" };
 

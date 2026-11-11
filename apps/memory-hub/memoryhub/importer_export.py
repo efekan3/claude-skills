@@ -18,6 +18,8 @@ from . import config, db
 
 SOURCE = "claude_ai_export"
 CHAT_URL = "https://claude.ai/chat/{}"
+CLOUD_SOURCE = "claude_code_cloud"
+CLOUD_FORMAT = "memory-hub-cloud-v1"
 
 
 def _load_bundle(path: Path) -> dict:
@@ -54,6 +56,9 @@ def _load_bundle(path: Path) -> dict:
             raise ValueError("Geen geldig JSON-bestand of zip-archief") from e
         if isinstance(obj, list):
             out["conversations"] = obj
+        elif isinstance(obj, dict) and obj.get("format") == CLOUD_FORMAT:
+            out["cloud"] = obj
+            out["conversations"] = []
         elif isinstance(obj, dict) and "conversations" in obj:
             out["conversations"] = obj["conversations"]
     if out["conversations"] is None:
@@ -77,6 +82,8 @@ def _message_text(m):
 
 def import_path(conn, path, trigger="handmatig") -> dict:
     bundle = _load_bundle(Path(path))
+    if bundle.get("cloud"):
+        return import_cloud(conn, bundle["cloud"], trigger, Path(path).name)
     res = {"new_conversations": 0, "updated_conversations": 0, "unchanged": 0, "new_messages": 0,
            "excluded": 0, "projects": 0, "memories": 0}
     proj_by_uuid = {}
@@ -275,3 +282,64 @@ def import_upload(conn, filename: str, data: bytes) -> dict:
             db.log_sync(conn, SOURCE, "upload", False, f"{safe}: {e}")
         raise
 
+
+
+def import_cloud(conn, data, trigger="handmatig", name="cloud") -> dict:
+    """Claude Code-cloudsessies (claude.ai/code), opgehaald via de officiële sessie-API van Claude Code."""
+    res = {"new_conversations": 0, "updated_conversations": 0, "unchanged": 0, "new_messages": 0, "excluded": 0,
+           "projects": 0, "memories": 0}
+    from .importer_cc import CONTEXT_PACK_MARKER, _recompute_branches
+    with db.transaction(conn):
+        for sess in data.get("sessions") or []:
+            ext = sess["id"]
+            if conn.execute("SELECT 1 FROM exclusions WHERE source=? AND ext_id=?", (CLOUD_SOURCE, ext)).fetchone():
+                res["excluded"] += 1
+                continue
+            missing = [] if sess.get("complete") else ["Niet alle (oudere) berichten van deze sessie konden worden opgehaald."]
+            missing.append("Denkstappen en tooluitvoer worden niet bewaard (alleen zichtbare tekst en toolnamen).")
+            project_id = db.get_or_create_project(conn, CLOUD_SOURCE, sess.get("repo") or "claude.ai/code", sess.get("repo") or "Claude Code (cloud)")
+            row = conn.execute("SELECT * FROM conversations WHERE source=? AND ext_id=?", (CLOUD_SOURCE, ext)).fetchone()
+            if row:
+                conv_id, is_new = row["id"], False
+                conn.execute("UPDATE conversations SET title=?, updated_at=?, source_updated_at=? WHERE id=?",
+                             (sess.get("title") or row["title"], sess.get("updated_at"), sess.get("updated_at"), conv_id))
+            else:
+                cur = conn.execute(
+                    "INSERT INTO conversations(source,ext_id,title,project_id,created_at,updated_at,imported_at,source_updated_at,url)"
+                    " VALUES(?,?,?,?,?,?,?,?,?)",
+                    (CLOUD_SOURCE, ext, sess.get("title") or "Claude Code-sessie (cloud)", project_id, sess.get("created_at"),
+                     sess.get("updated_at"), db.now(), sess.get("updated_at"), sess.get("url")))
+                conv_id, is_new = cur.lastrowid, True
+            seq = conn.execute("SELECT COALESCE(MAX(seq),0) FROM messages WHERE conversation_id=?", (conv_id,)).fetchone()[0]
+            added = 0
+            prev_uuid = None
+            for m in sess.get("messages") or []:
+                conn.execute("INSERT OR IGNORE INTO cc_nodes(conversation_id,uuid,parent_uuid,ts) VALUES(?,?,?,?)",
+                             (conv_id, m["uuid"], prev_uuid, m.get("created_at")))
+                prev_uuid = m["uuid"]
+                if conn.execute("SELECT 1 FROM messages WHERE conversation_id=? AND ext_id=?", (conv_id, m["uuid"])).fetchone():
+                    continue
+                seq += 1
+                text = m.get("text") or ""
+                conn.execute(
+                    "INSERT INTO messages(conversation_id,ext_id,seq,role,content,created_at,tools,is_context_pack) VALUES(?,?,?,?,?,?,?,?)",
+                    (conv_id, m["uuid"], seq, m["role"], text, m.get("created_at"), ",".join(m.get("tools") or []),
+                     1 if CONTEXT_PACK_MARKER in text else 0))
+                added += 1
+            if added:
+                # volgorde op tijd herstellen (oudere pagina's kunnen later binnenkomen)
+                ids = [r[0] for r in conn.execute("SELECT id FROM messages WHERE conversation_id=? ORDER BY created_at, seq", (conv_id,))]
+                for i, mid in enumerate(ids, 1):
+                    conn.execute("UPDATE messages SET seq=? WHERE id=?", (i, mid))
+            n = conn.execute("SELECT COUNT(*) FROM messages WHERE conversation_id=?", (conv_id,)).fetchone()[0]
+            conn.execute("UPDATE conversations SET message_count=?, missing_info=? WHERE id=?", (n, db.dumps(missing), conv_id))
+            res["new_messages"] += added
+            if is_new:
+                res["new_conversations"] += 1
+            elif added:
+                res["updated_conversations"] += 1
+            else:
+                res["unchanged"] += 1
+        db.log_sync(conn, CLOUD_SOURCE, trigger, True, f"Import uit {name}", res["new_messages"],
+                    res["new_conversations"], res["updated_conversations"])
+    return res
